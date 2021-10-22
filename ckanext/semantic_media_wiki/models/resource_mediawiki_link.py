@@ -7,7 +7,7 @@ from sqlalchemy.sql.expression import false
 from ckan.model import meta, Resource, domain_object
 
 
-__all__ = [u"ResourceMediawikiLink", u"resource_equipment_link_table"]
+__all__ = [u"ResourceEquipmentLink", u"resource_equipment_link_table"]
 
 resource_equipment_link_table = Table(
     u"resource_equipment_link",
@@ -20,7 +20,7 @@ resource_equipment_link_table = Table(
     Column(u"updated_at", _types.DateTime, default=datetime.datetime.utcnow, nullable=False),
 )
 
-class ResourceMediawikiLink(domain_object.DomainObject):
+class ResourceEquipmentLink(domain_object.DomainObject):
     def __init__(self, resource_id=None, url=None, link_name=None, create_at=None, updated_at=None):
         self.resource_id = resource_id
         self.url = url
@@ -48,7 +48,7 @@ class ResourceMediawikiLink(domain_object.DomainObject):
 
 
 meta.mapper(
-    ResourceMediawikiLink,
+    ResourceEquipmentLink,
     resource_equipment_link_table,
     properties={
         u"resource": orm.relation(

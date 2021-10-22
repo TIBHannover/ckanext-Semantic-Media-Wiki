@@ -20,7 +20,7 @@ def upgrade():
      op.create_table(
         'resource_equipment_link',
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
-        sa.Column('resource_id', sa.UnicodeText(), sa.ForeignKey('resource_id'), nullable=False),
+        sa.Column('resource_id', sa.UnicodeText(), sa.ForeignKey('resource.id'), nullable=False),
         sa.Column('url', sa.UnicodeText(), nullable=False),
         sa.Column('link_name', sa.UnicodeText()),
         sa.Column('create_at', sa.DateTime(timezone=False), nullable=False),

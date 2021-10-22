@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 from sqlalchemy.sql.expression import false, null, true
-from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceMediawikiLink
+from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceEquipmentLink
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from urllib import parse
@@ -20,7 +20,7 @@ class Helper():
                 machine_name = request.form.get('machine_name_' + str(i))
                 create_at = _time.now()
                 updated_at = create_at
-                resource_object = ResourceMediawikiLink(resource, link, machine_name, create_at, updated_at)
+                resource_object = ResourceEquipmentLink(resource, link, machine_name, create_at, updated_at)
                 resource_object.save()
         except:
             return false
@@ -37,12 +37,12 @@ class Helper():
                 if link == '0':
                     machine_name = None
                 updated_at = _time.now()
-                resource_object = ResourceMediawikiLink(resource_id=resource).get_by_resource(id=resource)                
+                resource_object = ResourceEquipmentLink(resource_id=resource).get_by_resource(id=resource)                
                 if resource_object == false:
                     # resource link does not exist --> add a new one
                     create_at = _time.now()
                     updated_at = create_at
-                    resource_object = ResourceMediawikiLink(resource, link, machine_name, create_at, updated_at)
+                    resource_object = ResourceEquipmentLink(resource, link, machine_name, create_at, updated_at)
                     resource_object.save()
                     continue
 
@@ -57,7 +57,7 @@ class Helper():
 
     
     def get_machine_link(resource_id):
-        res_object = ResourceMediawikiLink(resource_id=resource_id)
+        res_object = ResourceEquipmentLink(resource_id=resource_id)
         result = res_object.get_by_resource(id=resource_id)
         if result != false:
             return result
