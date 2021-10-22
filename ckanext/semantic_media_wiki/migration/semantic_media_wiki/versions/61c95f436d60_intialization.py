@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade():
      op.create_table(
-        'resource_mediawiki_link',
+        'resource_equipment_link',
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
         sa.Column('resource_id', sa.UnicodeText(), sa.ForeignKey('resource_id'), nullable=False),
         sa.Column('url', sa.UnicodeText(), nullable=False),
@@ -29,4 +29,4 @@ def upgrade():
 
 
 def downgrade():
-   op.drop_table('resource_mediawiki_link')
+   op.drop_table('resource_equipment_link')

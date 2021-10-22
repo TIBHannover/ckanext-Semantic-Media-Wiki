@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 from sqlalchemy.sql.expression import false, null, true
-from ckanext.upgrade_dataset.model import ResourceMediawikiLink
+from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceMediawikiLink
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from urllib import parse
