@@ -1,6 +1,6 @@
 # ckanext-Semantic-Media-Wiki
 
-This CKAN extension includes `media_wiki` plugin that aim to able users to link machines on semantic media wiki to resources/datasets in CKAN.
+This CKAN extension includes `semantic_media_wiki` plugin that aim to able users to link machines on semantic media wiki to resources/datasets in CKAN.
 
 
 
