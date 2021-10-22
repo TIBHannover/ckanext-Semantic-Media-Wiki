@@ -12,7 +12,7 @@
                     <a href="" target="_blank" class="machine-link" id='{{resource.id}}'>
                         <div class="machine-name-tag"></div>
                     </a>
-                    <input type="hidden" class="base_url" value="{{ h.url_for('media_wiki.get_machine_link', id=resource.id, _external=True)}}">
+                    <input type="hidden" class="base_url" value="{{ h.url_for('semantic_media_wiki.get_machine_link', id=resource.id, _external=True)}}">
                 </span>                                
             {% endfor %}
                                      
