@@ -1,0 +1,15 @@
+{% ckan_extends %}
+
+{% block resource_read_url %}    
+    {{ super() }}
+    {% asset 'ckanext-upgrade-dataset/resource-machine-js' %}
+    {% set resource_id = resource['id']  %}
+    {% set dest_url = h.url_for('media_wiki.get_machine_link', id=resource_id, _external=True) %}
+    <input type="hidden" id="get_link_url" value='{{dest_url}}'>
+    
+    <div id="machine_link_box">
+        {{_('Equipment URL')}}: <a href="#" id="machine_url_anchor"  target="_blank"> </a>
+    </div>    
+    <br><br>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% ckan_extends %}
+
+{% block package_additional_info %}
+    {% asset 'ckanext-upgrade-dataset/machines-name-view-css' %}
+    {% asset 'ckanext-upgrade-dataset/dataset-machines-js' %}
+    <tr>
+        <th scope="row" class="dataset-label">{{ _("Equipment(s)") }}</th>
+
+        <td class="dataset-details">
+            {% for resource in pkg_dict['resources'] %}
+                <span>
+                    <a href="" target="_blank" class="machine-link" id='{{resource.id}}'>
+                        <div class="machine-name-tag"></div>
+                    </a>
+                    <input type="hidden" class="base_url" value="{{ h.url_for('media_wiki.get_machine_link', id=resource.id, _external=True)}}">
+                </span>                                
+            {% endfor %}
+                                     
+        </td>
+    </tr>
+    {{ super() }}
+{% endblock  %}
