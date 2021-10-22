@@ -2,7 +2,7 @@
 
 import ckan.plugins.toolkit as toolkit
 from flask import render_template, request, redirect
-from ckanext.upgrade_dataset.libs.media_wiki import Helper
+from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 from sqlalchemy.sql.expression import false, true
 import json
 import ckan.lib.helpers as h

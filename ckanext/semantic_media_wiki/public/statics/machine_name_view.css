@@ -1,0 +1,11 @@
+.machine-name-tag{
+    display: inline-block;
+    background-color: rgb(219, 219, 248);
+    padding: 5px;
+    margin: 5px;
+}
+
+.machine-link{
+    text-decoration: none !important;
+    display: none;
+}

@@ -1,0 +1,96 @@
+stage-css:
+  output: ckanext-semantic-media-wiki/%(version)s_my.css
+  contents:
+    - stage.css
+
+machines-css:
+  output: ckanext-semantic-media-wiki/%(version)s_my.css
+  contents:
+    - machines.css
+
+edit-machines-css:
+  output: ckanext-semantic-media-wiki/%(version)s_my.css
+  contents:
+    - edit_machine.css
+
+machines-name-view-css:
+  output: ckanext-semantic-media-wiki/%(version)s_my.css
+  contents:
+    - machine_name_view.css
+
+stage-js:  
+  output: ckanext-semantic-media-wiki/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+  contents:
+    - stages.js
+
+machines-js:  
+  output: ckanext-semantic-media-wiki/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - machines.js
+  
+resource-machine-js:  
+  output: ckanext-semantic-media-wiki/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - resource_machine.js
+  
+dataset-machines-js:  
+  output: ckanext-semantic-media-wiki/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - dataset_machines.js
+
+edit-machines-js:  
+  output: ckanext-semantic-media-wiki/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - edit_machine.js
+  
+  machine-image-modal-js:  
+    output: ckanext-semantic-media-wiki/%(version)s_my.js
+    extra:
+      preload:
+        - base/main
+        - vendor/vendor
+        - vendor/bootstrap
+        - vendor/jquery
+        - vendor/jquery.ui.core
+        - vendor/select2
+    contents:
+      - machine_image_modal.js
