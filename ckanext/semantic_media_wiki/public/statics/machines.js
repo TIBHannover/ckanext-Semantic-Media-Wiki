@@ -30,7 +30,9 @@ $(document).ready(function(){
     $('.machine_dropdown').change(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
-        $('#machine_name_' + id).val($.trim($(this).select2('data').text));                       
+        $('#machine_name_' + id).val($.trim($(this).select2('data').text));   
+        $('#modalMachineName' + id).text($.trim($(this).select2('data').text));
+        $('#resourcesModal' + id).modal('show');                    
     }); 
 
     $('#machine_box_id_1').show();
