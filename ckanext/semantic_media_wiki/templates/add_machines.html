@@ -31,7 +31,27 @@
     </a>
   </p>
   <br>
-  <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">      
+  {% for res in pkg_dict['resources'] %}
+    <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
+      <div class="col-sm-12">
+        <h4>{{_('Please select an Equipment:')}}</h4>   
+        <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
+          {% for machine in machines_list %}           
+            <option value={{machine.value}} image={{machine.image}}>
+              {{machine.text}}                    
+            </option>
+          {% endfor %}
+          <br>
+        </select>
+      </div>
+    </div>
+  {% endfor %}
+  <br>
+  <button class="btn btn-primary" id="add-another-machine-box">{{_('+ Add Another')}}</button>
+
+
+
+  {# <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">      
       <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
       
       <table>
@@ -67,7 +87,7 @@
         <button class="btn btn-primary" name="save_btn" value="finish_machine" type="submit">{{ _('Add') }}</button>
       </div>      
       
-  </form>
+  </form> #}
   
 {% for machine in machines_list %}              
     <div class="machine_url_div" value='{{machine.text}}'>{{machine.image}}</div>  

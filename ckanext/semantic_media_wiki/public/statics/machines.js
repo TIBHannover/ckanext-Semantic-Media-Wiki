@@ -32,5 +32,11 @@ $(document).ready(function(){
         id = id[id.length - 1];
         $('#machine_name_' + id).val($.trim($(this).select2('data').text));                       
     }); 
+
+    $('#machine_box_id_1').show();
+    $('#add-another-machine-box').click(function(){
+      $('#machine_box_id_2').fadeIn();
+    });
+
     
 });
