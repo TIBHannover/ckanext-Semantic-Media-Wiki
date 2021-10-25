@@ -22,7 +22,7 @@ class API():
         self.host = host
         self.target_sfb = target_sfb
         if self.target_sfb == "1153":
-            self.image_field = "HasImage"
+            self.image_field = "Image"
         else:
             self.image_field = "depiction"
     
