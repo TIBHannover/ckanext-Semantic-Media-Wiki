@@ -35,7 +35,17 @@ $(document).ready(function(){
 
     $('#machine_box_id_1').show();
     $('#add-another-machine-box').click(function(){
-      $('#machine_box_id_2').fadeIn();
+      let all_visible = false;
+      for(let i=1; i <= $('.machine-box').length; i++){
+        if ($('#machine_box_id_' + i).is(':hidden')){
+          $('#machine_box_id_' + i).fadeIn();
+          all_visible = true;
+          break;
+        }
+      }
+      if(!all_visible){
+        $(this).hide();
+      }
     });
 
     
