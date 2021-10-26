@@ -23,7 +23,7 @@ $(document).ready(function(){
       $('#add_new_machine_btn').attr('href', 'https://service.tib.eu/sfb1153/wiki/Equipment');
     }
 
-    $('.machine_dropdown').parent().parent().find('label').hide();         
+         
     $("select.machine_dropdown").select2({
         formatResult: formatState
       });

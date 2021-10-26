@@ -1,5 +1,3 @@
-<button type="button" class="btn btn-default resources-modal" data-toggle="modal" data-target={{'#resourcesModal' ~ counter}}></button>
-
 <div id={{'resourcesModal' ~ counter}} class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -12,6 +10,12 @@
         <b><i>
           <p>{{_('Please select the data resources for this Equipment.')}}</p>
         </i></b>
+        {% for res in resources %}
+          <label class="checkbox-container">{{res.name}}
+            <input type="checkbox">
+            <span class="checkmark"></span>
+          </label>
+        {% endfor %}
       </div>
       <div class="modal-footer">
         <button id="ref_submit_btn" class="btn btn-primary">{{_('Add')}}</button>
