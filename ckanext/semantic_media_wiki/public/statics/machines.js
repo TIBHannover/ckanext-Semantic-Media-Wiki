@@ -50,5 +50,11 @@ $(document).ready(function(){
       }
     });
 
+    $('.select-all-resources').click(function(){
+        let id = $(this).attr('id');
+        id = id[id.length - 1];
+        $('.resource-checkbox-input' + id).click();
+    });
+
     
 });

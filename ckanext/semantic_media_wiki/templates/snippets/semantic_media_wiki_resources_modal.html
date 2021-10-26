@@ -11,14 +11,14 @@
           <p>{{_('Please select the data resources for this Equipment.')}}</p>
         </i></b>
         <label class="checkbox-container">{{_('Select All')}}
-            <input type="checkbox">
+            <input type="checkbox" class="select-all-resources" id={{'select-all-resources-' ~ counter}}>
             <span class="checkmark"></span>
           </label>
           <br>
         <div class="resources-list-box">
           {% for res in resources %}
             <label class="checkbox-container">{{res.name}}
-              <input type="checkbox">
+              <input type="checkbox" class={{'resource-checkbox-input' ~ counter}}>
               <span class="checkmark"></span>
             </label>
           {% endfor %}
