@@ -10,6 +10,11 @@
         <b><i>
           <p>{{_('Please select the data resources for this Equipment.')}}</p>
         </i></b>
+        <label class="checkbox-container">{{_('Select All')}}
+            <input type="checkbox">
+            <span class="checkmark"></span>
+          </label>
+          <br>
         {% for res in resources %}
           <label class="checkbox-container">{{res.name}}
             <input type="checkbox">
