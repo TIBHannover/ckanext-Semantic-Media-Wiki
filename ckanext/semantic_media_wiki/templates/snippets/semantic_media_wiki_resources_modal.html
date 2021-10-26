@@ -18,15 +18,20 @@
         <div class="resources-list-box">
           {% for res in resources %}
             <label class="checkbox-container">{{res.name}}
-              <input type="checkbox" class={{'resource-checkbox-input' ~ counter}} name={{'machine_resources_list' ~ counter}} value={{res.id}}>
+              <input type="checkbox" 
+                class={{'resource-checkbox-input' ~ counter}} 
+                name={{'machine_resources_list' ~ counter}} 
+                value={{res.id}}
+                resource_identifier={{res.id}}
+                >
               <span class="checkmark"></span>
             </label>
           {% endfor %}
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="ref_submit_btn" class="btn btn-primary">{{_('Add')}}</button>
-        <button type="button" id="ref_add_close_btn" type="button" class="btn btn-default" data-dismiss="modal">{{_('Close')}}</button>
+        <button type="button" id="ref_modal_add_btn" class="btn btn-primary" data-dismiss="modal">{{_('Add')}}</button>
+        <button type="button" id={{'ref_add_close_btn' ~ counter}} type="button" class="btn btn-default refModalClose" data-dismiss="modal">{{_('Close')}}</button>
       </div>
     </div>
 

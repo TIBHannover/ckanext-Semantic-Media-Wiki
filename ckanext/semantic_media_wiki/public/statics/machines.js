@@ -56,5 +56,16 @@ $(document).ready(function(){
         $('.resource-checkbox-input' + id).click();
     });
 
+    $('.refModalClose').click(function(){
+        let id = $(this).attr('id');
+        id = id[id.length - 1];
+        let checkBoxes = $('.resource-checkbox-input' + id);
+        for(let i=0; i < checkBoxes.length; i++){
+            if($(checkBoxes[i]).prop('checked') == true){
+              $(checkBoxes[i]).click();
+            }
+        }
+    });
+
     
 });
