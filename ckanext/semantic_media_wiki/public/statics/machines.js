@@ -27,6 +27,11 @@ $(document).ready(function(){
     $("select.machine_dropdown").select2({
         formatResult: formatState
       });
+    
+      /**
+       * Show the modal when a machine selected
+       * 
+       */
     $('.machine_dropdown').change(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
@@ -35,6 +40,10 @@ $(document).ready(function(){
         $('#resourcesModal' + id).modal('show');                    
     }); 
 
+    /**
+     * Add another machine selection box
+     * 
+     */
     $('#machine_box_id_1').show();
     $('#add-another-machine-box').click(function(){
       let all_visible = false;
@@ -50,12 +59,25 @@ $(document).ready(function(){
       }
     });
 
+    /**
+     * click the select all box
+     * 
+     */
     $('.select-all-resources').click(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
-        $('.resource-checkbox-input' + id).click();
+        let checkBoxes = $('.resource-checkbox-input' + id);
+        for(let i=0; i < checkBoxes.length; i++){
+            if($(checkBoxes[i]).prop('checked') == !($(this).prop('checked'))){
+              $(checkBoxes[i]).click();
+            }
+        }
     });
 
+    /**
+     * Click the close in modal
+     * 
+     */
     $('.refModalClose').click(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
