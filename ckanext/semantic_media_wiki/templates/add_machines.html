@@ -20,7 +20,6 @@
       {% endif %}
   {% endblock %}
 
-  {% set action = h.url_for('semantic_media_wiki.save_machines', _external=True) %}
   <h3>{{_('Please Select the Equipment(s) for this dataset')}}:</h3>
   <p>
     {{_('If you cannot find your Equipment, you can add it via the below button. Please refresh this page 
@@ -31,24 +30,37 @@
     </a>
   </p>
   <br>
-  {% for res in pkg_dict['resources'] %}
-    <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
-      {% snippet 'snippets/semantic_media_wiki_resources_modal.html', resources=pkg_dict['resources'], counter=loop.index %}
-      <div class="col-sm-12">
-        <h4>{{_('Please select an Equipment:')}}</h4>   
-        <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
-          {% for machine in machines_list %}           
-            <option value={{machine.value}} image={{machine.image}}>
-              {{machine.text}}                    
-            </option>
-          {% endfor %}
-          <br>
-        </select>
+  {% set action = h.url_for('semantic_media_wiki.save_machines', _external=True) %}
+  <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+    {% for res in pkg_dict['resources'] %}
+      <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} > 
+      <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
+        {% snippet 'snippets/semantic_media_wiki_resources_modal.html', resources=pkg_dict['resources'], counter=loop.index %}
+        <div class="col-sm-12">
+          <h4>{{_('Please select an Equipment:')}}</h4>   
+          <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
+            {% for machine in machines_list %}           
+              <option value={{machine.value}} image={{machine.image}}>
+                {{machine.text}}                    
+              </option>
+            {% endfor %}
+            <br>
+          </select>
+        </div>
       </div>
-    </div>
-  {% endfor %}
-  <br>
-  <button class="btn btn-primary" id="add-another-machine-box">{{_('+ Add Another')}}</button>
+    {% endfor %}
+    <br>
+    <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
+    <br><br><br>
+    <div class="form-actions">
+        {% if h.cancel_dataset_is_enabled() %} 
+        {% set dest_url = h.url_for('cancel_dataset_creation.cancel_dataset', package_id=pkg_dict['id'], is_draft=0, _external=True) %}
+        <a class="btn btn-danger pull-left" href="{{dest_url}}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this dataset?') }}">{{ _('Cancel & Delete Dataset') }}</a>        
+      {% endif %}
+      <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('I add it later') }}</button>
+      <button class="btn btn-primary" name="save_btn" value="finish_machine" type="submit">{{ _('Save') }}</button>
+    </div>      
+  </form>
 
 
 
@@ -72,8 +84,7 @@
                 {% endfor %}
               </select>
 
-              <input type="hidden"  name={{ 'resource_' ~ loop.index }} value='{{res.id}}'>
-              <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} >        
+              <input type="hidden"  name={{ 'resource_' ~ loop.index }} value='{{res.id}}'>       
             </td>
           </tr>  
         {% endfor %}
