@@ -15,12 +15,14 @@
             <span class="checkmark"></span>
           </label>
           <br>
-        {% for res in resources %}
-          <label class="checkbox-container">{{res.name}}
-            <input type="checkbox">
-            <span class="checkmark"></span>
-          </label>
-        {% endfor %}
+        <div class="resources-list-box">
+          {% for res in resources %}
+            <label class="checkbox-container">{{res.name}}
+              <input type="checkbox">
+              <span class="checkmark"></span>
+            </label>
+          {% endfor %}
+        </div>
       </div>
       <div class="modal-footer">
         <button id="ref_submit_btn" class="btn btn-primary">{{_('Add')}}</button>

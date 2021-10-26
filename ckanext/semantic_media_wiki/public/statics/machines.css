@@ -81,3 +81,9 @@
 .select2-result {
     margin-bottom: 10px;
 }
+
+.resources-list-box{
+  border: black solid 1px;
+  padding: 20px;
+  border-radius: 15px;
+}
