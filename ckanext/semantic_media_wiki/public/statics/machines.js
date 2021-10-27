@@ -96,6 +96,7 @@ $(document).ready(function(){
         if($('#select-all-resources-' + id).prop('checked') == true){
           $('#select-all-resources-' + id).click();
         }
+        $('#machine_resource_count-' + id).text('0');
     });
 
     /**
