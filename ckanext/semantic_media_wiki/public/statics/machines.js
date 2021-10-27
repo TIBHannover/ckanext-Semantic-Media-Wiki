@@ -111,5 +111,23 @@ $(document).ready(function(){
         }
     });
 
+    /**
+     * Click Add button on a modal
+     * 
+     */
+    $('.refModalAdd').click(function(){
+        let id = $(this).attr('id');
+        id = id[id.length - 1];
+        let boxes = $('.resource-checkbox-input' + id);
+        let resourceCount = 0;
+        for (let i=0; i < boxes.length; i++){
+            if($(boxes[i]).prop('checked') == true){
+                resourceCount += 1;
+            }
+        }
+        $('#machine_resource_count-' + id).text(resourceCount);
+        $('#machine_resource_count-message-box_' + id).show();
+    });
+
     
 });

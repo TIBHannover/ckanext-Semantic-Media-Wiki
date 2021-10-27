@@ -87,3 +87,11 @@
   padding: 20px;
   border-radius: 15px;
 }
+
+.machine-alert-box{
+  padding: 5px !important;
+  margin-top: 5px;
+  width: 50%;
+  text-align: center;
+  display: none;
+}
