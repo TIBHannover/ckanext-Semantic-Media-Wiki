@@ -134,5 +134,27 @@ $(document).ready(function(){
         $('#machine_resource_count-message-box_' + id).show();
     });
 
+    /**
+     * remove machine
+     * 
+     */
+    $('.machine-remove-anchor').click(function(){
+        let id = $(this).attr('id');
+        id = id[id.length - 1];
+        let checkBoxes = $('.resource-checkbox-input' + id);
+        for(let i=0; i < checkBoxes.length; i++){
+            if($(checkBoxes[i]).prop('checked') == true){
+              $(checkBoxes[i]).click();
+            }
+        }
+        if($('#select-all-resources-' + id).prop('checked') == true){
+          $('#select-all-resources-' + id).click();
+        }
+        $('#machine_resource_count-' + id).text('0');
+        $('#machine_resource_count-message-box_' + id).hide();
+        $('#machine_box_id_' + id).fadeOut();
+        
+    });
+
     
 });

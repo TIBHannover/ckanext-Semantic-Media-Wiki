@@ -49,14 +49,16 @@
           </select>
         </div>
         <div class="col-sm-1">
+        {% if loop.index > 1 %}
             <a href="#" class="machine-remove-anchor" id={{ '"machine-remove-anchor' ~ loop.index }}>
               <i class="fa fa-minus-circle remove-machine-icon"></i>
             </a>
+        {% endif %}
         </div>
       </div>
-      <div id={{ 'machine_resource_count-message-box_' ~ loop.index }} class="machine-alert-box alert alert-success">
-          <span  id={{ 'machine_resource_count-' ~ loop.index }}></span> &nbsp; resource(s)
-      </div>
+        <div id={{ 'machine_resource_count-message-box_' ~ loop.index }} class="machine-alert-box alert alert-success">
+            <span  id={{ 'machine_resource_count-' ~ loop.index }}></span> &nbsp; resource(s)
+        </div>
     {% endfor %}
     <br>
     <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
