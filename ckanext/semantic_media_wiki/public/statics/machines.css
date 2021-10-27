@@ -95,3 +95,9 @@
   text-align: center;
   display: none;
 }
+
+.remove-machine-icon{
+  color: red;
+  font-size: 35px !important;
+  margin-top: 99%;
+}
