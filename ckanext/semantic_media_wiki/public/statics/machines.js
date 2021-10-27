@@ -68,8 +68,10 @@ $(document).ready(function(){
         id = id[id.length - 1];
         let checkBoxes = $('.resource-checkbox-input' + id);
         for(let i=0; i < checkBoxes.length; i++){
-            if($(checkBoxes[i]).prop('checked') == !($(this).prop('checked'))){
-              $(checkBoxes[i]).click();
+            if($(checkBoxes[i]).is(':visible')){
+              if($(checkBoxes[i]).prop('checked') == !($(this).prop('checked'))){
+                  $(checkBoxes[i]).click();
+              }
             }
         }
     });
@@ -89,6 +91,23 @@ $(document).ready(function(){
         }
         if($('#select-all-resources-' + id).prop('checked') == true){
           $('#select-all-resources-' + id).click();
+        }
+    });
+
+    /**
+     * hide a resource from other modals when the resource is chosen for one machine in a modal
+     * 
+     */
+    $('.resource-box').click(function(){
+        let id = $(this).attr('name');
+        id = id[id.length - 1];
+        let resource = $(this).val();
+        if($(this).prop('checked') == true){
+            $(".checkbox-container[value=" + resource + "]").hide();
+            $(this).parent().show();          
+        }
+        else{
+          $(".checkbox-container[value=" + resource + "]").show();
         }
     });
 
