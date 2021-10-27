@@ -37,7 +37,11 @@ $(document).ready(function(){
         id = id[id.length - 1];
         $('#machine_name_' + id).val($.trim($(this).select2('data').text));   
         $('#modalMachineName' + id).text($.trim($(this).select2('data').text));
-        $('#resourcesModal' + id).modal('show');                    
+        $('#resourcesModal' + id).modal({
+          backdrop: 'static',
+          keyboard: false
+         });
+        $('#resourcesModal' + id).modal('show');                   
     }); 
 
     /**
