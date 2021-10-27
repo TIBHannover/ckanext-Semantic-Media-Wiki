@@ -87,6 +87,9 @@ $(document).ready(function(){
               $(checkBoxes[i]).click();
             }
         }
+        if($('#select-all-resources-' + id).prop('checked') == true){
+          $('#select-all-resources-' + id).click();
+        }
     });
 
     
