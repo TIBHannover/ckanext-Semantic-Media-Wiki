@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">  
         <b><i>
-          <p>{{_('Please select the data resources for this Equipment.')}}</p>
+          <p>{{_('Please link the data resource(s) to this Equipment.')}}</p>
         </i></b>
         <label class="checkbox-container">{{_('Select All')}}
             <input type="checkbox" class="select-all-resources" id={{'select-all-resources-' ~ counter}}>
@@ -28,8 +28,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id={{'ref_modal_add_btn' ~ counter}} class="btn btn-primary refModalAdd" data-dismiss="modal">{{_('Add or keep existing')}}</button>
-        <button type="button" id={{'ref_add_close_btn' ~ counter}} type="button" class="pull-left btn btn-default refModalClose" data-dismiss="modal">{{_('Close and Unassign all')}}</button>
+        <button type="button" id={{'ref_modal_add_btn' ~ counter}} class="btn btn-primary refModalAdd" data-dismiss="modal">{{_('Save')}}</button>
+        <button type="button" id={{'ref_add_close_btn' ~ counter}} type="button" class="pull-left btn btn-default refModalClose" data-dismiss="modal">{{_('Close')}}</button>
       </div>
     </div>
 
