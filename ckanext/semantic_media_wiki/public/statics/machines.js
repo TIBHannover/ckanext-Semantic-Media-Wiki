@@ -147,5 +147,20 @@ $(document).ready(function(){
         
     });
 
+    /**
+     * click the edit mark on the resource count box
+     * 
+     */
+
+    $('.resource_count_edit').click(function(){
+      let id = $(this).attr('id');
+      id = id[id.length - 1];
+      $('#resourcesModal' + id).modal({
+        backdrop: 'static',
+        keyboard: false
+       });
+      $('#resourcesModal' + id).modal('show'); 
+    });
+
     
 });
