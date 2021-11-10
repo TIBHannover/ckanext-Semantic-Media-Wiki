@@ -80,13 +80,14 @@ class MediaWikiController():
 
     def edit_save():
         package_name = request.form.get('package')
+        package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
         resources_len = int(request.form.get('resources_length'))
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # cancel button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'update_machine':
-            result = Helper.update_resource_machine(request, resources_len)
+            result = Helper.update_resource_machine(request, resources_len, package)
             if result:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 

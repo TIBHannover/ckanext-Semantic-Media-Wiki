@@ -39,8 +39,16 @@ class Helper():
 
         return true
 
-    def update_resource_machine(request, resources_len):
+    def update_resource_machine(request, resources_len, package):
         try:
+            for res in package['resources']:
+                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                if resource_object != false:
+                    resource_object.url = '0'
+                    resource_object.link_name = None
+                    resource_object.updated_at = _time.now()
+                    resource_object.commit()
+                    
             for i in range(1, resources_len + 1):
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
@@ -61,6 +69,7 @@ class Helper():
                     resource_object.link_name = machine_name
                     resource_object.updated_at = updated_at
                     resource_object.commit()
+
         except:
             return False
 
