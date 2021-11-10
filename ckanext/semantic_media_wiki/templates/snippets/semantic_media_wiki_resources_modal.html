@@ -1,0 +1,37 @@
+<div id={{'resourcesModal' ~ counter}} class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Equipment: <div id={{'modalMachineName' ~ counter}}></div> </h4>
+      </div>
+      <div class="modal-body">  
+        <b><i>
+          <p>{{_('Please link the data resource(s) to this Equipment.')}}</p>
+        </i></b>
+        <label class="checkbox-container">{{_('Select All')}}
+            <input type="checkbox" class="select-all-resources" id={{'select-all-resources-' ~ counter}}>
+            <span class="checkmark"></span>
+        </label>
+          <br>
+        <div class="resources-list-box">
+          {% for res in resources %}
+            <label class="checkbox-container" value={{res.id}} >{{res.name}}
+              <input type="checkbox" 
+                class="{{'resource-checkbox-input' ~ counter}}  resource-box"
+                name={{'machine_resources_list' ~ counter}} 
+                value={{res.id}}
+                >
+              <span class="checkmark"></span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id={{'ref_modal_add_btn' ~ counter}} class="btn btn-primary refModalAdd" data-dismiss="modal">{{_('Save')}}</button>
+        <button type="button" id={{'ref_add_close_btn' ~ counter}} type="button" class="pull-left btn btn-default refModalClose" data-dismiss="modal">{{_('Close')}}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
