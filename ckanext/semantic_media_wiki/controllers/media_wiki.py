@@ -38,7 +38,7 @@ class MediaWikiController():
         except:
             return toolkit.abort(400, "Package not found") 
         
-        if not Helper.check_access_edit_package(package.id): 
+        if not Helper.check_access_edit_package(package['id']): 
             return toolkit.abort(403, "You are not authorized to access this function" )
                
         action = request.form.get('save_btn')
