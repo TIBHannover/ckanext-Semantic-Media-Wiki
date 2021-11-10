@@ -70,7 +70,7 @@ class Helper():
     def get_machine_link(resource_id):
         res_object = ResourceEquipmentLink(resource_id=resource_id)
         result = res_object.get_by_resource(id=resource_id)
-        if result != false:
+        if result != false and result.url != '0':
             return result
         return False
     
