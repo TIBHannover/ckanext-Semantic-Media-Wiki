@@ -3,7 +3,7 @@
 
 {% block styles %}
   {{ super() }}
-  {% asset 'ckanext-semantic-media-wiki/edit-machines-css' %}
+  {% asset 'ckanext-semantic-media-wiki/machines-css' %}
 {% endblock styles %}
 
 
@@ -21,7 +21,32 @@
     <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
     {% for key, value in resource_data.items() %}
-        
+        <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }}>
+        <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
+            {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
+                resources=pkg_dict['resources'], 
+                counter=loop.index, 
+                chosen_resources=value 
+            %}
+            <div class="col-sm-11">
+                <h4>{{_('Please select an Equipment:')}}</h4>   
+                <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
+                    {% for machine in machines_list %} 
+                    <option value={{machine.value}} image={{machine.image}}>
+                        {{machine.text}}                  
+                    </option>
+                    {% endfor %}
+                    <br>
+                </select>
+            </div>
+            <div class="col-sm-1">
+                {% if loop.index > 1 %}
+                    <a href="#" class="machine-remove-anchor" id={{ '"machine-remove-anchor' ~ loop.index }}>
+                    <i class="fa fa-minus-circle remove-machine-icon"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div> 
     {% endfor %}
     <br>
     <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
@@ -39,5 +64,5 @@
 
 {% block scripts %}
   {{ super() }}
-  {% asset 'ckanext-semantic-media-wiki/edit-machines-js' %}
+  {% asset 'ckanext-semantic-media-wiki/machines-js' %}
 {% endblock %}

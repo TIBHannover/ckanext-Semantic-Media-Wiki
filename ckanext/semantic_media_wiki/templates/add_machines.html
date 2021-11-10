@@ -36,7 +36,11 @@
     {% for res in pkg_dict['resources'] %}
       <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} > 
       <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
-        {% snippet 'snippets/semantic_media_wiki_resources_modal.html', resources=pkg_dict['resources'], counter=loop.index %}
+        {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
+          resources=pkg_dict['resources'], 
+          counter=loop.index,
+          chosen_resources=value 
+        %}
         <div class="col-sm-11">
           <h4>{{_('Please select an Equipment:')}}</h4>   
           <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
