@@ -25,7 +25,9 @@
     {% endif %}
     </div>
     </div>
-    <div id={{ 'machine_resource_count-message-box_' ~ (loop.index + offset) }} class="machine-alert-box alert alert-success">
-        <span  id={{ 'machine_resource_count-' ~ (loop.index + offset) }}></span> &nbsp; resource(s)
-    </div>
+    {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
+        custom_class='machine-alert-box',
+        default_count=0,
+        Id=loop.index + offset
+    %}
 {% endfor %}

@@ -52,10 +52,12 @@
                     </a>
                 {% endif %}
             </div>
-        </div> 
-        <div id={{ 'machine_resource_count-message-box_' ~ loop.index }} class="machine-alert-box-edit alert alert-success">
-            <span  id={{ 'machine_resource_count-' ~ loop.index }}>{{value|length}}</span> &nbsp; resource(s)
         </div>
+        {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
+            custom_class='machine-alert-box-edit',
+            default_count=value|length,
+            Id=loop.index
+        %} 
     {% endfor %}
     {% snippet 'snippets/semantic_media_wiki_machines_dropdown.html', 
         resources=pkg_dict['resources'], 
