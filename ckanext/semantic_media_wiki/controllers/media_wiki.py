@@ -39,7 +39,7 @@ class MediaWikiController():
             return toolkit.abort(400, "Package not found") 
         
         if not Helper.check_access_edit_package(package.id): 
-            return toolkit.abort(403, "You need to authenticate before accessing this function" )
+            return toolkit.abort(403, "You are not authorized to access this function" )
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
@@ -57,7 +57,7 @@ class MediaWikiController():
 
     def edit_machines_view(id):
         if not Helper.check_access_edit_package(id): 
-            return toolkit.abort(403, "You need to authenticate before accessing this function" )
+            return toolkit.abort(403, "You are not authorized to access this function" )
 
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
         machines, machine_imageUrl = Helper.get_machines_list()
@@ -98,7 +98,7 @@ class MediaWikiController():
 
     def get_machine_link(id):
         if not toolkit.g.user: 
-            return toolkit.abort(403, "You need to authenticate before accessing this function" )
+            return toolkit.abort(403, "You are not authorized to access this function" )
         record = Helper.get_machine_link(id)
         if record == false or record.url == '0':
             return '0'
