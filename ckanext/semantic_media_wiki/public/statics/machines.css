@@ -96,8 +96,21 @@
   display: none;
 }
 
+.machine-alert-box-edit{
+  padding: 5px !important;
+  margin-top: 5px;
+  width: 50%;
+  text-align: center;
+}
+
+
 .remove-machine-icon{
   color: red;
   font-size: 35px !important;
   margin-top: 99%;
+}
+
+.resource_count_edit{
+  font-size: 18px !important;
+  cursor: pointer;
 }

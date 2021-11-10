@@ -85,6 +85,15 @@ $(document).ready(function(){
      * hide a resource from other modals when the resource is chosen for one machine in a modal
      * 
      */
+
+    let resources =  $('.resource-box');
+    for(let i=0; i < resources.length; i++){
+      if($(resources[i]).prop('checked') == true){
+        $(".checkbox-container[value=" + $(resources[i]).val() + "]").hide();
+        $(resources[i]).parent().show();  
+      }
+    }
+
     $('.resource-box').click(function(){
         let id = $(this).attr('name');
         id = id[id.length - 1];
@@ -136,6 +145,21 @@ $(document).ready(function(){
         $('#machine_resource_count-message-box_' + id).hide();
         $('#machine_box_id_' + id).fadeOut();
         
+    });
+
+    /**
+     * click the edit mark on the resource count box
+     * 
+     */
+
+    $('.resource_count_edit').click(function(){
+      let id = $(this).attr('id');
+      id = id[id.length - 1];
+      $('#resourcesModal' + id).modal({
+        backdrop: 'static',
+        keyboard: false
+       });
+      $('#resourcesModal' + id).modal('show'); 
     });
 
     

@@ -3,7 +3,7 @@
 
 {% block styles %}
   {{ super() }}
-  {% asset 'ckanext-semantic-media-wiki/edit-machines-css' %}
+  {% asset 'ckanext-semantic-media-wiki/machines-css' %}
 {% endblock styles %}
 
 
@@ -15,55 +15,72 @@
         <a id="add_new_machine_btn" class="btn btn-primary" href="" target='_blank'>
             {{_('Add New Equipment')}}
          </a>
-    </p><br>
+    </p>
+    <hr>
     {% set action = h.url_for('semantic_media_wiki.edit_save', _external=True) %}
-    <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">        
-        <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
-        <input type="hidden" name="resources_length" value='{{resource_data|length}}'>
-        
-        <table>
-            <tr>
-                <th>{{_('Resource')}}</th>
-                <th>{{_('Equipment')}}</th>
-            </tr>    
-            {% for res in resource_data %}          
-            <tr>
-                <td>{{res['name']}}</td>
-                <td>
+    <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+    <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
+    <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
+    {% for key, value in resource_data.items() %}
+        <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }}>
+        <div class="row machine-box-edit" id={{'machine_box_id_' ~ loop.index}}>
+            {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
+                resources=pkg_dict['resources'], 
+                counter=loop.index, 
+                chosen_resources=value 
+            %}
+            <div class="col-sm-11">
+                <h4>{{_('Please select an Equipment:')}}</h4>   
                 <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
-                    {% for machine in machines_list %}    
-                        {% if res.machine == machine.value %}                                      
-                            <option value={{machine.value}} image={{machine.image}} selected='selected'>
-                                {{machine.text}}                    
+                    {% for machine in machines_list %}
+                        {% if key == machine.value %}
+                            <option value={{machine.value}} image={{machine.image}} selected>
+                                {{machine.text}}                  
                             </option>
-                        {% else %}
+                        {% else %} 
                             <option value={{machine.value}} image={{machine.image}}>
-                                {{machine.text}}                    
+                                {{machine.text}}                  
                             </option>
                         {% endif %}
                     {% endfor %}
-                </select>                
-                <input type="hidden"  name={{ 'resource_' ~ loop.index }} value='{{res["id"]}}'>
-                <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} >        
-                </td>
-            </tr>  
-            {% endfor %}
-        </table>
-        <br><br>
-        <div class="form-actions">
-            <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('Cancel') }}</button>
-            <button class="btn btn-primary" name="save_btn" value="update_machine" type="submit">{{ _('Edit') }}</button>
-        </div>      
-        
-    </form>
-    
-    {% for machine in machines_list %}              
-        <div class="machine_url_div" value='{{machine.text}}'>{{machine.image}}</div>  
+                    <br>
+                </select>
+            </div>
+            <div class="col-sm-1">
+                {% if loop.index > 1 %}
+                    <a href="#" class="machine-remove-anchor" id={{ '"machine-remove-anchor' ~ loop.index }}>
+                    <i class="fa fa-minus-circle remove-machine-icon"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
+            custom_class='machine-alert-box-edit',
+            default_count=value|length,
+            Id=loop.index
+        %} 
     {% endfor %}
+    {% snippet 'snippets/semantic_media_wiki_machines_dropdown.html', 
+        resources=pkg_dict['resources'], 
+        machines_list=machines_list,
+        offset=machines_count
+    %}
+    <br>
+    <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
+    <br><br><br><hr>
+    <div class="form-actions">
+        <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('Cancel') }}</button>
+        <button class="btn btn-primary" name="save_btn" value="update_machine" type="submit">{{ _('Save') }}</button>
+    </div>      
+  </form>
+  
+{% for machine in machines_list %}              
+    <div class="machine_url_div" value='{{machine.text}}'>{{machine.image}}</div>  
+{% endfor %}
 
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-  {% asset 'ckanext-semantic-media-wiki/edit-machines-js' %}
+  {% asset 'ckanext-semantic-media-wiki/machines-js' %}
 {% endblock %}

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from sqlalchemy.sql.expression import false, null, true
+from sqlalchemy.sql.expression import false, true
 from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceEquipmentLink
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -9,6 +9,17 @@ import ckan.plugins.toolkit as toolkit
 
 
 class Helper():
+
+    def check_access_edit_package(package_id):
+        context = {'user': toolkit.g.user, 'auth_user_obj': toolkit.g.userobj}
+        data_dict = {'id':package_id}
+        try:
+            toolkit.check_access('package_update', context, data_dict)
+            return True
+
+        except toolkit.NotAuthorized:
+            return False
+
 
     def add_machine_links(request, resources_len):
         try:
@@ -28,40 +39,49 @@ class Helper():
 
         return true
 
-    def update_resource_machine(request, resources_len):
+    def update_resource_machine(request, resources_len, package):
         try:
+            for res in package['resources']:
+                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                if resource_object != false:
+                    resource_object.url = '0'
+                    resource_object.link_name = None
+                    resource_object.updated_at = _time.now()
+                    resource_object.commit()
+                    
             for i in range(1, resources_len + 1):
-                resource = request.form.get('resource_' + str(i))            
-                link = request.form.get('machine_link' + str(i))            
-                machine_name = request.form.get('machine_name_' + str(i))                
+                link = request.form.get('machine_link' + str(i))
                 if link == '0':
                     machine_name = None
+                machine_name = request.form.get('machine_name_' + str(i))
+                resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
-                resource_object = ResourceEquipmentLink(resource_id=resource).get_by_resource(id=resource)                
-                if resource_object == false:
-                    # resource link does not exist --> add a new one
-                    create_at = _time.now()
-                    updated_at = create_at
-                    resource_object = ResourceEquipmentLink(resource, link, machine_name, create_at, updated_at)
-                    resource_object.save()
-                    continue
+                for Id in resources_checkbox_list:
+                    resource_object = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
+                    if resource_object == false:
+                        # resource link does not exist --> add a new one
+                        create_at = _time.now()
+                        updated_at = create_at
+                        resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
+                        resource_object.save()
+                        continue
+                    resource_object.url = link
+                    resource_object.link_name = machine_name
+                    resource_object.updated_at = updated_at
+                    resource_object.commit()
 
-                resource_object.url = link
-                resource_object.link_name = machine_name
-                resource_object.updated_at = updated_at
-                resource_object.commit()
         except:
-            return false
+            return False
 
-        return true
+        return True
 
     
     def get_machine_link(resource_id):
         res_object = ResourceEquipmentLink(resource_id=resource_id)
         result = res_object.get_by_resource(id=resource_id)
-        if result != false:
+        if result != false and result.url != '0':
             return result
-        return false
+        return False
     
 
     def get_machines_list():
