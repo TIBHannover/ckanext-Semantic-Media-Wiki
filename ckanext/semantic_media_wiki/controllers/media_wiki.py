@@ -81,6 +81,9 @@ class MediaWikiController():
     def edit_save():
         package_name = request.form.get('package')
         package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
+        if not Helper.check_access_edit_package(package['id']): 
+            return toolkit.abort(403, "You are not authorized to access this function" )
+
         resources_len = int(request.form.get('resources_length'))
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # cancel button
