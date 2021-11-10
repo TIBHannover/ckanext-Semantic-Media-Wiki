@@ -3,7 +3,7 @@
 import ckan.plugins.toolkit as toolkit
 from flask import render_template, request, redirect
 from ckanext.semantic_media_wiki.libs.media_wiki import Helper
-from sqlalchemy.sql.expression import false, true
+from sqlalchemy.sql.expression import false
 import json
 import ckan.lib.helpers as h
 
@@ -12,6 +12,9 @@ import ckan.lib.helpers as h
 class MediaWikiController():
 
     def machines_view(id):
+        if not Helper.check_access_edit_package(id):
+            toolkit.abort(403, 'You are not authorized to access this function')
+
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         stages = ['complete', 'complete','complete', 'active']
         machines, machine_imageUrl = Helper.get_machines_list()
@@ -23,9 +26,6 @@ class MediaWikiController():
             )
     
     def save_machines():
-        if not toolkit.g.user: 
-            return toolkit.abort(403, "You need to authenticate before accessing this function" )
-
         package_name = request.form.get('package')
         resources_len = 0
         if package_name == None:
@@ -37,6 +37,9 @@ class MediaWikiController():
 
         except:
             return toolkit.abort(400, "Package not found") 
+        
+        if not Helper.check_access_edit_package(package.id): 
+            return toolkit.abort(403, "You need to authenticate before accessing this function" )
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
@@ -53,6 +56,9 @@ class MediaWikiController():
     
 
     def edit_machines_view(id):
+        if not Helper.check_access_edit_package(id): 
+            return toolkit.abort(403, "You need to authenticate before accessing this function" )
+
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
         machines, machine_imageUrl = Helper.get_machines_list()
         resource_machine_data = {}
@@ -73,9 +79,6 @@ class MediaWikiController():
     
 
     def edit_save():
-        if not toolkit.g.user: 
-            return toolkit.abort(403, "You need to authenticate before accessing this function" )
-        
         package_name = request.form.get('package')
         resources_len = int(request.form.get('resources_length'))
         action = request.form.get('save_btn')

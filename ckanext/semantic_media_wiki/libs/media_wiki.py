@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from sqlalchemy.sql.expression import false, null, true
+from sqlalchemy.sql.expression import false, true
 from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceEquipmentLink
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -9,6 +9,17 @@ import ckan.plugins.toolkit as toolkit
 
 
 class Helper():
+
+    def check_access_edit_package(package_id):
+        context = {'user': toolkit.g.user, 'auth_user_obj': toolkit.g.userobj}
+        data_dict = {'id':package_id}
+        try:
+            toolkit.check_access('package_update', context, data_dict)
+            return True
+
+        except toolkit.NotAuthorized:
+            return False
+
 
     def add_machine_links(request, resources_len):
         try:
