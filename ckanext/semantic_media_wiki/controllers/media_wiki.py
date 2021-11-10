@@ -87,7 +87,7 @@ class MediaWikiController():
         
         if action == 'update_machine':
             result = Helper.update_resource_machine(request, resources_len)
-            if result != false:
+            if result:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
             return toolkit.abort(500, "Server issue")    
