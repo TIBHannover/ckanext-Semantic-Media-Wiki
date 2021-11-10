@@ -96,6 +96,14 @@
   display: none;
 }
 
+.machine-alert-box-edit{
+  padding: 5px !important;
+  margin-top: 5px;
+  width: 50%;
+  text-align: center;
+}
+
+
 .remove-machine-icon{
   color: red;
   font-size: 35px !important;
