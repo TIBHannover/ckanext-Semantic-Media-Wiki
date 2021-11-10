@@ -15,51 +15,25 @@
         <a id="add_new_machine_btn" class="btn btn-primary" href="" target='_blank'>
             {{_('Add New Equipment')}}
          </a>
-    </p><br>
+    </p>
+    <hr>
     {% set action = h.url_for('semantic_media_wiki.edit_save', _external=True) %}
-    <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">        
-        <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
-        <input type="hidden" name="resources_length" value='{{resource_data|length}}'>
+    <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+    <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
+    {% for key, value in resource_data.items() %}
         
-        <table>
-            <tr>
-                <th>{{_('Resource')}}</th>
-                <th>{{_('Equipment')}}</th>
-            </tr>    
-            {% for res in resource_data %}          
-            <tr>
-                <td>{{res['name']}}</td>
-                <td>
-                <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
-                    {% for machine in machines_list %}    
-                        {% if res.machine == machine.value %}                                      
-                            <option value={{machine.value}} image={{machine.image}} selected='selected'>
-                                {{machine.text}}                    
-                            </option>
-                        {% else %}
-                            <option value={{machine.value}} image={{machine.image}}>
-                                {{machine.text}}                    
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>                
-                <input type="hidden"  name={{ 'resource_' ~ loop.index }} value='{{res["id"]}}'>
-                <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} >        
-                </td>
-            </tr>  
-            {% endfor %}
-        </table>
-        <br><br>
-        <div class="form-actions">
-            <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('Cancel') }}</button>
-            <button class="btn btn-primary" name="save_btn" value="update_machine" type="submit">{{ _('Edit') }}</button>
-        </div>      
-        
-    </form>
-    
-    {% for machine in machines_list %}              
-        <div class="machine_url_div" value='{{machine.text}}'>{{machine.image}}</div>  
     {% endfor %}
+    <br>
+    <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
+    <br><br><br><hr>
+    <div class="form-actions">
+      <button class="btn btn-primary" name="save_btn" value="finish_machine" type="submit">{{ _('Save') }}</button>
+    </div>      
+  </form>
+  
+{% for machine in machines_list %}              
+    <div class="machine_url_div" value='{{machine.text}}'>{{machine.image}}</div>  
+{% endfor %}
 
 {% endblock %}
 

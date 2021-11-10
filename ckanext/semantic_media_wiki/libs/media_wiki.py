@@ -61,7 +61,7 @@ class Helper():
         result = res_object.get_by_resource(id=resource_id)
         if result != false:
             return result
-        return false
+        return False
     
 
     def get_machines_list():

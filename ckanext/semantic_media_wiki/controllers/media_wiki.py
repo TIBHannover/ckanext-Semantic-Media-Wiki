@@ -55,14 +55,13 @@ class MediaWikiController():
     def edit_machines_view(id):
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
         machines, machine_imageUrl = Helper.get_machines_list()
-        resource_machine_data = []
+        resource_machine_data = {}
         for resource in package['resources']:
-            temp = {}
-            temp['name'] = resource['name']            
-            temp['id'] = resource['id']
             record = Helper.get_machine_link(resource['id'])
-            temp['machine'] =  record.url if record != false else '0'
-            resource_machine_data.append(temp)
+            if record and record.url not in resource_machine_data.keys():
+                resource_machine_data[record.url] = [resource['id']]
+            elif record:
+                resource_machine_data[record.url].append(resource['id'])
 
         return render_template('edit_machines.html', 
             pkg_dict=package, 
