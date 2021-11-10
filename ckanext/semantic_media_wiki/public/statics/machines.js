@@ -80,25 +80,7 @@ $(document).ready(function(){
         }
     });
 
-    /**
-     * Click the close in modal
-     * 
-     */
-    // $('.refModalClose').click(function(){
-    //     let id = $(this).attr('id');
-    //     id = id[id.length - 1];
-    //     let checkBoxes = $('.resource-checkbox-input' + id);
-    //     for(let i=0; i < checkBoxes.length; i++){
-    //         if($(checkBoxes[i]).prop('checked') == true){
-    //           $(checkBoxes[i]).click();
-    //         }
-    //     }
-    //     if($('#select-all-resources-' + id).prop('checked') == true){
-    //       $('#select-all-resources-' + id).click();
-    //     }
-    //     $('#machine_resource_count-' + id).text('0');
-    // });
-
+  
     /**
      * hide a resource from other modals when the resource is chosen for one machine in a modal
      * 
