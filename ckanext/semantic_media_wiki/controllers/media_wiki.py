@@ -67,7 +67,8 @@ class MediaWikiController():
             pkg_dict=package, 
             machines_list=machines, 
             resource_data=resource_machine_data,
-            machine_imageUrl=machine_imageUrl
+            machine_imageUrl=machine_imageUrl,
+            machines_count=len(resource_machine_data.keys())
             )
     
 

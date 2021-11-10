@@ -1,0 +1,31 @@
+{% for res in resources %}
+    <input type="hidden"  name={{ 'machine_name_' ~ (loop.index + offset) }} id={{ 'machine_name_' ~ (loop.index + offset) }} > 
+    <div class="row machine-box" id={{'machine_box_id_' ~ (loop.index + offset)}}>
+    {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
+        resources=resources, 
+        counter=(loop.index + offset),
+        chosen_resources=value 
+    %}
+    <div class="col-sm-11">
+        <h4>{{_('Please select an Equipment:')}}</h4>   
+        <select name={{'machine_link' ~ (loop.index + offset)}} id={{'machines_dropdown_' ~ (loop.index + offset)}} class="machine_dropdown" >
+        {% for machine in machines_list %}           
+            <option value={{machine.value}} image={{machine.image}}>
+            {{machine.text}}                    
+            </option>
+        {% endfor %}
+        <br>
+        </select>
+    </div>
+    <div class="col-sm-1">
+    {% if (loop.index + offset) > 1 %}
+        <a href="#" class="machine-remove-anchor" id={{ '"machine-remove-anchor' ~ (loop.index + offset) }}>
+            <i class="fa fa-minus-circle remove-machine-icon"></i>
+        </a>
+    {% endif %}
+    </div>
+    </div>
+    <div id={{ 'machine_resource_count-message-box_' ~ (loop.index + offset) }} class="machine-alert-box alert alert-success">
+        <span  id={{ 'machine_resource_count-' ~ (loop.index + offset) }}></span> &nbsp; resource(s)
+    </div>
+{% endfor %}

@@ -57,6 +57,11 @@
             <span  id={{ 'machine_resource_count-' ~ loop.index }}></span> &nbsp; {{value|length}} resource(s)
         </div>
     {% endfor %}
+    {% snippet 'snippets/semantic_media_wiki_machines_dropdown.html', 
+        resources=pkg_dict['resources'], 
+        machines_list=machines_list,
+        offset=machines_count
+    %}
     <br>
     <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
     <br><br><br><hr>

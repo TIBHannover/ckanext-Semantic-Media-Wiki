@@ -33,37 +33,11 @@
   {% set action = h.url_for('semantic_media_wiki.save_machines', _external=True) %}
   <form id="machine-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
-    {% for res in pkg_dict['resources'] %}
-      <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} > 
-      <div class="row machine-box" id={{'machine_box_id_' ~ loop.index}}>
-        {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
-          resources=pkg_dict['resources'], 
-          counter=loop.index,
-          chosen_resources=value 
-        %}
-        <div class="col-sm-11">
-          <h4>{{_('Please select an Equipment:')}}</h4>   
-          <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
-            {% for machine in machines_list %}           
-              <option value={{machine.value}} image={{machine.image}}>
-                {{machine.text}}                    
-              </option>
-            {% endfor %}
-            <br>
-          </select>
-        </div>
-        <div class="col-sm-1">
-        {% if loop.index > 1 %}
-            <a href="#" class="machine-remove-anchor" id={{ '"machine-remove-anchor' ~ loop.index }}>
-              <i class="fa fa-minus-circle remove-machine-icon"></i>
-            </a>
-        {% endif %}
-        </div>
-      </div>
-        <div id={{ 'machine_resource_count-message-box_' ~ loop.index }} class="machine-alert-box alert alert-success">
-            <span  id={{ 'machine_resource_count-' ~ loop.index }}></span> &nbsp; resource(s)
-        </div>
-    {% endfor %}
+    {% snippet 'snippets/semantic_media_wiki_machines_dropdown.html', 
+        resources=pkg_dict['resources'], 
+        machines_list=machines_list,
+        offset=0 
+    %}
     <br>
     <button type="button" class="btn btn-primary" id="add-another-machine-box">{{_('+ Another')}}</button>
     <br><br><br><hr>
