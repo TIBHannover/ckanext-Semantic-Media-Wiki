@@ -54,7 +54,7 @@
             </div>
         </div> 
         <div id={{ 'machine_resource_count-message-box_' ~ loop.index }} class="machine-alert-box-edit alert alert-success">
-            <span  id={{ 'machine_resource_count-' ~ loop.index }}></span> &nbsp; {{value|length}} resource(s)
+            <span  id={{ 'machine_resource_count-' ~ loop.index }}>{{value|length}}</span> &nbsp; resource(s)
         </div>
     {% endfor %}
     {% snippet 'snippets/semantic_media_wiki_machines_dropdown.html', 
