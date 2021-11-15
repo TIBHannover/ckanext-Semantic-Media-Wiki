@@ -62,10 +62,12 @@ class MediaWikiController():
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
         machines, machine_imageUrl = Helper.get_machines_list()
         resource_machine_data = {}
+        machine_link_name = {}
         for resource in package['resources']:
             record = Helper.get_machine_link(resource['id'])
             if record and record.url not in resource_machine_data.keys():
                 resource_machine_data[record.url] = [resource['id']]
+                machine_link_name[record.url] = record.link_name
             elif record:
                 resource_machine_data[record.url].append(resource['id'])
 
@@ -74,7 +76,8 @@ class MediaWikiController():
             machines_list=machines, 
             resource_data=resource_machine_data,
             machine_imageUrl=machine_imageUrl,
-            machines_count=len(resource_machine_data.keys())
+            machines_count=len(resource_machine_data.keys()),
+            machine_link_name=machine_link_name
             )
     
 
@@ -127,6 +130,14 @@ class MediaWikiController():
             return '0'
         return json.dumps(results)
     
+
+
+    def get_resource_machine(id):
+        record = Helper.get_machine_link(id)
+        if not record or record.url == '0':
+            return '0'
+        return json.dumps(record.url)
+
 
     
     def cancel_dataset_plugin_is_enabled():
