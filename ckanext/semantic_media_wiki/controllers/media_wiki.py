@@ -103,13 +103,31 @@ class MediaWikiController():
     def get_machine_link(id):
         if not toolkit.g.user: 
             return toolkit.abort(403, "You are not authorized to access this function" )
-        record = Helper.get_machine_link(id)
-        if record == false or record.url == '0':
+        
+        try:
+            package = toolkit.get_action('package_show')({}, {'name_or_id': id})
+            machine_links = []
+            results = []
+            for res in package['resources']:
+                record = Helper.get_machine_link(res['id'])
+                if not record or record.url == '0':
+                    continue
+                if record.url not in machine_links:
+                    machine_links.append(record.url)
+                    if not record.link_name or record.link_name == '':
+                       record.link_name = "Link to the Equipment"
+                    temp =  ['', '']
+                    temp[0] = record.url
+                    temp[1] = record.link_name
+                    results.append(temp)
+        except:
+            return toolkit.abort(403, "bad request")
+
+        if len(results) == 0:
             return '0'
-        if not record.link_name or record.link_name == '':
-            record.link_name = "Link to the Equipment"
-        return json.dumps([record.url, record.link_name])
+        return json.dumps(results)
     
+
     
     def cancel_dataset_plugin_is_enabled():
         if Helper.check_plugin_enabled('cancel_dataset_creation'):

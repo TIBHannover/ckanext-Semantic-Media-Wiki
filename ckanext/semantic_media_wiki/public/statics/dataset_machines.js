@@ -1,8 +1,6 @@
 $(document).ready(function(){
-    let anchors = $('.machine-link');
-    for(let i=0; i<anchors.length; i++){        
-        get_resource_link(anchors[i] ,$(anchors[i]).siblings('.base_url').val());
-    }
+    let dest_url = $('#dataset_id_for_machine').val();
+    get_resource_link($('#machinesTableRow') ,dest_url);
 
 });
 
@@ -13,15 +11,21 @@ function get_resource_link(target, url){
         dataType: 'json',     
         type: "GET",
         success: function(result){            
-            if(result == '0'){                
-                $(target).find('.machine-name-tag').css('visibility', 'hidden');
-            }
-            else{                
-                $(target).attr('href', result[0]);
-                $(target).find('.machine-name-tag').text(result[1]);
-                $(target).show();
-                
-            }            
+            if(result !== '0'){
+                let block = ''; 
+                for (let i=0; i < result.length; i++){
+                    block += build(result[i][0], result[i][1]);
+                }
+                $(target).append(block);
+                $('.machine-link').fadeIn();
+            }           
         }
     });
+}
+
+function build(url, name){
+    let machineName = '<div class="machine-name-tag">' + name + '</div>';
+    let anchor = '<a href="' + url + '" target="_blank" class="machine-link">' + machineName + '</a>';
+    return '<span>' + anchor + '</span>';
+
 }
