@@ -22,12 +22,13 @@ class Helper():
 
 
     def add_machine_links(request, resources_len):
+        
         try:
             for i in range(1, resources_len + 1):    
                 link = request.form.get('machine_link' + str(i))
                 if link == '0': # not specified
                     continue            
-                machine_name = request.form.get('machine_name_' + str(i))
+                machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 create_at = _time.now()
                 updated_at = create_at
@@ -36,7 +37,7 @@ class Helper():
                     resource_object.save()
         except:
             return false
-
+            
         return true
 
     def update_resource_machine(request, resources_len, package):
@@ -53,7 +54,7 @@ class Helper():
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
                     machine_name = None
-                machine_name = request.form.get('machine_name_' + str(i))
+                machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
                 for Id in resources_checkbox_list:
@@ -119,6 +120,15 @@ class Helper():
             return [machines_list, machine_imageUrl]
         
         return [[], []]
+    
+
+    def get_machine_name(machine_url):
+        machines, images = Helper.get_machines_list()
+        for machine in machines:
+            if machine['value'] == machine_url:
+                return machine['text']
+
+        return None
     
 
     def get_api_config():
