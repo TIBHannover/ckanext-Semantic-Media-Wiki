@@ -21,7 +21,6 @@ function get_resource_link(target, url){
                 $(target).find('.machine-name-tag').text(result[1]);
                 $(target).show();
                 
-
             }            
         }
     });

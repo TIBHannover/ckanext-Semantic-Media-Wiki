@@ -106,6 +106,8 @@ class MediaWikiController():
         record = Helper.get_machine_link(id)
         if record == false or record.url == '0':
             return '0'
+        if not record.link_name or record.link_name == '':
+            record.link_name = "Link to the Equipment"
         return json.dumps([record.url, record.link_name])
     
     
