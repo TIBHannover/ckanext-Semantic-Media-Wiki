@@ -44,14 +44,7 @@ class Helper():
 
     def update_resource_machine(request, resources_len, package):
         try:
-            for res in package['resources']:
-                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
-                if resource_object != false:
-                    resource_object.url = '0'
-                    resource_object.link_name = None
-                    resource_object.updated_at = _time.now()
-                    resource_object.commit()
-                    
+            already_edited_resources = []        
             for i in range(1, resources_len + 1):
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
@@ -69,10 +62,18 @@ class Helper():
                         updated_at = create_at
                         resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
                         resource_object.save()
+                        already_edited_resources.append(Id)
                         continue
                     resource_object.url = link
                     resource_object.link_name = machine_name
                     resource_object.updated_at = updated_at
+                    resource_object.commit()
+                    already_edited_resources.append(Id)
+            
+            for res in package['resources']:
+                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                if resource_object != false and res['id'] not in already_edited_resources:
+                    resource_object.delete()
                     resource_object.commit()
 
         except:

@@ -22,7 +22,7 @@
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
     <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
     {% for key, value in resource_data.items() %}
-        <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }}>
+        <input type="hidden"  name={{ 'machine_name_' ~ loop.index }} id={{ 'machine_name_' ~ loop.index }} value='{{machine_link_name[key]}}'>
         <div class="row machine-box-edit" id={{'machine_box_id_' ~ loop.index}}>
             {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
                 resources=pkg_dict['resources'], 

@@ -52,6 +52,13 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
             )
         
         blueprint.add_url_rule(
+            u'/smw/get_resource_machine/<id>',
+            u'get_resource_machine',
+            MediaWikiController.get_resource_machine,
+            methods=['GET']
+            )
+        
+        blueprint.add_url_rule(
             u'/smw/edit_save',
             u'edit_save',
             MediaWikiController.edit_save,
