@@ -1,4 +1,5 @@
 {% for res in resources %}
+    <input type="hidden"  name={{ 'machine_name_' ~ (loop.index + offset) }} id={{ 'machine_name_' ~ (loop.index + offset) }} > 
     <div class="row machine-box" id={{'machine_box_id_' ~ (loop.index + offset)}}>
     {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
         resources=resources, 

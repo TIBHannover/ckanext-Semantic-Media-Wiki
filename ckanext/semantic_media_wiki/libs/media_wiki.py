@@ -28,7 +28,9 @@ class Helper():
                 link = request.form.get('machine_link' + str(i))
                 if link == '0': # not specified
                     continue            
-                machine_name = Helper.get_machine_name(link)
+                machine_name =request.form.get('machine_name_' + str(i))
+                if not machine_name or machine_name == '':
+                    machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 create_at = _time.now()
                 updated_at = create_at
@@ -54,7 +56,9 @@ class Helper():
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
                     machine_name = None
-                machine_name = Helper.get_machine_name(link)
+                machine_name = request.form.get('machine_name_' + str(i))
+                if not machine_name or machine_name == '':
+                    machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
                 for Id in resources_checkbox_list:
