@@ -132,6 +132,7 @@ $(document).ready(function(){
         else{
           $('#machine_resource_count-' + id).text(0);
           $('#machine_resource_count-message-box_' + id).hide();
+          $("#machines_dropdown_" + id).select2("val", "0"); // none selected
         }
     });
 
