@@ -125,8 +125,14 @@ $(document).ready(function(){
                 resourceCount += 1;
             }
         }
-        $('#machine_resource_count-' + id).text(resourceCount);
-        $('#machine_resource_count-message-box_' + id).show();
+        if(resourceCount !== 0){
+          $('#machine_resource_count-' + id).text(resourceCount);
+          $('#machine_resource_count-message-box_' + id).show();
+        }
+        else{
+          $('#machine_resource_count-' + id).text(0);
+          $('#machine_resource_count-message-box_' + id).hide();
+        }
     });
 
     /**
