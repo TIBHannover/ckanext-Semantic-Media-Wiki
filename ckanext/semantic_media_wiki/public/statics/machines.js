@@ -4,7 +4,11 @@ function formatState (state) {
     }    
     let image_url = $("div[value='" + $.trim(state.text) + "']").text(); 
     if(image_url === 'None' || image_url === ''){
-      let $state = $.trim(state.text) + '<br><div class="no-image-available">No Image Available</div><br>';
+      if(state.id !== '0'){
+        let $state = $.trim(state.text) + '<br><div class="no-image-available">No Image Available</div><br>';
+        return $state;
+      }
+      let $state = $.trim(state.text) + '<br><br>';
       return $state;
     }   
     var $state = $(
