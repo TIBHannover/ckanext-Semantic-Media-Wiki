@@ -110,7 +110,7 @@ class Helper():
         if results and len(results) > 0:
             temp = {}
             temp['value'] = '0'
-            temp['text'] = 'Not selected'
+            temp['text'] = 'None selected'
             machines_list.append(temp)
             for machine in results:
                 temp = {}
