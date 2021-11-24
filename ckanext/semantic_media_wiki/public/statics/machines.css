@@ -114,3 +114,13 @@
   font-size: 18px !important;
   cursor: pointer;
 }
+
+.no-image-available{
+  background-color: rgb(133, 10, 10);
+  color: white;
+  width: 150px;
+  text-align: center;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: bold;
+}
