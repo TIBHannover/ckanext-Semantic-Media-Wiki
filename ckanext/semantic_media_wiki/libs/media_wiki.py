@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from sqlalchemy.sql.expression import false, null, true
+from sqlalchemy.sql.expression import false, true
 from ckanext.semantic_media_wiki.models.resource_mediawiki_link import ResourceEquipmentLink
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -10,58 +10,84 @@ import ckan.plugins.toolkit as toolkit
 
 class Helper():
 
-    def add_machine_links(request, resources_len):
+    def check_access_edit_package(package_id):
+        context = {'user': toolkit.g.user, 'auth_user_obj': toolkit.g.userobj}
+        data_dict = {'id':package_id}
         try:
-            for i in range(1, resources_len + 1):
-                resource = request.form.get('resource_' + str(i))            
+            toolkit.check_access('package_update', context, data_dict)
+            return True
+
+        except toolkit.NotAuthorized:
+            return False
+
+
+    def add_machine_links(request, resources_len):
+        
+        try:
+            for i in range(1, resources_len + 1):    
                 link = request.form.get('machine_link' + str(i))
                 if link == '0': # not specified
                     continue            
-                machine_name = request.form.get('machine_name_' + str(i))
+                machine_name =request.form.get('machine_name_' + str(i))
+                if not machine_name or machine_name == '':
+                    machine_name = Helper.get_machine_name(link)
+                resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 create_at = _time.now()
                 updated_at = create_at
-                resource_object = ResourceEquipmentLink(resource, link, machine_name, create_at, updated_at)
-                resource_object.save()
+                for Id in resources_checkbox_list:
+                    resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
+                    resource_object.save()
         except:
             return false
-
+            
         return true
-    
 
-    def update_resource_machine(request, resources_len):
+    def update_resource_machine(request, resources_len, package):
         try:
+            already_edited_resources = []        
             for i in range(1, resources_len + 1):
-                resource = request.form.get('resource_' + str(i))            
-                link = request.form.get('machine_link' + str(i))            
-                machine_name = request.form.get('machine_name_' + str(i))                
+                link = request.form.get('machine_link' + str(i))
                 if link == '0':
                     machine_name = None
+                machine_name = request.form.get('machine_name_' + str(i))
+                if not machine_name or machine_name == '':
+                    machine_name = Helper.get_machine_name(link)
+                resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
-                resource_object = ResourceEquipmentLink(resource_id=resource).get_by_resource(id=resource)                
-                if resource_object == false:
-                    # resource link does not exist --> add a new one
-                    create_at = _time.now()
-                    updated_at = create_at
-                    resource_object = ResourceEquipmentLink(resource, link, machine_name, create_at, updated_at)
-                    resource_object.save()
-                    continue
+                for Id in resources_checkbox_list:
+                    resource_object = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
+                    if resource_object == false:
+                        # resource link does not exist --> add a new one
+                        create_at = _time.now()
+                        updated_at = create_at
+                        resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
+                        resource_object.save()
+                        already_edited_resources.append(Id)
+                        continue
+                    resource_object.url = link
+                    resource_object.link_name = machine_name
+                    resource_object.updated_at = updated_at
+                    resource_object.commit()
+                    already_edited_resources.append(Id)
+            
+            for res in package['resources']:
+                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                if resource_object != false and res['id'] not in already_edited_resources:
+                    resource_object.delete()
+                    resource_object.commit()
 
-                resource_object.url = link
-                resource_object.link_name = machine_name
-                resource_object.updated_at = updated_at
-                resource_object.commit()
         except:
-            return false
+            return False
 
-        return true
+        return True
 
     
     def get_machine_link(resource_id):
         res_object = ResourceEquipmentLink(resource_id=resource_id)
         result = res_object.get_by_resource(id=resource_id)
-        if result != false:
+        if result != false and result.url != '0':
             return result
-        return false
+        return False
     
 
     def get_machines_list():
@@ -84,7 +110,7 @@ class Helper():
         if results and len(results) > 0:
             temp = {}
             temp['value'] = '0'
-            temp['text'] = 'Not selected'
+            temp['text'] = 'None selected'
             machines_list.append(temp)
             for machine in results:
                 temp = {}
@@ -99,6 +125,15 @@ class Helper():
             return [machines_list, machine_imageUrl]
         
         return [[], []]
+    
+
+    def get_machine_name(machine_url):
+        machines, images = Helper.get_machines_list()
+        for machine in machines:
+            if machine['value'] == machine_url:
+                return machine['text']
+
+        return None
     
 
     def get_api_config():

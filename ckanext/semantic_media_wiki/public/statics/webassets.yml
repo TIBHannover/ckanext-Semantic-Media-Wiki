@@ -8,11 +8,6 @@ machines-css:
   contents:
     - machines.css
 
-edit-machines-css:
-  output: ckanext-semantic-media-wiki/%(version)s_my.css
-  contents:
-    - edit_machine.css
-
 machines-name-view-css:
   output: ckanext-semantic-media-wiki/%(version)s_my.css
   contents:
@@ -69,7 +64,7 @@ dataset-machines-js:
   contents:
     - dataset_machines.js
 
-edit-machines-js:  
+machine-image-modal-js:  
   output: ckanext-semantic-media-wiki/%(version)s_my.js
   extra:
     preload:
@@ -80,17 +75,4 @@ edit-machines-js:
       - vendor/jquery.ui.core
       - vendor/select2
   contents:
-    - edit_machine.js
-  
-  machine-image-modal-js:  
-    output: ckanext-semantic-media-wiki/%(version)s_my.js
-    extra:
-      preload:
-        - base/main
-        - vendor/vendor
-        - vendor/bootstrap
-        - vendor/jquery
-        - vendor/jquery.ui.core
-        - vendor/select2
-    contents:
-      - machine_image_modal.js
+    - machine_image_modal.js
