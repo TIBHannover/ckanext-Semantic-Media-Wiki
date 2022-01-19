@@ -144,4 +144,16 @@ class MediaWikiController():
         if Helper.check_plugin_enabled('cancel_dataset_creation'):
             return True
         return False
+    
+
+    def get_smw_link():
+        ckan_root_path = toolkit.config.get('ckan.root_path')
+        if  ckan_root_path and 'sfb1368/ckan' in ckan_root_path:
+            return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
+        
+        elif ckan_root_path and 'sfb1153/ckan' in ckan_root_path:
+            return ['1153', "https://service.tib.eu/sfb1153/wiki/Tools", "https://service.tib.eu/sfb1153/wiki/Machines"]
+        else:
+            return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
+
 
