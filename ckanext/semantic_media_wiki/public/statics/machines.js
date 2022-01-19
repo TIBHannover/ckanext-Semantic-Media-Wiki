@@ -18,15 +18,6 @@ function formatState (state) {
   };
 
 $(document).ready(function(){
-    let cUrl = window.location.pathname;   
-    console.info(cUrl);
-    if (cUrl.includes('1368/ckan')){
-      $('#add_new_machine_btn').attr('href', 'https://service.tib.eu/sfb1368/wiki/Equipment');
-    }
-    else{
-      $('#add_new_machine_btn').attr('href', 'https://service.tib.eu/sfb1153/wiki/Equipment');
-    }
-
          
     $("select.machine_dropdown").select2({
         formatResult: formatState
