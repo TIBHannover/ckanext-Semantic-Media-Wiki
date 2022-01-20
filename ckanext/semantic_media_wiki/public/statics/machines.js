@@ -75,33 +75,6 @@ $(document).ready(function(){
         }
     });
 
-  
-    /**
-     * hide a resource from other modals when the resource is chosen for one machine in a modal
-     * 
-     */
-
-    let resources =  $('.resource-box');
-    for(let i=0; i < resources.length; i++){
-      if($(resources[i]).prop('checked') == true){
-        $(".checkbox-container[value=" + $(resources[i]).val() + "]").hide();
-        $(resources[i]).parent().show();  
-      }
-    }
-
-    $('.resource-box').click(function(){
-        let id = $(this).attr('name');
-        id = id[id.length - 1];
-        let resource = $(this).val();
-        if($(this).prop('checked') == true){
-            $(".checkbox-container[value=" + resource + "]").hide();
-            $(this).parent().show();          
-        }
-        else{
-          $(".checkbox-container[value=" + resource + "]").show();
-        }
-    });
-
     /**
      * Click Add button on a modal
      * 
