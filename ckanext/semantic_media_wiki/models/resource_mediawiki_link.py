@@ -35,7 +35,7 @@ class ResourceEquipmentLink(domain_object.DomainObject):
 
         exists = meta.Session.query(cls).filter(cls.resource_id==id).first() is not None
         if not exists:
-            return false
+            return False
         query = meta.Session.query(cls).filter(cls.resource_id==id)
         query = query.autoflush(autoflush)
         record = query

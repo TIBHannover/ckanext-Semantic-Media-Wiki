@@ -64,12 +64,13 @@ class MediaWikiController():
         resource_machine_data = {}
         machine_link_name = {}
         for resource in package['resources']:
-            record = Helper.get_machine_link(resource['id'])
-            if record and record.url not in resource_machine_data.keys():
-                resource_machine_data[record.url] = [resource['id']]
-                machine_link_name[record.url] = record.link_name
-            elif record:
-                resource_machine_data[record.url].append(resource['id'])
+            urls = Helper.get_machine_link(resource['id'])
+            for name, url in urls.items(): 
+                if url not in resource_machine_data.keys():
+                    resource_machine_data[url] = [resource['id']]
+                    machine_link_name[url] = name
+                else:
+                    resource_machine_data[url].append(resource['id'])
 
         return render_template('edit_machines.html', 
             pkg_dict=package, 

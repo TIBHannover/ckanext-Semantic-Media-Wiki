@@ -43,8 +43,9 @@ class Helper():
         return true
 
     def update_resource_machine(request, resources_len, package):
+        
         try:
-            already_edited_resources = []        
+            already_edited_resources = {}        
             for i in range(1, resources_len + 1):
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
@@ -54,27 +55,44 @@ class Helper():
                     machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
-                for Id in resources_checkbox_list:
-                    resource_object = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
-                    if resource_object == false:
+                for entry in resources_checkbox_list:
+                    Id = entry.split('@@@')[0]
+                    old_machine_url = entry.split('@@@')[1]
+                    resource_objects = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
+                    if not resource_objects:
                         # resource link does not exist --> add a new one
                         create_at = _time.now()
                         updated_at = create_at
                         resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
                         resource_object.save()
-                        already_edited_resources.append(Id)
+                        if Id in already_edited_resources.keys():
+                            already_edited_resources[Id].append(link)
+                        else:
+                            already_edited_resources[Id] = [link]
                         continue
-                    resource_object.url = link
-                    resource_object.link_name = machine_name
-                    resource_object.updated_at = updated_at
-                    resource_object.commit()
-                    already_edited_resources.append(Id)
-            
-            for res in package['resources']:
-                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
-                if resource_object != false and res['id'] not in already_edited_resources:
-                    resource_object.delete()
-                    resource_object.commit()
+
+                    for resource_obj in resource_objects:
+                        if resource_obj.url == old_machine_url:                            
+                            resource_obj.url = link
+                            resource_obj.link_name = machine_name
+                            resource_obj.updated_at = updated_at
+                            resource_obj.commit()
+                            if Id in already_edited_resources.keys():
+                                already_edited_resources[Id].append(link)
+                            else:
+                                already_edited_resources[Id] = [link]
+                
+                
+                for res in package['resources']:
+                    resource_objects = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                    if resource_objects:
+                        for record in resource_objects:
+                            if res['id'] not in already_edited_resources.keys():
+                                record.delete()
+                                record.commit()
+                            elif record.url not in already_edited_resources[res['id']]:
+                                record.delete()
+                                record.commit() 
 
         except:
             return False
@@ -94,7 +112,7 @@ class Helper():
                      urls[record.url] = record.url       
             return urls
 
-        return False
+        return {}
     
 
     def get_machines_list():
