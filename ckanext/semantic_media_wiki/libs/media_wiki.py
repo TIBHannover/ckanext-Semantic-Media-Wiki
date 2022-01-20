@@ -84,9 +84,16 @@ class Helper():
     
     def get_machine_link(resource_id):
         res_object = ResourceEquipmentLink(resource_id=resource_id)
-        result = res_object.get_by_resource(id=resource_id)
-        if result != false and result.url != '0':
-            return result
+        results = res_object.get_by_resource(id=resource_id)
+        urls = {}
+        if results != false:
+            for record in results:
+                if record.url != '0' and record.link_name != '':
+                    urls[record.link_name] = record.url
+                elif record.url != '0' and record.link_name == '':
+                     urls[record.url] = record.url       
+            return urls
+
         return False
     
 

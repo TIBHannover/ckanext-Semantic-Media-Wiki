@@ -38,7 +38,7 @@ class ResourceEquipmentLink(domain_object.DomainObject):
             return false
         query = meta.Session.query(cls).filter(cls.resource_id==id)
         query = query.autoflush(autoflush)
-        record = query.first()
+        record = query
         return record
 
     

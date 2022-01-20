@@ -133,10 +133,10 @@ class MediaWikiController():
 
 
     def get_resource_machine(id):
-        record = Helper.get_machine_link(id)
-        if not record or record.url == '0':
+        urls = Helper.get_machine_link(id)
+        if len(urls.keys()) == 0:
             return '0'
-        return json.dumps(record.url)
+        return json.dumps(urls)
 
 
     
