@@ -57,9 +57,12 @@ class Helper():
                 updated_at = _time.now()
                 for entry in resources_checkbox_list:
                     Id = entry.split('@@@')[0]
-                    old_machine_url = entry.split('@@@')[1]
-                    resource_objects = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
-                    if not resource_objects:
+                    if len(entry.split('@@@')) == 2:
+                        old_machine_url = entry.split('@@@')[1]
+                    else:
+                        old_machine_url = ''
+                    resource_record = ResourceEquipmentLink(resource_id=Id).get_by_resource_machine(id=Id, machine_url=old_machine_url)
+                    if not resource_record:
                         # resource link does not exist --> add a new one
                         create_at = _time.now()
                         updated_at = create_at
@@ -70,32 +73,31 @@ class Helper():
                         else:
                             already_edited_resources[Id] = [link]
                         continue
-
-                    for resource_obj in resource_objects:
-                        if resource_obj.url == old_machine_url:                            
-                            resource_obj.url = link
-                            resource_obj.link_name = machine_name
-                            resource_obj.updated_at = updated_at
-                            resource_obj.commit()
-                            if Id in already_edited_resources.keys():
-                                already_edited_resources[Id].append(link)
-                            else:
-                                already_edited_resources[Id] = [link]
+                                                                                                                 
+                    resource_record.url = link
+                    resource_record.link_name = machine_name
+                    resource_record.updated_at = updated_at
+                    resource_record.commit()
+                    if Id in already_edited_resources.keys():
+                        already_edited_resources[Id].append(link)
+                    else:
+                        already_edited_resources[Id] = [link]
                 
                 
                 for res in package['resources']:
                     resource_objects = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
                     if resource_objects:
                         for record in resource_objects:
-                            if res['id'] not in already_edited_resources.keys():
+                            if record.resource_id not in already_edited_resources.keys():
                                 record.delete()
                                 record.commit()
-                            elif record.url not in already_edited_resources[res['id']]:
+                            elif record.url not in already_edited_resources[res['id']]:                                
                                 record.delete()
                                 record.commit() 
 
         except:
-            return False
+            raise 
+            # return False
 
         return True
 
@@ -104,7 +106,7 @@ class Helper():
         res_object = ResourceEquipmentLink(resource_id=resource_id)
         results = res_object.get_by_resource(id=resource_id)
         urls = {}
-        if results != false:
+        if results:
             for record in results:
                 if record.url != '0' and record.link_name != '':
                     urls[record.link_name] = record.url

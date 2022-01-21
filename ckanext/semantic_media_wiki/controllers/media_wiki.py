@@ -127,7 +127,8 @@ class MediaWikiController():
                         temp[1] = eq_name
                         results.append(temp)
         except:
-            return toolkit.abort(403, "bad request")
+            raise
+            # return toolkit.abort(403, "bad request")
 
         if len(results) == 0:
             return '0'

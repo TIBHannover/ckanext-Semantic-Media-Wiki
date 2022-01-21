@@ -29,6 +29,20 @@ class ResourceEquipmentLink(domain_object.DomainObject):
         self.updated_at = updated_at
     
     @classmethod
+    def get_by_resource_machine(cls, id, machine_url, autoflush=True):
+        if not id:
+            return None
+
+        exists = meta.Session.query(cls).filter(cls.resource_id==id, cls.url == machine_url).first() is not None
+        if not exists:
+            return False
+        query = meta.Session.query(cls).filter(cls.resource_id==id)
+        query = query.autoflush(autoflush)
+        record = query.first()
+        return record
+    
+
+    @classmethod
     def get_by_resource(cls, id, autoflush=True):
         if not id:
             return None
