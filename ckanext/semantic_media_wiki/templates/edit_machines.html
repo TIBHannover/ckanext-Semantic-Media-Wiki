@@ -37,7 +37,8 @@
             {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 
                 resources=pkg_dict['resources'], 
                 counter=loop.index, 
-                chosen_resources=value 
+                chosen_resources=value,
+                the_machine=key 
             %}
             <div class="col-sm-11">
                 <h4>{{_('Please select an Equipment:')}}</h4>   

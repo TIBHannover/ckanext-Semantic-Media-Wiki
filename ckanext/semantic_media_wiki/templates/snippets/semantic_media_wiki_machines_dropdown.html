@@ -11,7 +11,7 @@
         <select name={{'machine_link' ~ (loop.index + offset)}} id={{'machines_dropdown_' ~ (loop.index + offset)}} class="machine_dropdown" >
         {% for machine in machines_list %}           
             <option value={{machine.value}} image={{machine.image}}>
-            {{machine.text}}                    
+            {{machine.text}} 
             </option>
         {% endfor %}
         <br>

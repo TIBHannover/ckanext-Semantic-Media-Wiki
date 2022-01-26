@@ -9,8 +9,12 @@ $(document).ready(function(){
                 $('#machine_link_box').hide();
             }
             else{
-                $('#machine_url_anchor').attr('href', result);
-                $('#machine_url_anchor').text(result);
+                $.each(result, function(key,value){
+                    let anchor = '<a href="';
+                    anchor += value;
+                    anchor += ('" target="_blank">' + key + '</a><br>');
+                    $('#equipment_list').append(anchor);
+                });
 
             }            
         }
