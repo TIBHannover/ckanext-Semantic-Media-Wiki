@@ -8,7 +8,6 @@ import json
 import ckan.lib.helpers as h
 
 
-
 class MediaWikiController():
 
     def machines_view(id):
@@ -27,13 +26,12 @@ class MediaWikiController():
     
     def save_machines():
         package_name = request.form.get('package')
-        resources_len = 0
+        machine_count = request.form.get('machine_count')
         if package_name == None:
             return toolkit.abort(403, "bad request")
         
         try:
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-            resources_len = len(package['resources'])
 
         except:
             return toolkit.abort(400, "Package not found") 
@@ -46,7 +44,7 @@ class MediaWikiController():
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'finish_machine':
-            result = Helper.add_machine_links(request, resources_len)
+            result = Helper.add_machine_links(request, int(machine_count))
             if result != false:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
