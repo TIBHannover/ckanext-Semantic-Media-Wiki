@@ -1,4 +1,6 @@
-{% for res in resources %}
+{% set machine_count = resources|length + 10  %}
+{% for res in range(machine_count) %}
+    <input type="hidden" name="machine_count" value="{{machine_count}}">
     <input type="hidden"  name={{ 'machine_name_' ~ (loop.index + offset) }} id={{ 'machine_name_' ~ (loop.index + offset) }} > 
     <div class="row machine-box" id={{'machine_box_id_' ~ (loop.index + offset)}}>
     {% snippet 'snippets/semantic_media_wiki_resources_modal.html', 

@@ -8,7 +8,6 @@ import json
 import ckan.lib.helpers as h
 
 
-
 class MediaWikiController():
 
     def machines_view(id):
@@ -27,13 +26,12 @@ class MediaWikiController():
     
     def save_machines():
         package_name = request.form.get('package')
-        resources_len = 0
+        machine_count = request.form.get('machine_count')
         if package_name == None:
             return toolkit.abort(403, "bad request")
         
         try:
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-            resources_len = len(package['resources'])
 
         except:
             return toolkit.abort(400, "Package not found") 
@@ -46,7 +44,7 @@ class MediaWikiController():
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'finish_machine':
-            result = Helper.add_machine_links(request, resources_len)
+            result = Helper.add_machine_links(request, int(machine_count))
             if result != false:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
@@ -59,7 +57,7 @@ class MediaWikiController():
         if not Helper.check_access_edit_package(id): 
             return toolkit.abort(403, "You are not authorized to access this function" )
 
-        package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
+        package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         machines, machine_imageUrl = Helper.get_machines_list()
         resource_machine_data = {}
         machine_link_name = {}
@@ -84,17 +82,17 @@ class MediaWikiController():
 
     def edit_save():
         package_name = request.form.get('package')
+        machine_count = request.form.get('machine_count')  
         package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
         if not Helper.check_access_edit_package(package['id']): 
             return toolkit.abort(403, "You are not authorized to access this function" )
 
-        resources_len = int(request.form.get('resources_length'))
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # cancel button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'update_machine':
-            result = Helper.update_resource_machine(request, resources_len, package)
+            result = Helper.update_resource_machine(request, int(machine_count), package)
             if result:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
