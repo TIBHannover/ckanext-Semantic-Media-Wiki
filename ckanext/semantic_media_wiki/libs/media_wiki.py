@@ -43,8 +43,9 @@ class Helper():
         return true
 
     def update_resource_machine(request, resources_len, package):
+        
         try:
-            already_edited_resources = []        
+            already_edited_resources = {}        
             for i in range(1, resources_len + 1):
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
@@ -54,40 +55,66 @@ class Helper():
                     machine_name = Helper.get_machine_name(link)
                 resources_checkbox_list = request.form.getlist('machine_resources_list' + str(i))
                 updated_at = _time.now()
-                for Id in resources_checkbox_list:
-                    resource_object = ResourceEquipmentLink(resource_id=Id).get_by_resource(id=Id)
-                    if resource_object == false:
+                for entry in resources_checkbox_list:
+                    Id = entry.split('@@@')[0]
+                    if len(entry.split('@@@')) == 2:
+                        old_machine_url = entry.split('@@@')[1]
+                    else:
+                        old_machine_url = ''
+                    resource_record = ResourceEquipmentLink(resource_id=Id).get_by_resource_machine(id=Id, machine_url=old_machine_url)
+                    if not resource_record:
                         # resource link does not exist --> add a new one
                         create_at = _time.now()
                         updated_at = create_at
                         resource_object = ResourceEquipmentLink(Id, link, machine_name, create_at, updated_at)
                         resource_object.save()
-                        already_edited_resources.append(Id)
+                        if Id in already_edited_resources.keys():
+                            already_edited_resources[Id].append(link)
+                        else:
+                            already_edited_resources[Id] = [link]
                         continue
-                    resource_object.url = link
-                    resource_object.link_name = machine_name
-                    resource_object.updated_at = updated_at
-                    resource_object.commit()
-                    already_edited_resources.append(Id)
-            
-            for res in package['resources']:
-                resource_object = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
-                if resource_object != false and res['id'] not in already_edited_resources:
-                    resource_object.delete()
-                    resource_object.commit()
+                                                                                                                 
+                    resource_record.url = link
+                    resource_record.link_name = machine_name
+                    resource_record.updated_at = updated_at
+                    resource_record.commit()
+                    if Id in already_edited_resources.keys():
+                        already_edited_resources[Id].append(link)
+                    else:
+                        already_edited_resources[Id] = [link]
+                
+                
+                for res in package['resources']:
+                    resource_objects = ResourceEquipmentLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                    if resource_objects:
+                        for record in resource_objects:
+                            if record.resource_id not in already_edited_resources.keys():
+                                record.delete()
+                                record.commit()
+                            elif record.url not in already_edited_resources[res['id']]:                                
+                                record.delete()
+                                record.commit() 
 
         except:
-            return False
+            raise 
+            # return False
 
         return True
 
     
     def get_machine_link(resource_id):
         res_object = ResourceEquipmentLink(resource_id=resource_id)
-        result = res_object.get_by_resource(id=resource_id)
-        if result != false and result.url != '0':
-            return result
-        return False
+        results = res_object.get_by_resource(id=resource_id)
+        urls = {}
+        if results:
+            for record in results:
+                if record.url != '0' and record.link_name != '':
+                    urls[record.link_name] = record.url
+                elif record.url != '0' and record.link_name == '':
+                     urls[record.url] = record.url       
+            return urls
+
+        return {}
     
 
     def get_machines_list():

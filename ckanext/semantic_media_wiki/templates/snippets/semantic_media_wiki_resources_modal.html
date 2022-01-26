@@ -21,7 +21,7 @@
                 <input type="checkbox" 
                   class="{{'resource-checkbox-input' ~ counter}}  resource-box"
                   name={{'machine_resources_list' ~ counter}} 
-                  value={{res.id}}
+                  value={{res.id ~ '@@@' ~ the_machine}}
                   checked
                   >
                 <span class="checkmark"></span>

@@ -64,12 +64,13 @@ class MediaWikiController():
         resource_machine_data = {}
         machine_link_name = {}
         for resource in package['resources']:
-            record = Helper.get_machine_link(resource['id'])
-            if record and record.url not in resource_machine_data.keys():
-                resource_machine_data[record.url] = [resource['id']]
-                machine_link_name[record.url] = record.link_name
-            elif record:
-                resource_machine_data[record.url].append(resource['id'])
+            urls = Helper.get_machine_link(resource['id'])
+            for name, url in urls.items(): 
+                if url not in resource_machine_data.keys():
+                    resource_machine_data[url] = [resource['id']]
+                    machine_link_name[url] = name
+                else:
+                    resource_machine_data[url].append(resource['id'])
 
         return render_template('edit_machines.html', 
             pkg_dict=package, 
@@ -106,25 +107,28 @@ class MediaWikiController():
     def get_machine_link(id):
         if not toolkit.g.user: 
             return toolkit.abort(403, "You are not authorized to access this function" )
-        
+                
         try:
             package = toolkit.get_action('package_show')({}, {'name_or_id': id})
             machine_links = []
             results = []
             for res in package['resources']:
-                record = Helper.get_machine_link(res['id'])
-                if not record or record.url == '0':
+                machien_urls = Helper.get_machine_link(res['id'])
+                if len(machien_urls.keys()) == 0:
                     continue
-                if record.url not in machine_links:
-                    machine_links.append(record.url)
-                    if not record.link_name or record.link_name == '':
-                       record.link_name = "Link to the Equipment"
-                    temp =  ['', '']
-                    temp[0] = record.url
-                    temp[1] = record.link_name
-                    results.append(temp)
+                for name, link in machien_urls.items():
+                    if link not in machine_links:
+                        machine_links.append(link)
+                        eq_name = name
+                        if name == '':
+                            eq_name = "Link to the Equipment"
+                        temp =  ['', '']
+                        temp[0] = link
+                        temp[1] = eq_name
+                        results.append(temp)
         except:
-            return toolkit.abort(403, "bad request")
+            raise
+            # return toolkit.abort(403, "bad request")
 
         if len(results) == 0:
             return '0'
@@ -133,10 +137,10 @@ class MediaWikiController():
 
 
     def get_resource_machine(id):
-        record = Helper.get_machine_link(id)
-        if not record or record.url == '0':
+        urls = Helper.get_machine_link(id)
+        if len(urls.keys()) == 0:
             return '0'
-        return json.dumps(record.url)
+        return json.dumps(urls)
 
 
     
