@@ -15,9 +15,9 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config_):
-        toolkit.add_template_directory(config_, 'templates')
+        toolkit.add_template_directory(config_, 'templates/sample_link')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('public/statics', 'ckanext-semantic-media-wiki')
+        toolkit.add_resource('public/statics/sample_link', 'ckanext-sample-link')
 
 
     #plugin Blueprint
