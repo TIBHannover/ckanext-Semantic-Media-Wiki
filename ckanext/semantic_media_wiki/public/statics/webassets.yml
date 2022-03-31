@@ -1,8 +1,3 @@
-stage-css:
-  output: ckanext-semantic-media-wiki/%(version)s_my.css
-  contents:
-    - stage.css
-
 machines-css:
   output: ckanext-semantic-media-wiki/%(version)s_my.css
   contents:
@@ -12,18 +7,6 @@ machines-name-view-css:
   output: ckanext-semantic-media-wiki/%(version)s_my.css
   contents:
     - machine_name_view.css
-
-stage-js:  
-  output: ckanext-semantic-media-wiki/%(version)s_my.js
-  extra:
-    preload:
-      - base/main
-      - vendor/vendor
-      - vendor/bootstrap
-      - vendor/jquery
-      - vendor/jquery.ui.core
-  contents:
-    - stages.js
 
 machines-js:  
   output: ckanext-semantic-media-wiki/%(version)s_my.js
