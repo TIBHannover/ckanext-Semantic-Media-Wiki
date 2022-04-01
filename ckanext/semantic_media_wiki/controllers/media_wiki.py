@@ -15,12 +15,12 @@ class MediaWikiController():
             toolkit.abort(403, 'You are not authorized to access this function')
 
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
-        stages = ['complete', 'complete','complete', 'complete', 'active']
+        stages = True
         machines, machine_imageUrl = Helper.get_machines_list()
         return render_template('add_machines.html', 
             pkg_dict=package, 
-            custom_stage=stages, 
             machines_list=machines,
+            custom_stage=stages,
             machine_imageUrl=machine_imageUrl
             )
     
