@@ -34,9 +34,15 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
             methods=['GET']
             )
         
+        blueprint.add_url_rule(
+            u'/smw/save_samples',
+            u'save_samples',
+            SampleLinkController.save_samples,
+            methods=['POST']
+            )
+        
 
         return blueprint
     
-    # def get_helpers(self):
-    #     return {'cancel_dataset_is_enabled': MediaWikiController.cancel_dataset_plugin_is_enabled,
-    #     'get_smw_link': MediaWikiController.get_smw_link}
+    def get_helpers(self):
+        return {'cancel_dataset_is_enabled': SampleLinkController.cancel_dataset_plugin_is_enabled}

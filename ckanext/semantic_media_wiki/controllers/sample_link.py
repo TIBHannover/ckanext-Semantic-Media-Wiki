@@ -21,3 +21,15 @@ class SampleLinkController():
         #     samples=samples,
         #     custom_stage=stages
         #     )
+    
+
+
+    def save_samples():
+        return '0'
+    
+
+
+    def cancel_dataset_plugin_is_enabled():
+        if SampleLinkHelper.check_plugin_enabled('cancel_dataset_creation'):
+            return True
+        return False

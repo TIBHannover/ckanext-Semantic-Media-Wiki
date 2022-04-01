@@ -1,0 +1,18 @@
+samples-css:
+  output: ckanext-sample-link/%(version)s_my.css
+  contents:
+    - samples.css
+
+
+samples-js:  
+  output: ckanext-sample-link/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - samples.js
