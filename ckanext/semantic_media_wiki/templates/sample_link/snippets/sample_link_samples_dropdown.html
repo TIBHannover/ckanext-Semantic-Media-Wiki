@@ -3,29 +3,29 @@
     <input type="hidden" name="sample_count" value="{{sample_count}}">
     <input type="hidden"  name={{ 'sample_name_' ~ (loop.index + offset) }} id={{ 'sample_name_' ~ (loop.index + offset) }} > 
     <div class="row sample-box" id={{'sample_box_id_' ~ (loop.index + offset)}}>
-    {% snippet 'snippets/sample_link_resources_modal.html', 
-        resources=resources, 
-        counter=(loop.index + offset),
-        chosen_resources=value 
-    %}
-    <div class="col-sm-11">
-        <h4>{{_('Please select a Sample:')}}</h4>   
-        <select name={{'samples_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
-        {% for sample in samples %}           
-            <option value={sample.value}}>
-            {{sample.text}} 
-            </option>
-        {% endfor %}
-        <br>
-        </select>
-    </div>
-    <div class="col-sm-1">
-    {% if (loop.index + offset) > 1 %}
-        <a href="#" class="sample-remove-anchor" id={{ '"sample-remove-anchor' ~ (loop.index + offset) }}>
-            <i class="fa fa-minus-circle remove-sample-icon"></i>
-        </a>
-    {% endif %}
-    </div>
+        {% snippet 'snippets/sample_link_resources_modal.html', 
+            resources=resources, 
+            counter=(loop.index + offset),
+            chosen_resources=value 
+        %}
+        <div class="col-sm-11">
+            <h4>{{_('Please select a Sample:')}}</h4>   
+            <select name={{'samples_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
+            {% for sample in samples %}           
+                <option value={sample.value}}>
+                {{sample.text}} 
+                </option>
+            {% endfor %}
+            <br>
+            </select>
+        </div>
+        <div class="col-sm-1">
+        {% if (loop.index + offset) > 1 %}
+            <a href="#" class="sample-remove-anchor" id={{ '"sample-remove-anchor' ~ (loop.index + offset) }}>
+                <i class="fa fa-minus-circle remove-sample-icon"></i>
+            </a>
+        {% endif %}
+        </div>
     </div>
     {% snippet 'snippets/sample_link_resource_count.html', 
         custom_class='sample-alert-box',

@@ -1,22 +1,23 @@
 $(document).ready(function(){
-         
-    $("select.sample_dropdown").select2({});
+    $("select.sample_dropdown").select2();
     
       /**
        * Show the modal when a sample selected
        * 
        */
-    $('.sample_dropdown').change(function(){
-        let id = $(this).attr('id');
-        id = id[id.length - 1];
-        $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
-        $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
-        $('#resourcesModal' + id).modal({
-          backdrop: 'static',
-          keyboard: false
-         });
-        $('#resourcesModal' + id).modal('show');                   
-    }); 
+    
+      $("select.sample_dropdown").change(function(){
+        alert(66);
+          let id = $(this).attr('id');
+          id = id[id.length - 1];
+          $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
+          $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
+          $('#resourcesModal' + id).modal({
+            backdrop: 'static',
+            keyboard: false
+          });
+          $('#resourcesModal' + id).modal('show');                   
+      }); 
 
     /**
      * Add another sample selection box
