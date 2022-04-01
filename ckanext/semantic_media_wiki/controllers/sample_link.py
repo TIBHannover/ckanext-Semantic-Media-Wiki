@@ -3,7 +3,6 @@
 import ckan.plugins.toolkit as toolkit
 from flask import render_template
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
-import json
 
 
 class SampleLinkController():
@@ -15,12 +14,11 @@ class SampleLinkController():
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         stages = True
         samples = SampleLinkHelper.get_samples_list()
-        return json.dumps(samples)
-        # return render_template('add_machines.html', 
-        #     pkg_dict=package, 
-        #     samples=samples,
-        #     custom_stage=stages
-        #     )
+        return render_template('add_samples.html', 
+            pkg_dict=package, 
+            samples=samples,
+            custom_stage=stages
+            )
     
 
 

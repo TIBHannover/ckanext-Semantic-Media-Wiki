@@ -1,37 +1,16 @@
-function formatState (state) {
-    if (!state.id) {
-      return $.trim(state.text);
-    }    
-    let image_url = $("div[value='" + $.trim(state.text) + "']").text(); 
-    if(image_url === 'None' || image_url === ''){
-      if(state.id !== '0'){
-        let $state = $.trim(state.text) + '<br><div class="no-image-available">No Image Available</div><br>';
-        return $state;
-      }
-      let $state = $.trim(state.text) + '<br><br>';
-      return $state;
-    }   
-    var $state = $(
-      '<span>' + $.trim(state.text) + '<br><img src="' + $.trim(image_url) + '"' + 'class="responsive">' + '</span>'
-    );
-    return $state;
-  };
-
 $(document).ready(function(){
          
-    $("select.machine_dropdown").select2({
-        formatResult: formatState
-      });
+    $("select.sample_dropdown").select2({});
     
       /**
-       * Show the modal when a machine selected
+       * Show the modal when a sample selected
        * 
        */
-    $('.machine_dropdown').change(function(){
+    $('.sample_dropdown').change(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
-        $('#machine_name_' + id).val($.trim($(this).select2('data').text));   
-        $('#modalMachineName' + id).text($.trim($(this).select2('data').text));
+        $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
+        $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
         $('#resourcesModal' + id).modal({
           backdrop: 'static',
           keyboard: false
@@ -40,15 +19,15 @@ $(document).ready(function(){
     }); 
 
     /**
-     * Add another machine selection box
+     * Add another sample selection box
      * 
      */
-    $('#machine_box_id_1').show();
-    $('#add-another-machine-box').click(function(){
+    $('#sample_box_id_1').show();
+    $('#add-another-sample-box').click(function(){
       let all_visible = false;
-      for(let i=1; i <= $('.machine-box').length; i++){
-        if ($('#machine_box_id_' + i).is(':hidden')){
-          $('#machine_box_id_' + i).fadeIn();
+      for(let i=1; i <= $('.sample-box').length; i++){
+        if ($('#sample_box_id_' + i).is(':hidden')){
+          $('#sample_box_id_' + i).fadeIn();
           all_visible = true;
           break;
         }
@@ -90,21 +69,21 @@ $(document).ready(function(){
             }
         }
         if(resourceCount !== 0){
-          $('#machine_resource_count-' + id).text(resourceCount);
-          $('#machine_resource_count-message-box_' + id).show();
+          $('#sample_resource_count-' + id).text(resourceCount);
+          $('#sample_resource_count-message-box_' + id).show();
         }
         else{
-          $('#machine_resource_count-' + id).text(0);
-          $('#machine_resource_count-message-box_' + id).hide();
-          $("#machines_dropdown_" + id).select2("val", "0"); // none selected
+          $('#sample_resource_count-' + id).text(0);
+          $('#sample_resource_count-message-box_' + id).hide();
+          $("#samples_dropdown_" + id).select2("val", "0"); // none selected
         }
     });
 
     /**
-     * remove machine
+     * remove sample
      * 
      */
-    $('.machine-remove-anchor').click(function(){
+    $('.sample-remove-anchor').click(function(){
         let id = $(this).attr('id');
         id = id[id.length - 1];
         let checkBoxes = $('.resource-checkbox-input' + id);
@@ -116,9 +95,9 @@ $(document).ready(function(){
         if($('#select-all-resources-' + id).prop('checked') == true){
           $('#select-all-resources-' + id).click();
         }
-        $('#machine_resource_count-' + id).text('0');
-        $('#machine_resource_count-message-box_' + id).hide();
-        $('#machine_box_id_' + id).fadeOut();
+        $('#sample_resource_count-' + id).text('0');
+        $('#sample_resource_count-message-box_' + id).hide();
+        $('#sample_box_id_' + id).fadeOut();
         
     });
 
