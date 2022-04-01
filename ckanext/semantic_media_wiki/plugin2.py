@@ -3,7 +3,7 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from flask import Blueprint
-from ckanext.semantic_media_wiki.controllers.media_wiki import MediaWikiController
+from ckanext.semantic_media_wiki.controllers.sample_link import SampleLinkController
 
 
 
@@ -26,6 +26,13 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
 
         blueprint = Blueprint(self.name, self.__module__)
         blueprint.template_folder = u'templates'
+
+        blueprint.add_url_rule(
+            u'/smw/add_samples_view/<id>',
+            u'add_samples_view',
+            SampleLinkController.add_samples_view,
+            methods=['GET']
+            )
         
 
         return blueprint
