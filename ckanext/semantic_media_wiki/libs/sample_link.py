@@ -32,9 +32,9 @@ class SampleLinkHelper():
             password = credentials[1].split('=')[1]
            
         except:
-            return [[], []]
+            return []
         
-        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb)
+        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)
         results, _ = api_call.pipeline()
         if results and len(results) > 0:
             temp = {}
