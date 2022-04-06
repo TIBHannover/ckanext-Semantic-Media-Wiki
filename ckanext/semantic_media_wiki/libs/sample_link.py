@@ -158,6 +158,27 @@ class SampleLinkHelper():
 
 
 
+    def get_sample_link(resource_id):
+        '''
+            Get a sample url from DB for a data resource.
+        '''
+
+        res_object = ResourceSampleLink(resource_id=resource_id)
+        results = res_object.get_by_resource(id=resource_id)
+        urls = {}
+        if results:
+            for record in results:
+                if record.sample_url != '0' and record.sample_name != '':
+                    urls[record.sample_name] = record.sample_url
+                elif record.sample_url != '0' and record.sample_name == '':
+                     urls[record.sample_url] = record.sample_url       
+            return urls
+
+        return {}
+
+
+
+
 
     def get_samples_list():
         samples = []

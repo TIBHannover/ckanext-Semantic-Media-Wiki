@@ -3,6 +3,25 @@ samples-css:
   contents:
     - samples.css
 
+dataset-samples-css:
+  output: ckanext-sample-link/%(version)s_my.css
+  contents:
+    - dataset_samples.css
+
+
+dataset-samples-js:  
+  output: ckanext-sample-link/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - dataset_samples.js
+
 
 samples-js:  
   output: ckanext-sample-link/%(version)s_my.js

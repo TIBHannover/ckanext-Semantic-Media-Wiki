@@ -1,0 +1,14 @@
+{% ckan_extends %}
+
+{% block package_additional_info %}
+    {% asset 'ckanext-sample-link/dataset-samples-css' %}
+    {% asset 'ckanext-sample-link/dataset-samples-js' %}
+    <tr>
+        <th scope="row" class="dataset-label">{{ _("Related Samples") }}</th>
+
+        <td class="dataset-details" id="samplesTableRow">
+            <input id="dataset_id_for_sample" type="hidden" class="base_url" value="{{ h.url_for('sample_link.get_samples_link', id=pkg_dict['id'], _external=True)}}">                                     
+        </td>
+    </tr>
+    {{ super() }}
+{% endblock  %}

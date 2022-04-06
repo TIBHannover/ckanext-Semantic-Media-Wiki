@@ -4,6 +4,7 @@ import ckan.plugins.toolkit as toolkit
 from flask import render_template, request, redirect
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 import ckan.lib.helpers as h
+import json
 
 
 
@@ -52,6 +53,39 @@ class SampleLinkController():
 
         return toolkit.abort(403, "bad request")
     
+
+
+
+    def get_samples_link(id):
+        if not toolkit.g.user: 
+            return toolkit.abort(403, "You are not authorized to access this function" )
+                
+        try:
+            package = toolkit.get_action('package_show')({}, {'name_or_id': id})
+            sample_links = []
+            results = []
+            for res in package['resources']:
+                sample_urls = SampleLinkHelper.get_sample_link(res['id'])
+                if len(sample_urls.keys()) == 0:
+                    continue
+                for name, link in sample_urls.items():
+                    if link not in sample_links:
+                        sample_links.append(link)
+                        eq_name = name
+                        if name == '':
+                            eq_name = "Link to the Sample"
+                        temp =  ['', '']
+                        temp[0] = link
+                        temp[1] = eq_name
+                        results.append(temp)
+        except:
+            # raise
+            return toolkit.abort(403, "bad request")
+
+        if len(results) == 0:
+            return '0'
+        return json.dumps(results)
+
 
 
 
