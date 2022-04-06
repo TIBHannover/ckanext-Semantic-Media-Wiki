@@ -45,8 +45,7 @@ class SampleLinkHelper():
                 temp = {}
                 temp['value'] = smw_base_url + parse.quote(samp['page'])
                 temp['text'] = samp['page']
-                samples.append(temp)
-                        
+                samples.append(temp)                        
             return samples
         
         return []

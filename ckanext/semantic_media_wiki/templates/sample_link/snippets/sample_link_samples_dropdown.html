@@ -12,16 +12,15 @@
             <h4>{{_('Please select a Sample:')}}</h4>   
             <select name={{'samples_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
             {% for sample in samples %}           
-                <option value={sample.value}}>
+                <option value={{sample.value}}>
                 {{sample.text}} 
                 </option>
             {% endfor %}
-            <br>
             </select>
         </div>
         <div class="col-sm-1">
         {% if (loop.index + offset) > 1 %}
-            <a href="#" class="sample-remove-anchor" id={{ '"sample-remove-anchor' ~ (loop.index + offset) }}>
+            <a href="#" class="sample-remove-anchor" id={{ 'sample-remove-anchor' ~ (loop.index + offset) }}>
                 <i class="fa fa-minus-circle remove-sample-icon"></i>
             </a>
         {% endif %}

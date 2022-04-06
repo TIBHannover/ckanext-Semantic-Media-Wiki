@@ -1,13 +1,12 @@
 $(document).ready(function(){
-    $("select.sample_dropdown").select2();
+      $(".sample_dropdown").select2();
     
       /**
        * Show the modal when a sample selected
        * 
        */
     
-      $("select.sample_dropdown").change(function(){
-        alert(66);
+      $('.sample_dropdown').change(function(){         
           let id = $(this).attr('id');
           id = id[id.length - 1];
           $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
