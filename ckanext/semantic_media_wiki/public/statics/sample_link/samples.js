@@ -15,7 +15,7 @@ $(document).ready(function(){
             backdrop: 'static',
             keyboard: false
           });
-          $('#resourcesModal' + id).modal('show');                   
+          $('#resourcesModal' + id).modal('show');        
       }); 
 
     /**
