@@ -41,11 +41,15 @@ class MediaWikiController():
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
+            if Helper.check_plugin_enabled('sample_link'):
+                return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))     
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'finish_machine':
             result = Helper.add_machine_links(request, int(machine_count))
             if result != false:
+                if Helper.check_plugin_enabled('sample_link'):
+                    return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))  
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
             return toolkit.abort(500, "Server issue")    
