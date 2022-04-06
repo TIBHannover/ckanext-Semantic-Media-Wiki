@@ -10,7 +10,7 @@
         %}
         <div class="col-sm-11">
             <h4>{{_('Please select a Sample:')}}</h4>   
-            <select name={{'samples_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
+            <select name={{'sample_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
             {% for sample in samples %}           
                 <option value={{sample.value}}>
                 {{sample.text}} 

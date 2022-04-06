@@ -1,8 +1,10 @@
 # encoding: utf-8
 
 import ckan.plugins.toolkit as toolkit
-from flask import render_template
+from flask import render_template, request, redirect
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
+import ckan.lib.helpers as h
+
 
 
 class SampleLinkController():
@@ -23,8 +25,34 @@ class SampleLinkController():
 
 
     def save_samples():
-        return '0'
+        package_name = request.form.get('package')
+        sample_count = request.form.get('sample_count')
+        if package_name == None:
+            return toolkit.abort(403, "bad request")
+        
+        try:
+            package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
+
+        except:
+            return toolkit.abort(400, "Package not found") 
+        
+        if not SampleLinkHelper.check_access_edit_package(package['id']): 
+            return toolkit.abort(403, "You are not authorized to access this function" )
+               
+        action = request.form.get('save_btn')
+        if action == 'go-dataset-veiw': # I will add it later button
+            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
+        
+        if action == 'finish_machine':
+            result = SampleLinkHelper.add_sample_links(request, int(sample_count))
+            if result != False:
+                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
+
+            return toolkit.abort(500, "Server issue")    
+
+        return toolkit.abort(403, "bad request")
     
+
 
 
     def cancel_dataset_plugin_is_enabled():

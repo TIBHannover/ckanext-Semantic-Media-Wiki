@@ -96,8 +96,8 @@ class Helper():
                                 record.commit() 
 
         except:
-            raise 
-            # return False
+            # raise 
+            return False
 
         return True
 
