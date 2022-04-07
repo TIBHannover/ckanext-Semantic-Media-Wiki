@@ -1,6 +1,6 @@
 {% set sample_count = resources|length + 10  %}
 {% for res in range(sample_count) %}
-    <input type="hidden" name="sample_count" value="{{sample_count}}">
+    <input type="hidden" id="sample_count" name="sample_count" value="{{sample_count}}">
     <input type="hidden"  value="noPicked"  name={{ 'sample_name_' ~ (loop.index + offset) }} id={{ 'sample_name_' ~ (loop.index + offset) }} > 
     <div class="row sample-box" id={{'sample_box_id_' ~ (loop.index + offset)}}>
         {% snippet 'snippets/sample_link_resources_modal.html', 
@@ -25,10 +25,10 @@
             </a>
         {% endif %}
         </div>
+        {% snippet 'snippets/sample_link_resource_count.html', 
+            custom_class='sample-alert-box',
+            default_count=0,
+            Id=loop.index + offset
+        %}
     </div>
-    {% snippet 'snippets/sample_link_resource_count.html', 
-        custom_class='sample-alert-box',
-        default_count=0,
-        Id=loop.index + offset
-    %}
 {% endfor %}

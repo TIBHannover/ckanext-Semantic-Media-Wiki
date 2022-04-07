@@ -18,16 +18,30 @@ $(document).ready(function(){
           $('#resourcesModal' + id).modal('show');        
       }); 
 
+
+
     /**
      * Add another sample selection box
      * 
      */
-    $('#sample_box_id_1').show();
+
+    if ($('#isEditMode') && $('#isEditMode').val() == '1'){
+      let sampleCount = $('#existed_samples_dropdown').val();
+      for(let i=1; i <= parseInt(sampleCount); i++){
+        $('#sample_box_id_' + i).show();
+      }
+    }
+    else{
+      $('#sample_box_id_1').show();
+    }
     $('#add-another-sample-box').click(function(){
       let all_visible = false;
-      for(let i=1; i <= $('.sample-box').length; i++){
-        if ($('#sample_box_id_' + i).is(':hidden')){
-          $('#sample_box_id_' + i).fadeIn();
+      let allSampleBoxes = $('.sample-box');
+      console.info(allSampleBoxes);
+      for(let i=1; i <= allSampleBoxes.length; i++){
+        console.info($(allSampleBoxes[i]).attr('id'));
+        if ($(allSampleBoxes[i]).is(':hidden')){
+          $(allSampleBoxes[i]).fadeIn();
           all_visible = true;
           break;
         }
@@ -36,6 +50,38 @@ $(document).ready(function(){
         $(this).hide();
       }
     });
+
+
+    /**
+     * remove sample
+     * 
+     */
+     $('.sample-remove-anchor').click(function(){
+      let id = $(this).attr('id');
+      id = id[id.length - 1];
+      let checkBoxes = $('.resource-checkbox-input' + id);
+      for(let i=0; i < checkBoxes.length; i++){
+          if($(checkBoxes[i]).prop('checked') == true){
+            $(checkBoxes[i]).click();
+          }
+      }
+      if($('#select-all-resources-' + id).prop('checked') == true){
+        $('#select-all-resources-' + id).click();
+      }
+      $('#sample_resource_count-' + id).text('0');
+      $('#sample_resource_count-message-box_' + id).hide();
+      $('#sample_box_id_' + id).fadeOut();
+      $('#samples_dropdown_' + id).select2('val', '0');
+
+      let removedElement = $('#sample_box_id_' + id);
+      id = parseInt(id);
+      for(let i=id + 1; i < $('.sample-box').length; i++ ){
+          if(!$('#sample_box_id_' + i).is(':hidden')){
+            $(removedElement).insertAfter($('#sample_box_id_' + i));
+          }
+      }
+  });
+
 
     /**
      * click the select all box
@@ -53,6 +99,7 @@ $(document).ready(function(){
             }
         }
     });
+
 
     /**
      * Click Add button on a modal
@@ -79,27 +126,7 @@ $(document).ready(function(){
         }
     });
 
-    /**
-     * remove sample
-     * 
-     */
-    $('.sample-remove-anchor').click(function(){
-        let id = $(this).attr('id');
-        id = id[id.length - 1];
-        let checkBoxes = $('.resource-checkbox-input' + id);
-        for(let i=0; i < checkBoxes.length; i++){
-            if($(checkBoxes[i]).prop('checked') == true){
-              $(checkBoxes[i]).click();
-            }
-        }
-        if($('#select-all-resources-' + id).prop('checked') == true){
-          $('#select-all-resources-' + id).click();
-        }
-        $('#sample_resource_count-' + id).text('0');
-        $('#sample_resource_count-message-box_' + id).hide();
-        $('#sample_box_id_' + id).fadeOut();
-        
-    });
+    
 
     /**
      * click the edit mark on the resource count box

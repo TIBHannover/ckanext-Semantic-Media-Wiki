@@ -16,9 +16,11 @@
     <form id="sample-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
     <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
+    <input type="hidden" id="isEditMode" value="1">
+    <input type="hidden" id="existed_samples_dropdown" value="{{resource_data|length}}">
     {% for key, value in resource_data.items() %}
         <input type="hidden"  name={{ 'sample_name_' ~ loop.index }} id={{ 'sample_name_' ~ loop.index }} value='{{sample_link_name[key]}}'>
-        <div class="row sample-box-edit" id={{'sample_box_id_' ~ loop.index}}>
+        <div class="row sample-box" id={{'sample_box_id_' ~ loop.index}}>
             {% snippet 'snippets/sample_link_resources_modal.html', 
                 resources=pkg_dict['resources'], 
                 counter=loop.index, 
@@ -49,12 +51,12 @@
                     </a>
                 {% endif %}
             </div>
+            {% snippet 'snippets/sample_link_resource_count.html', 
+                custom_class='sample-alert-box-edit',
+                default_count=value|length,
+                Id=loop.index
+            %} 
         </div>
-        {% snippet 'snippets/sample_link_resource_count.html', 
-            custom_class='sample-alert-box-edit',
-            default_count=value|length,
-            Id=loop.index
-        %} 
     {% endfor %}
     {% snippet 'snippets/sample_link_samples_dropdown.html', 
         resources=pkg_dict['resources'], 
