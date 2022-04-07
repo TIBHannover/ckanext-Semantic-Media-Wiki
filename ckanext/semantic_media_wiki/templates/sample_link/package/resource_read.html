@@ -2,14 +2,14 @@
 
 {% block resource_read_url %}    
     {{ super() }}
-    {# {% asset 'ckanext-semantic-media-wiki/resource-machine-js' %}
+    {% asset 'ckanext-sample-link/resource-sample-js' %}
     {% set resource_id = resource['id']  %}
-    {% set dest_url = h.url_for('semantic_media_wiki.get_resource_machine', id=resource_id, _external=True) %}
-    <input type="hidden" id="get_link_url" value='{{dest_url}}'>
+    {% set dest_url = h.url_for('sample_link.get_resource_sample', id=resource_id, _external=True) %}
+    <input type="hidden" id="get_sample_url" value='{{dest_url}}'>
     
-    <div id="machine_link_box">
-        {{_('Linked Equipment')}}: <div id="equipment_list"></div>
+    <div id="sample_link_box">
+        <b>{{_('Linked Samples')}}:</b>  <div id="sample_list"></div>
     </div>    
-    <br><br> #}
+    <br><br>
 {% endblock %}
 

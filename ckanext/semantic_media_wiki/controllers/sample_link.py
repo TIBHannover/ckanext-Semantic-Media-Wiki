@@ -88,6 +88,13 @@ class SampleLinkController():
 
 
 
+    def get_resource_sample(id):
+        urls = SampleLinkHelper.get_sample_link(id)
+        if len(urls.keys()) == 0:
+            return '0'
+        return json.dumps(urls)
+
+
 
     def cancel_dataset_plugin_is_enabled():
         if SampleLinkHelper.check_plugin_enabled('cancel_dataset_creation'):

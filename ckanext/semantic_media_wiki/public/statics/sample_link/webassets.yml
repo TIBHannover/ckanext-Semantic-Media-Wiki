@@ -35,3 +35,16 @@ samples-js:
       - vendor/select2
   contents:
     - samples.js
+
+resource-sample-js:  
+  output: ckanext-sample-link/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - resource_sample.js

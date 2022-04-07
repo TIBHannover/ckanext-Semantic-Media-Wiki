@@ -48,6 +48,13 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
             methods=['GET']
             )
         
+        blueprint.add_url_rule(
+            u'/smw/get_resource_sample/<id>',
+            u'get_resource_sample',
+            SampleLinkController.get_resource_sample,
+            methods=['GET']
+            )
+        
 
         return blueprint
     
