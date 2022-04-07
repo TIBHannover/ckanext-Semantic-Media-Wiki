@@ -116,5 +116,9 @@ $(document).ready(function(){
       $('#resourcesModal' + id).modal('show'); 
     });
 
+    $('#sample_save_btn').click(function(){
+      $('#sample-save-btn-spinner').css("display","inline-block");
+    });
+
     
 });

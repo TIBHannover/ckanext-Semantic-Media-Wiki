@@ -129,3 +129,7 @@
 .select2-results {
   max-height: 400px !important;
 }
+
+#sample-save-btn-spinner{
+  display: none;
+}
