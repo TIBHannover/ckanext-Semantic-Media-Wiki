@@ -91,7 +91,7 @@ class SampleLinkHelper():
                 if link == '0':
                     sample_name = None
                 sample_name = request.form.get('sample_name_' + str(i))
-                if not sample_name or sample_name == '':
+                if not sample_name or sample_name != 'noPicked':
                     sample_name = SampleLinkHelper.get_sample_name(link)
                 resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))
                 updated_at = _time.now()
@@ -131,7 +131,7 @@ class SampleLinkHelper():
                             if record.resource_id not in already_edited_resources.keys():
                                 record.delete()
                                 record.commit()
-                            elif record.url not in already_edited_resources[res['id']]:                                
+                            elif record.sample_url not in already_edited_resources[res['id']]:                                
                                 record.delete()
                                 record.commit() 
 
@@ -149,7 +149,7 @@ class SampleLinkHelper():
             Get a sample name from SMW. 
         '''
 
-        samples, _ = SampleLinkHelper.get_samples_list()
+        samples = SampleLinkHelper.get_samples_list()
         for sample in samples:
             if sample['value'] == sample_url:
                 return sample['text']

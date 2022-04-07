@@ -125,7 +125,7 @@ class SampleLinkController():
 
     def edit_save_samples():
         package_name = request.form.get('package')
-        machine_count = request.form.get('machine_count')  
+        sample_count = request.form.get('sample_count')  
         package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
         if not SampleLinkHelper.check_access_edit_package(package['id']): 
             return toolkit.abort(403, "You are not authorized to access this function" )
@@ -134,8 +134,8 @@ class SampleLinkController():
         if action == 'go-dataset-veiw': # cancel button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
-        if action == 'update_machine':
-            result = SampleLinkHelper.update_resource_sample(request, int(machine_count), package)
+        if action == 'update_sample':
+            result = SampleLinkHelper.update_resource_sample(request, int(sample_count), package)
             if result:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
