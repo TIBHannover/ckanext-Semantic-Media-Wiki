@@ -13,9 +13,9 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config_):
-        toolkit.add_template_directory(config_, 'templates')
+        toolkit.add_template_directory(config_, 'templates/machine_link')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('public/statics', 'ckanext-semantic-media-wiki')
+        toolkit.add_resource('public/statics/machine_link', 'ckanext-semantic-media-wiki')
 
 
     #plugin Blueprint

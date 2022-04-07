@@ -15,11 +15,12 @@ class API():
     image_field = ""
 
 
-    def __init__(self, username, password, query, host, target_sfb):
+    def __init__(self, username, password, query, host, target_sfb, sample_query=False):
         self.username = username
         self.password = password
         self.query = query
         self.host = host
+        self.sample_query = sample_query
         self.target_sfb = target_sfb
         if self.target_sfb == "1153":
             self.image_field = "Image"
@@ -35,16 +36,22 @@ class API():
             self.login(self.host, self.path, self.scheme)
             raw_results = self.site.ask(self.query)                            
             for answer in raw_results:
-                if answer and answer['printouts']:
+                if not self.sample_query and answer and answer['printouts']:
                     processed_answer = self.unpack_ask_response(answer) 
                     results.append(processed_answer)                
                     if self.image_field in processed_answer.keys():
                         depiction_page =  processed_answer[self.image_field]
                         depiction_url = self.mw_getfile_url(filepage=depiction_page)                                        
-                        machines_imageUrl[processed_answer['page']] = depiction_url                
+                        machines_imageUrl[processed_answer['page']] = depiction_url
+
+                elif self.sample_query:
+                    answer_unpacked = self.unpack_ask_response(answer)
+                    results.append(answer_unpacked)
+
+
         except:
             return [[], {}]
-
+            
         return [results, machines_imageUrl]
 
 

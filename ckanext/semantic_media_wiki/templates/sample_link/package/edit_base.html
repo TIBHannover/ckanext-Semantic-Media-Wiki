@@ -1,0 +1,6 @@
+{% ckan_extends %}
+
+{% block content_primary_nav %}
+    {{ super() }}
+    {{ h.build_nav_icon('sample_link.edit_samples_view', _('Samples'), id=pkg.name, icon='bars') }}
+{% endblock %}

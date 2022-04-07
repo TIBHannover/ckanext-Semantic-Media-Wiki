@@ -1,0 +1,83 @@
+{% extends "package/edit_base.html" %}
+{% import 'macros/form.html' as input_object %}
+
+{% block styles %}
+  {{ super() }}
+  {% asset 'ckanext-sample-link/samples-css' %}
+{% endblock styles %}
+
+
+{% block primary_content_inner %}
+    <p>
+        {{_('Here you can edit the samples linked to your data resources.')}}
+    </p>
+    <hr>
+    {% set action = h.url_for('sample_link.edit_save_samples', _external=True) %}
+    <form id="sample-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+    <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
+    <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
+    <input type="hidden" id="isEditMode" value="1">
+    <input type="hidden" id="existed_samples_dropdown" value="{{resource_data|length}}">
+    {% for key, value in resource_data.items() %}
+        <input type="hidden"  name={{ 'sample_name_' ~ loop.index }} id={{ 'sample_name_' ~ loop.index }} value='{{sample_link_name[key]}}'>
+        <div class="row sample-box" id={{'sample_box_id_' ~ loop.index}}>
+            {% snippet 'snippets/sample_link_resources_modal.html', 
+                resources=pkg_dict['resources'], 
+                counter=loop.index, 
+                chosen_resources=value,
+                the_sample=key 
+            %}
+            <div class="col-sm-11">
+                <h4>{{_('Please select a Sample:')}}</h4>   
+                <select name={{'sample_link' ~ loop.index}} id={{'samples_dropdown_' ~ loop.index}} class="sample_dropdown" >
+                    {% for sample in samples_list %}
+                        {% if key == sample.value %}
+                            <option value={{sample.value}} selected>
+                                {{sample.text}}                  
+                            </option>
+                        {% else %} 
+                            <option value={{sample.value}}>
+                                {{sample.text}}                  
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                    <br>
+                </select>
+            </div>
+            <div class="col-sm-1">
+                {% if loop.index > 1 %}
+                    <a href="#" class="sample-remove-anchor" id={{ 'sample-remove-anchor' ~ loop.index }}>
+                    <i class="fa fa-minus-circle remove-sample-icon"></i>
+                    </a>
+                {% endif %}
+            </div>
+            {% snippet 'snippets/sample_link_resource_count.html', 
+                custom_class='sample-alert-box-edit',
+                default_count=value|length,
+                Id=loop.index
+            %} 
+        </div>
+    {% endfor %}
+    {% snippet 'snippets/sample_link_samples_dropdown.html', 
+        resources=pkg_dict['resources'], 
+        samples=samples_list,
+        offset=samples_count
+    %}
+    <br>
+    <button type="button" class="btn btn-primary" id="add-another-sample-box">{{_('+ Another')}}</button>
+    <br><br><br><hr>
+    <div class="form-actions">
+        <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('Cancel') }}</button>
+        <button class="btn btn-primary" name="save_btn" value="update_sample" type="submit" id="sample_save_btn">
+            {{ _('Update') }} 
+            <i id="sample-save-btn-spinner" class="fa fa-spinner fa-spin"></i> 
+        </button>
+    </div>      
+  </form>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% asset 'ckanext-sample-link/samples-js' %}
+{% endblock %}

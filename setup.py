@@ -85,6 +85,7 @@ setup(
     entry_points='''
         [ckan.plugins]
         semantic_media_wiki=ckanext.semantic_media_wiki.plugin:SemanticMediaWikiPlugin
+        sample_link=ckanext.semantic_media_wiki.plugin2:SampleLinkPlugin
 
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan
