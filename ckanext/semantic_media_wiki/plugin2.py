@@ -55,6 +55,21 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
             methods=['GET']
             )
         
+        blueprint.add_url_rule(
+            u'/smw/edit_samples_view/<id>',
+            u'edit_samples_view',
+            SampleLinkController.edit_samples_view,
+            methods=['GET']
+            )
+        
+
+        blueprint.add_url_rule(
+            u'/smw/edit_save_samples',
+            u'edit_save_samples',
+            SampleLinkController.edit_save_samples,
+            methods=['POST']
+            )
+        
 
         return blueprint
     

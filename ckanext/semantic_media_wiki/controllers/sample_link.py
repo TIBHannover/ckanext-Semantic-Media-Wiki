@@ -96,6 +96,56 @@ class SampleLinkController():
 
 
 
+    def edit_samples_view(id):
+        if not SampleLinkHelper.check_access_edit_package(id): 
+            return toolkit.abort(403, "You are not authorized to access this function" )
+
+        package = toolkit.get_action('package_show')({}, {'name_or_id': id})
+        samples = SampleLinkHelper.get_samples_list()
+        resource_sample_data = {}
+        sample_link_name = {}
+        for resource in package['resources']:
+            urls = SampleLinkHelper.get_sample_link(resource['id'])
+            for name, url in urls.items(): 
+                if url not in resource_sample_data.keys():
+                    resource_sample_data[url] = [resource['id']]
+                    sample_link_name[url] = name
+                else:
+                    resource_sample_data[url].append(resource['id'])
+
+        return render_template('edit_samples.html', 
+            pkg_dict=package, 
+            samples_list=samples, 
+            resource_data=resource_sample_data,
+            samples_count=len(resource_sample_data.keys()),
+            sample_link_name=sample_link_name
+            )
+    
+
+
+    def edit_save_samples():
+        package_name = request.form.get('package')
+        machine_count = request.form.get('machine_count')  
+        package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
+        if not SampleLinkHelper.check_access_edit_package(package['id']): 
+            return toolkit.abort(403, "You are not authorized to access this function" )
+
+        action = request.form.get('save_btn')
+        if action == 'go-dataset-veiw': # cancel button
+            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
+        
+        if action == 'update_machine':
+            result = SampleLinkHelper.update_resource_sample(request, int(machine_count), package)
+            if result:
+                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
+
+            return toolkit.abort(500, "Server issue")    
+
+        return toolkit.abort(403, "bad request")
+
+
+
+
     def cancel_dataset_plugin_is_enabled():
         if SampleLinkHelper.check_plugin_enabled('cancel_dataset_creation'):
             return True
