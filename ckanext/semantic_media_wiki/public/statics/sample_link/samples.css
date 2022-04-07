@@ -91,7 +91,8 @@
 
 .sample-alert-box{
   padding: 5px !important;
-  margin-top: 5px;
+  margin-top: 70px;
+  margin-left: 10px;
   width: 50%;
   text-align: center;
   display: none;
@@ -99,7 +100,8 @@
 
 .sample-alert-box-edit{
   padding: 5px !important;
-  margin-top: 5px;
+  margin-top: 70px;
+  margin-left: 10px;
   width: 50%;
   text-align: center;
 }
