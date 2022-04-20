@@ -10,7 +10,7 @@ from ckanext.semantic_media_wiki.controllers.sample_link import SampleLinkContro
 class SampleLinkPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IBlueprint)
-    # plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.ITemplateHelpers)
 
     # IConfigurer
 
@@ -74,4 +74,6 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
         return blueprint
     
     def get_helpers(self):
-        return {'cancel_dataset_is_enabled': SampleLinkController.cancel_dataset_plugin_is_enabled}
+        return {'cancel_dataset_is_enabled': SampleLinkController.cancel_dataset_plugin_is_enabled,
+            'get_samples_for_a_resource': SampleLinkController.get_samples_for_a_resource
+        }

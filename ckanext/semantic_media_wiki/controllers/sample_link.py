@@ -150,3 +150,11 @@ class SampleLinkController():
         if SampleLinkHelper.check_plugin_enabled('cancel_dataset_creation'):
             return True
         return False
+    
+
+
+    def get_samples_for_a_resource(resourec_id):
+        urls = SampleLinkHelper.get_sample_link(resourec_id)
+        if len(urls.keys()) == 0:
+            return {}
+        return urls
