@@ -35,18 +35,22 @@ $(document).ready(function(){
       $('#sample_box_id_1').show();
     }
     $('#add-another-sample-box').click(function(){
-      let all_visible = false;
-      let allSampleBoxes = $('.sample-box');
-      console.info(allSampleBoxes);
-      for(let i=1; i <= allSampleBoxes.length; i++){
-        console.info($(allSampleBoxes[i]).attr('id'));
+      let all_not_visible = false;
+      let allSampleBoxes = $('.sample-box');      
+      for(let i=1; i <= allSampleBoxes.length; i++){        
         if ($(allSampleBoxes[i]).is(':hidden')){
+          let prevSelectedId = $(allSampleBoxes[i - 1]).attr('id');
+          let currectId = $(allSampleBoxes[i]).attr('id');
+          currectId = currectId[currectId.length - 1];
+          prevSelectedId = prevSelectedId[prevSelectedId.length - 1];
+          let prevSelect = $('#samples_dropdown_' + prevSelectedId).select2('data');
+          $("#samples_dropdown_" + currectId).select2('data', { id:prevSelect.id, text: prevSelect.text});
           $(allSampleBoxes[i]).fadeIn();
-          all_visible = true;
+          all_not_visible = true;
           break;
         }
       }
-      if(!all_visible){
+      if(!all_not_visible){
         $(this).hide();
       }
     });
