@@ -161,5 +161,13 @@ class MediaWikiController():
             return ['1153', "https://service.tib.eu/sfb1153/wiki/Tools", "https://service.tib.eu/sfb1153/wiki/Machines"]
         else:
             return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
+    
+
+    @staticmethod
+    def check_plugin_enabled(plugin_name):
+        plugins = toolkit.config.get("ckan.plugins")
+        if plugin_name in plugins:
+            return True
+        return False
 
 

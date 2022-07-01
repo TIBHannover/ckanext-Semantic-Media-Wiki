@@ -75,5 +75,6 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
     
     def get_helpers(self):
         return {'cancel_dataset_is_enabled': SampleLinkController.cancel_dataset_plugin_is_enabled,
-            'get_samples_for_a_resource': SampleLinkController.get_samples_for_a_resource
+            'get_samples_for_a_resource': SampleLinkController.get_samples_for_a_resource,
+            'is_enabled': SampleLinkController.check_plugin_enabled
         }
