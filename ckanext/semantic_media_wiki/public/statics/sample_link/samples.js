@@ -8,7 +8,7 @@ $(document).ready(function(){
     
       $('.sample_dropdown').change(function(){         
           let id = $(this).attr('id');
-          id = id[id.length - 1];
+          id = id.split("samples_dropdown_")[1];
           $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
           $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
           $('#resourcesModal' + id).modal({
@@ -40,8 +40,8 @@ $(document).ready(function(){
       for(let i=1; i <= allSampleBoxes.length; i++){        
         if ($(allSampleBoxes[i]).is(':hidden')){
           let prevSelectedId = $(allSampleBoxes[i - 1]).attr('id');
-          let currectId = $(allSampleBoxes[i]).attr('id');
-          currectId = currectId[currectId.length - 1];
+          let currectId = $(allSampleBoxes[i]).attr('id');                    
+          currectId = currectId.split("sample_box_id_")[1];
           prevSelectedId = prevSelectedId[prevSelectedId.length - 1];
           let prevSelect = $('#samples_dropdown_' + prevSelectedId).select2('data');
           $("#samples_dropdown_" + currectId).select2('data', { id:prevSelect.id, text: prevSelect.text});
@@ -62,7 +62,7 @@ $(document).ready(function(){
      */
      $('.sample-remove-anchor').click(function(){
       let id = $(this).attr('id');
-      id = id[id.length - 1];
+      id = id.split("sample-remove-anchor")[1];      
       let checkBoxes = $('.resource-checkbox-input' + id);
       for(let i=0; i < checkBoxes.length; i++){
           if($(checkBoxes[i]).prop('checked') == true){
@@ -92,8 +92,8 @@ $(document).ready(function(){
      * 
      */
     $('.select-all-resources').click(function(){
-        let id = $(this).attr('id');
-        id = id[id.length - 1];
+        let id = $(this).attr('id');              
+        id = id.split("select-all-resources-")[1];
         let checkBoxes = $('.resource-checkbox-input' + id);
         for(let i=0; i < checkBoxes.length; i++){
             if($(checkBoxes[i]).is(':visible')){
@@ -110,8 +110,8 @@ $(document).ready(function(){
      * 
      */
     $('.refModalAdd').click(function(){
-        let id = $(this).attr('id');
-        id = id[id.length - 1];
+        let id = $(this).attr('id');        
+        id = id.split("ref_modal_add_btn")[1];
         let boxes = $('.resource-checkbox-input' + id);
         let resourceCount = 0;
         for (let i=0; i < boxes.length; i++){
@@ -138,8 +138,8 @@ $(document).ready(function(){
      */
 
     $('.resource_count_edit').click(function(){
-      let id = $(this).attr('id');
-      id = id[id.length - 1];
+      let id = $(this).attr('id');      
+      id = id.split("sample_resource_count_edit_")[1];
       $('#resourcesModal' + id).modal({
         backdrop: 'static',
         keyboard: false
