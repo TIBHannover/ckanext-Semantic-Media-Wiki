@@ -86,7 +86,7 @@ class SampleLinkHelper():
         
         try:
             already_edited_resources = {}        
-            for i in range(1, resources_len + 30):
+            for i in range(1, resources_len):
                 link = request.form.get('sample_link' + str(i))
                 if link == '0':
                     sample_name = None
