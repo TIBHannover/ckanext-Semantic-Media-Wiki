@@ -93,7 +93,12 @@ class Helper():
                                 record.commit()
                             elif record.url not in already_edited_resources[res['id']]:                                
                                 record.delete()
-                                record.commit() 
+                                record.commit()
+                
+                package_extras = []
+                package_extras.append({"key": "machine", "value": "True"})
+                package['extras'] = package_extras           
+                toolkit.get_action('package_update')({},package)
 
         except:
             # raise 
