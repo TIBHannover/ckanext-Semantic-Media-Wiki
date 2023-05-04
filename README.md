@@ -31,7 +31,7 @@ To install ckanext-Semantic-Media-Wiki:
         pip install -e .
         pip install -r requirements.txt
 
-3. Add `semantic_media_wiki` to the `ckan.plugins` setting in your CKAN
+3. Add `semantic_media_wiki` and `sample_link` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
@@ -39,12 +39,27 @@ To install ckanext-Semantic-Media-Wiki:
 
         ckan -c /etc/ckan/default/ckan.ini db upgrade -p semantic_media_wiki
 
+        ckan -c /etc/ckan/default/ckan.ini db upgrade -p sample_link
+
 
 4. Restart CKAN and supervisor. For example if you've deployed CKAN with nginx on Ubuntu:
 
-        sudo service nginx reload
         sudo service supervisor reload
+        sudo service nginx reload
+        
 
+
+## config
+These plugins need the following variables provided in `ckan.ini`
+
+
+        ckanext.crc.project.id="CRC_Project_ID"
+        
+        ckanext.smw.equipment.endpoint=""
+        
+        ckanext.smw.machine.endpoint=""
+        
+        ckanext.smw.tools.endpoint=""
 
 
 
