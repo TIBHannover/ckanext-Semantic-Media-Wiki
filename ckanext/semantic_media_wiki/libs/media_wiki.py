@@ -6,6 +6,9 @@ from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from urllib import parse
 import ckan.plugins.toolkit as toolkit
+from ckanext.semantic_media_wiki.libs.commons import Common
+from flask import redirect
+import ckan.lib.helpers as h
 
 
 class Helper():
@@ -173,6 +176,13 @@ class Helper():
             sfb = "1368"
 
         return [credential_path, smw_base_url, api_host, query, sfb]
+    
+
+    @staticmethod
+    def get_next_step_redirect(package_name):
+        if Common.check_plugin_enabled('sample_link'):
+            return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))     
+        return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
     
     
 

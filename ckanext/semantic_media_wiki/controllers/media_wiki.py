@@ -27,11 +27,9 @@ class MediaWikiController():
         package_name = request.form.get('package')
         machine_count = request.form.get('machine_count')
         if package_name == None:
-            return toolkit.abort(403, "bad request")
-        
+            return toolkit.abort(403, "bad request")        
         try:
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-
         except:
             return toolkit.abort(400, "Package not found") 
         
@@ -39,16 +37,12 @@ class MediaWikiController():
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
-            if Common.check_plugin_enabled('sample_link'):
-                return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))     
-            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
+            return Helper.get_next_step_redirect(package_name)
         
         if action == 'finish_machine':
             result = Helper.add_machine_links(request, int(machine_count))
             if result != false:
-                if Common.check_plugin_enabled('sample_link'):
-                    return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))  
-                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
+                return Helper.get_next_step_redirect(package_name)
 
             return toolkit.abort(500, "Server issue")    
 

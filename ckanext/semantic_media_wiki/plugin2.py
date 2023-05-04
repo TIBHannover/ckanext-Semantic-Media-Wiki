@@ -76,5 +76,5 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
     
     def get_helpers(self):
         return {'get_samples_for_a_resource': SampleLinkController.get_samples_for_a_resource,
-            'is_enabled': Common.check_plugin_enabled
+            'check_plugin_enabled': Common.check_plugin_enabled
         }
