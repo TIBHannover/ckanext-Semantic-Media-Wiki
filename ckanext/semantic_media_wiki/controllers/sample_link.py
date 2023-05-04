@@ -140,7 +140,7 @@ class SampleLinkController():
 
 
     def cancel_dataset_plugin_is_enabled():
-        if SampleLinkHelper.check_plugin_enabled('cancel_dataset_creation'):
+        if Common.check_plugin_enabled('cancel_dataset_creation'):
             return True
         return False
     
@@ -152,10 +152,3 @@ class SampleLinkController():
             return {}
         return urls
     
-
-    @staticmethod
-    def check_plugin_enabled(plugin_name):
-        plugins = toolkit.config.get("ckan.plugins")
-        if plugin_name in plugins:
-            return True
-        return False

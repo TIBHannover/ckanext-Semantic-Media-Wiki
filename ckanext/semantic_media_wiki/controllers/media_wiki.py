@@ -23,6 +23,8 @@ class MediaWikiController():
             machine_imageUrl=machine_imageUrl
             )
     
+
+
     def save_machines():
         package_name = request.form.get('package')
         machine_count = request.form.get('machine_count')
@@ -39,14 +41,14 @@ class MediaWikiController():
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
-            if Helper.check_plugin_enabled('sample_link'):
+            if Common.check_plugin_enabled('sample_link'):
                 return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))     
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'finish_machine':
             result = Helper.add_machine_links(request, int(machine_count))
             if result != false:
-                if Helper.check_plugin_enabled('sample_link'):
+                if Common.check_plugin_enabled('sample_link'):
                     return redirect(h.url_for('sample_link.add_samples_view', id=str(package_name) ,  _external=True))  
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
@@ -54,6 +56,7 @@ class MediaWikiController():
 
         return toolkit.abort(403, "bad request")
     
+
 
     def edit_machines_view(id):
         Common.abort_if_dataset_editing_not_permit(id)
@@ -79,6 +82,7 @@ class MediaWikiController():
             machine_link_name=machine_link_name
             )
     
+
 
     def edit_save():
         package_name = request.form.get('package')
@@ -141,10 +145,11 @@ class MediaWikiController():
 
     
     def cancel_dataset_plugin_is_enabled():
-        if Helper.check_plugin_enabled('cancel_dataset_creation'):
+        if Common.check_plugin_enabled('cancel_dataset_creation'):
             return True
         return False
     
+
 
     def get_smw_link():
         ckan_root_path = toolkit.config.get('ckan.root_path')
@@ -157,11 +162,5 @@ class MediaWikiController():
             return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
     
 
-    @staticmethod
-    def check_plugin_enabled(plugin_name):
-        plugins = toolkit.config.get("ckan.plugins")
-        if plugin_name in plugins:
-            return True
-        return False
 
 

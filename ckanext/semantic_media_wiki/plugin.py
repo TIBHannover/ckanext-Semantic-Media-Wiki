@@ -2,6 +2,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from flask import Blueprint
 from ckanext.semantic_media_wiki.controllers.media_wiki import MediaWikiController
+from ckanext.semantic_media_wiki.libs.commons import Common
 
 
 
@@ -70,4 +71,4 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
     def get_helpers(self):
         return {'cancel_dataset_is_enabled': MediaWikiController.cancel_dataset_plugin_is_enabled,
         'get_smw_link': MediaWikiController.get_smw_link,
-        'is_enabled': MediaWikiController.check_plugin_enabled}
+        'is_enabled': Common.check_plugin_enabled}

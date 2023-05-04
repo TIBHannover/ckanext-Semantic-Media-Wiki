@@ -15,3 +15,12 @@ class Common():
 
         except toolkit.NotAuthorized:
             toolkit.abort(403, 'You are not authorized to access this function')
+    
+
+
+    @staticmethod     
+    def check_plugin_enabled(plugin_name):
+        plugins = toolkit.config.get("ckan.plugins")
+        if plugin_name in plugins:
+            return True
+        return False

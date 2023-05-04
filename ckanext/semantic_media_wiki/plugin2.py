@@ -4,6 +4,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from flask import Blueprint
 from ckanext.semantic_media_wiki.controllers.sample_link import SampleLinkController
+from ckanext.semantic_media_wiki.libs.commons import Common
 
 
 
@@ -76,5 +77,5 @@ class SampleLinkPlugin(plugins.SingletonPlugin):
     def get_helpers(self):
         return {'cancel_dataset_is_enabled': SampleLinkController.cancel_dataset_plugin_is_enabled,
             'get_samples_for_a_resource': SampleLinkController.get_samples_for_a_resource,
-            'is_enabled': SampleLinkController.check_plugin_enabled
+            'is_enabled': Common.check_plugin_enabled
         }
