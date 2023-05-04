@@ -144,7 +144,7 @@ class Helper():
                     temp['image'] = ''
                 machines_list.append(temp)
                         
-            return [machines_list, machine_imageUrl]
+            return machines_list
         
         return [[], []]
     

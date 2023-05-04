@@ -28,7 +28,7 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
         blueprint.add_url_rule(
             u'/smw/machines_view/<id>',
             u'machines_view',
-            MediaWikiController.machines_view,
+            MediaWikiController.render_add_machines_view,
             methods=['GET']
             )
         blueprint.add_url_rule(

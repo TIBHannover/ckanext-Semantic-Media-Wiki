@@ -11,16 +11,14 @@ from ckanext.semantic_media_wiki.libs.commons import Common
 
 class MediaWikiController():
 
-    def machines_view(id):
+    def render_add_machines_view(id):
         Common.abort_if_dataset_editing_not_permit(id)
-        package = toolkit.get_action('package_show')({}, {'name_or_id': id})
-        stages = True
-        machines, machine_imageUrl = Helper.get_machines_list()
+        package = toolkit.get_action('package_show')({}, {'name_or_id': id})        
+        machines = Helper.get_machines_list()
         return render_template('add_machines.html', 
             pkg_dict=package, 
             machines_list=machines,
-            custom_stage=stages,
-            machine_imageUrl=machine_imageUrl
+            custom_stage=True            
             )
     
 
@@ -61,7 +59,7 @@ class MediaWikiController():
     def edit_machines_view(id):
         Common.abort_if_dataset_editing_not_permit(id)
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
-        machines, machine_imageUrl = Helper.get_machines_list()
+        machines = Helper.get_machines_list()
         resource_machine_data = {}
         machine_link_name = {}
         for resource in package['resources']:
@@ -76,8 +74,7 @@ class MediaWikiController():
         return render_template('edit_machines.html', 
             pkg_dict=package, 
             machines_list=machines, 
-            resource_data=resource_machine_data,
-            machine_imageUrl=machine_imageUrl,
+            resource_data=resource_machine_data,            
             machines_count=len(resource_machine_data.keys()),
             machine_link_name=machine_link_name
             )
