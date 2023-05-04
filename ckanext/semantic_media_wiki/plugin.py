@@ -69,6 +69,5 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
         return blueprint
     
     def get_helpers(self):
-        return {'cancel_dataset_is_enabled': MediaWikiController.cancel_dataset_plugin_is_enabled,
-        'get_smw_link': MediaWikiController.get_smw_link,
+        return {'get_smw_link': MediaWikiController.get_smw_link,
         'is_enabled': Common.check_plugin_enabled}

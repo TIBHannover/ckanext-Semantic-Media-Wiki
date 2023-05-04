@@ -141,13 +141,6 @@ class MediaWikiController():
         if len(urls.keys()) == 0:
             return '0'
         return json.dumps(urls)
-
-
-    
-    def cancel_dataset_plugin_is_enabled():
-        if Common.check_plugin_enabled('cancel_dataset_creation'):
-            return True
-        return False
     
 
 
