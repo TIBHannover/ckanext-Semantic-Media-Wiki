@@ -32,7 +32,7 @@ class MediaWikiController():
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
             Common.abort_if_dataset_editing_not_permit(package['id'])               
             action = request.form.get('save_btn')
-            if action == 'go-dataset-veiw': # I will add it later button
+            if action == 'go-dataset-veiw': # "I will add it later" button
                 return Helper.get_next_step_redirect(package_name)
             
             if action == 'finish_machine':
