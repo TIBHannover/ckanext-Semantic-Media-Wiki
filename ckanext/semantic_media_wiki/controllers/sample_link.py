@@ -5,15 +5,14 @@ from flask import render_template, request, redirect
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 import ckan.lib.helpers as h
 import json
+from ckanext.semantic_media_wiki.libs.commons import Common
 
 
 
 class SampleLinkController():
 
     def add_samples_view(id):
-        if not SampleLinkHelper.check_access_edit_package(id):
-            toolkit.abort(403, 'You are not authorized to access this function')
-
+        Common.abort_if_dataset_editing_not_permit(id)        
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         stages = True
         samples = SampleLinkHelper.get_samples_list()
@@ -37,9 +36,7 @@ class SampleLinkController():
         except:
             return toolkit.abort(400, "Package not found") 
         
-        if not SampleLinkHelper.check_access_edit_package(package['id']): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
-               
+        Common.abort_if_dataset_editing_not_permit(package['id'])                       
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
@@ -96,10 +93,8 @@ class SampleLinkController():
 
 
 
-    def edit_samples_view(id):
-        if not SampleLinkHelper.check_access_edit_package(id): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
-
+    def edit_samples_view(id):        
+        Common.abort_if_dataset_editing_not_permit(id)
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         samples = SampleLinkHelper.get_samples_list()
         resource_sample_data = {}
@@ -127,9 +122,7 @@ class SampleLinkController():
         package_name = request.form.get('package')
         sample_count = request.form.get('sample_count')  
         package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-        if not SampleLinkHelper.check_access_edit_package(package['id']): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
-
+        Common.abort_if_dataset_editing_not_permit(package['id'])        
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # cancel button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 

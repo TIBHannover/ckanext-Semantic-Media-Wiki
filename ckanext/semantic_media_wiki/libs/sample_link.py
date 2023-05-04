@@ -10,28 +10,6 @@ from ckanext.semantic_media_wiki.models.resource_sample_link import ResourceSamp
 
 class SampleLinkHelper():
 
-    def check_access_edit_package(package_id):
-        '''
-            Check a user can edit a dataset or not.
-
-            Arg:
-                - package_id: the target dataset id
-            
-            Return:
-                - boolean
-        '''
-
-        context = {'user': toolkit.g.user, 'auth_user_obj': toolkit.g.userobj}
-        data_dict = {'id':package_id}
-        try:
-            toolkit.check_access('package_update', context, data_dict)
-            return True
-
-        except toolkit.NotAuthorized:
-            return False
-    
-
-
     def add_sample_links(request, resources_len):
         '''
             Save a sample link in db.

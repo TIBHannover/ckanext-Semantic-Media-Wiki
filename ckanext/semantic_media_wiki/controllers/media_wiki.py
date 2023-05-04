@@ -6,14 +6,13 @@ from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 from sqlalchemy.sql.expression import false
 import json
 import ckan.lib.helpers as h
+from ckanext.semantic_media_wiki.libs.commons import Common
 
 
 class MediaWikiController():
 
     def machines_view(id):
-        if not Helper.check_access_edit_package(id):
-            toolkit.abort(403, 'You are not authorized to access this function')
-
+        Common.abort_if_dataset_editing_not_permit(id)
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         stages = True
         machines, machine_imageUrl = Helper.get_machines_list()
@@ -36,8 +35,7 @@ class MediaWikiController():
         except:
             return toolkit.abort(400, "Package not found") 
         
-        if not Helper.check_access_edit_package(package['id']): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
+        Common.abort_if_dataset_editing_not_permit(package['id'])
                
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # I will add it later button
@@ -58,9 +56,7 @@ class MediaWikiController():
     
 
     def edit_machines_view(id):
-        if not Helper.check_access_edit_package(id): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
-
+        Common.abort_if_dataset_editing_not_permit(id)
         package = toolkit.get_action('package_show')({}, {'name_or_id': id})
         machines, machine_imageUrl = Helper.get_machines_list()
         resource_machine_data = {}
@@ -88,9 +84,7 @@ class MediaWikiController():
         package_name = request.form.get('package')
         machine_count = request.form.get('machine_count')  
         package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-        if not Helper.check_access_edit_package(package['id']): 
-            return toolkit.abort(403, "You are not authorized to access this function" )
-
+        Common.abort_if_dataset_editing_not_permit(package['id'])
         action = request.form.get('save_btn')
         if action == 'go-dataset-veiw': # cancel button
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 

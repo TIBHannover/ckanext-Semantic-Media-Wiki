@@ -10,16 +10,6 @@ import ckan.plugins.toolkit as toolkit
 
 class Helper():
 
-    def check_access_edit_package(package_id):
-        context = {'user': toolkit.g.user, 'auth_user_obj': toolkit.g.userobj}
-        data_dict = {'id':package_id}
-        try:
-            toolkit.check_access('package_update', context, data_dict)
-            return True
-
-        except toolkit.NotAuthorized:
-            return False
-
 
     def add_machine_links(request, resources_len):
         
