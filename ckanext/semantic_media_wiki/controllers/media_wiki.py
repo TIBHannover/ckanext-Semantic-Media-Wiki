@@ -144,15 +144,17 @@ class MediaWikiController():
     
 
 
-    def get_smw_link():
-        ckan_root_path = toolkit.config.get('ckan.root_path')
-        if  ckan_root_path and 'sfb1368/ckan' in ckan_root_path:
-            return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
+    def get_smw_endpoints():
+        project_id = toolkit.config.get('ckanext.crc.project.id')
+        if project_id == "1368":
+            machine_endpoint = toolkit.config.get('ckanext.smw.equipment.endpoint')
+            tools_endpoint = None
+            return [project_id, machine_endpoint, tools_endpoint]
         
-        elif ckan_root_path and 'sfb1153/ckan' in ckan_root_path:
-            return ['1153', "https://service.tib.eu/sfb1153/wiki/Tools", "https://service.tib.eu/sfb1153/wiki/Machines"]
-        else:
-            return ['1368', "https://service.tib.eu/sfb1368/wiki/Equipment", None]
+        machine_endpoint = toolkit.config.get('ckanext.smw.machine.endpoint')
+        tools_endpoint = toolkit.config.get('ckanext.smw.tools.endpoint')
+        return [project_id, machine_endpoint, tools_endpoint]
+        
     
 
 
