@@ -164,18 +164,17 @@ class Helper():
     def get_api_config():
         credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.confgi.get('ckanext.smw.mediaWiki.api.endpont')        
-        sfb = toolkit.confgi.get('ckanext.crc.project.id')
-        ckan_root_path = toolkit.config.get('ckan.root_path')
+        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
+        sfb = toolkit.config.get('ckanext.crc.project.id')        
         query = ""
-        if  ckan_root_path and 'sfb1368/ckan' in ckan_root_path:
+        if  sfb.strip() == "1368":
             query = "[[Category:Equipment]]|?hasManufacturer|?hasModel|?depiction"
         else:
             query = "[[Category:Device]]|?HasManufacturer|?HasImage|?HasType"
 
-        return [credential_path, smw_base_url, api_host, query, sfb]
+        return [credential_path, smw_base_url, api_host, query, sfb.strip()]
     
-    
+
 
     @staticmethod
     def get_next_step_redirect(package_name):
