@@ -94,8 +94,8 @@ class Helper():
                 toolkit.get_action('package_update')({},package)
 
         except:
-            # raise 
-            return False
+            raise 
+            # return False
 
         return True
 
@@ -149,11 +149,11 @@ class Helper():
                         
             return machines_list
         
-        return [[], []]
+        return []
     
 
     def get_machine_name(machine_url):
-        machines, images = Helper.get_machines_list()
+        machines = Helper.get_machines_list()
         for machine in machines:
             if machine['value'] == machine_url:
                 return machine['text']

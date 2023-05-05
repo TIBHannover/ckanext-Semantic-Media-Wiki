@@ -1,4 +1,4 @@
-{% set machine_count = resources|length + 10  %}
+{% set machine_count = resources|length + 30 %}
 {% for res in range(machine_count) %}
     <input type="hidden" name="machine_count" value="{{machine_count}}">
     <input type="hidden"  name={{ 'machine_name_' ~ (loop.index + offset) }} id={{ 'machine_name_' ~ (loop.index + offset) }} > 

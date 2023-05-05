@@ -43,7 +43,7 @@
             <div class="col-sm-11">
                 <h4>{{_('Please select an Equipment:')}}</h4>   
                 <select name={{'machine_link' ~ loop.index}} id={{'machines_dropdown_' ~ loop.index}} class="machine_dropdown" >
-                    {% for machine in machines_list %}
+                    {% for machine in machines_list %}                        
                         {% if key == machine.value %}
                             <option value={{machine.value}} image={{machine.image}} selected>
                                 {{machine.text}}                  
