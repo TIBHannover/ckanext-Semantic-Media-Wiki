@@ -70,4 +70,4 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
     
     def get_helpers(self):
         return {'get_smw_link': MediaWikiController.get_smw_endpoints,
-        'is_enabled': Common.check_plugin_enabled}
+        'check_plugin_enabled': Common.check_plugin_enabled}
