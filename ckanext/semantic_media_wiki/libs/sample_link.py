@@ -197,20 +197,12 @@ class SampleLinkHelper():
 
 
     @staticmethod
-    def get_api_config():
-        credential_path = '/etc/ckan/default/credentials/smw1153.txt'
-        smw_base_url = "https://service.tib.eu/sfb1153/wiki/"
-        api_host = "service.tib.eu/sfb1153"
-        query = "[[Category:Samples]]"
-        sfb = "1153"
-        ckan_root_path = toolkit.config.get('ckan.root_path')
-        if  ckan_root_path and 'sfb1368/ckan' in ckan_root_path:
-            credential_path = '/etc/ckan/default/credentials/smw1368.txt'
-            smw_base_url = "https://service.tib.eu/sfb1368/wiki/"
-            api_host = "service.tib.eu/sfb1368"
-            query = "[[Category:Samples]]"
-            sfb = "1368"
-
+    def get_api_config():                        
+        query = "[[Category:Samples]]"        
+        credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
+        smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
+        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
+        sfb = toolkit.config.get('ckanext.crc.project.id')                 
         return [credential_path, smw_base_url, api_host, query, sfb]
 
 
