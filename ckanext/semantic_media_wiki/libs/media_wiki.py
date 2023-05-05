@@ -42,7 +42,7 @@ class Helper():
             for i in range(1, resources_len + 1):
                 link = request.form.get('machine_link' + str(i))
                 if link == '0':
-                    machine_name = None
+                    continue
                 machine_name = request.form.get('machine_name_' + str(i))
                 if not machine_name or machine_name == '':
                     machine_name = Helper.get_machine_name(link)

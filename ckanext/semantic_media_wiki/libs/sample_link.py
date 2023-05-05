@@ -67,7 +67,7 @@ class SampleLinkHelper():
             for i in range(1, resources_len):
                 link = request.form.get('sample_link' + str(i))
                 if link == '0':
-                    sample_name = None
+                   continue
                 sample_name = request.form.get('sample_name_' + str(i))
                 if not sample_name or sample_name != 'noPicked':
                     sample_name = SampleLinkHelper.get_sample_name(link)
