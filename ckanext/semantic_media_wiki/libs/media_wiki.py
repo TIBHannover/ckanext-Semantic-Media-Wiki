@@ -175,6 +175,7 @@ class Helper():
 
         return [credential_path, smw_base_url, api_host, query, sfb]
     
+    
 
     @staticmethod
     def get_next_step_redirect(package_name):

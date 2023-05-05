@@ -54,6 +54,12 @@ These plugins need the following variables provided in `ckan.ini`
 
 
         ckanext.crc.project.id="CRC_Project_ID"
+
+        ckanext.mediaWiki_credentials_path=""
+        
+        ckanext.smw.baseUrl=""
+
+        ckanext.smw.mediaWiki.api.endpont=""
         
         ckanext.smw.equipment.endpoint=""
         
