@@ -68,9 +68,7 @@ class SampleLinkHelper():
                 link = request.form.get('sample_link' + str(i))
                 if link == '0':
                    continue
-                sample_name = request.form.get('sample_name_' + str(i))
-                if not sample_name or sample_name != 'noPicked':
-                    sample_name = SampleLinkHelper.get_sample_name(link)
+                sample_name = request.form.get('sample_name_' + str(i))                
                 resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))
                 updated_at = _time.now()
                 for entry in resources_checkbox_list:
