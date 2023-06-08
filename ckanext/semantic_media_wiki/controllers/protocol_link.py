@@ -72,5 +72,24 @@ class ProtocolLinkController():
         except:
             # raise
             return toolkit.abort(404, "Not Found")
+    
 
+
+    @staticmethod
+    def unlink_protocols():
+        try:
+            dataset_id = request.form.get('dataset_id')
+            Common.abort_if_dataset_editing_not_permit(dataset_id)
+            selectedProtocols = request.form.getlist('protocol_list')
+            for name in selectedProtocols:
+                db_object = DatasetProtocolLink(dataset_id=dataset_id)
+                protocol_link_obj = db_object.get_by_protocol_name(name=name)
+                if protocol_link_obj:
+                    protocol_link_obj.delete()
+                    protocol_link_obj.commit()
+                    
+            return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
+        except:
+            raise
+            # return toolkit.abort(404, "Not Found")
 

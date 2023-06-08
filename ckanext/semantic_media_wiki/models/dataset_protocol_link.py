@@ -41,6 +41,20 @@ class DatasetProtocolLink(domain_object.DomainObject):
         query = query.autoflush(autoflush)
         record = query
         return record
+    
+
+    @classmethod
+    def get_by_protocol_name(cls, name, autoflush=True):
+        if not id:
+            return None
+
+        exists = meta.Session.query(cls).filter(cls.protocol_name==name).first() is not None
+        if not exists:
+            return False
+        query = meta.Session.query(cls).filter(cls.protocol_name==name)
+        query = query.autoflush(autoflush)
+        record = query
+        return record
 
     
     def get_resource(self):
