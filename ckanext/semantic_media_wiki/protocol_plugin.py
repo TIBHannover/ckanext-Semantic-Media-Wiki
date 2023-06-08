@@ -45,7 +45,15 @@ class ProtocolLinkPlugin(plugins.SingletonPlugin):
             u'get_protocol',
             ProtocolLinkController.get_protocol_link,
             methods=['GET']
-            )                
+            )
+
+
+        blueprint.add_url_rule(
+            u'/smw/edit_protocol_view/<dataset_id>',
+            u'edit_protocol_view',
+            ProtocolLinkController.protocol_edit_view,
+            methods=['GET']
+            )                  
         
 
         return blueprint

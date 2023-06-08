@@ -1,0 +1,18 @@
+{% extends "package/edit_base.html" %}
+{% import 'macros/form.html' as input_object %}
+
+{% block styles %}
+  {{ super() }}
+  {% asset 'ckanext-protocol-link/dataset-protocol-css' %}
+{% endblock styles %}
+
+
+{% block primary_content_inner %}
+    delete
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% asset 'ckanext-protocol-link/dataset-protocol-js' %}
+{% endblock %}
