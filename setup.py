@@ -86,6 +86,7 @@ setup(
         [ckan.plugins]
         machine_link=ckanext.semantic_media_wiki.machine_plugin:SemanticMediaWikiPlugin
         sample_link=ckanext.semantic_media_wiki.sample_plugin:SampleLinkPlugin
+        protocol_link=ckanext.semantic_media_wiki.protocol_plugin:ProtocolLinkPlugin
 
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan
