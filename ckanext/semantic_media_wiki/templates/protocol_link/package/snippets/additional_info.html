@@ -1,0 +1,14 @@
+{% ckan_extends %}
+
+{% block package_additional_info %}
+    {# {% asset 'ckanext-semantic-media-wiki/machines-name-view-css' %} #}
+    {# {% asset 'ckanext-semantic-media-wiki/dataset-machines-js' %} #}
+    <tr>
+        <th scope="row" class="dataset-label">{{ _("Protocol") }}</th>
+
+        <td class="dataset-details" id="protocolRowInTable">
+            <input id="dataset_protocol_link" type="hidden" class="base_url" value="{{ h.url_for('protocol_link.get_protocol', dataset_id=pkg_dict['id'], _external=True)}}"> 
+        </td>
+    </tr>
+    {{ super() }}
+{% endblock  %}
