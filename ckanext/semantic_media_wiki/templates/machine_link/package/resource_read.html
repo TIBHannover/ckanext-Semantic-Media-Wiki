@@ -2,7 +2,7 @@
 
 {% block resource_read_url %}    
     {{ super() }}
-    {% if not h.is_enabled("sfb_layout")%}
+    {% if not h.check_plugin_enabled("sfb_layout")%}
         {% asset 'ckanext-semantic-media-wiki/resource-machine-js' %}
         {% set resource_id = resource['id']  %}
         {% set dest_url = h.url_for('machine_link.get_resource_machine', id=resource_id, _external=True) %}
