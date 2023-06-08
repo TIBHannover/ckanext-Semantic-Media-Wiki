@@ -1,7 +1,8 @@
 {% import 'macros/form.html' as macro %}
 {% set action = h.url_for('protocol_link.save_protocol', _external=True) %}
- {# {% asset 'ckanext-dataset-reference/publication-add-reference-css' %} #}
- {# {% asset 'ckanext-dataset-reference/publication-add-reference-js' %}  #}
+{% asset 'ckanext-protocol-link/dataset-protocol-css' %}
+{% asset 'ckanext-protocol-link/dataset-protocol-js' %}
+
 
 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
 

@@ -1,0 +1,18 @@
+dataset-protocol-css:
+  output: ckanext-protocol-link/%(version)s_my.css
+  contents:
+    - dataset_protocol.css
+
+
+dataset-protocol-js:  
+  output: ckanext-protocol-link/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
+      - vendor/jquery.ui.core
+      - vendor/select2
+  contents:
+    - dataset_protocol.js

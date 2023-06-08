@@ -17,7 +17,7 @@ class ProtocolLinkPlugin(plugins.SingletonPlugin):
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates/protocol_link')
         toolkit.add_public_directory(config_, 'public')
-        # toolkit.add_resource('public/statics/sample_link', 'ckanext-sample-link')
+        toolkit.add_resource('public/statics/protocol_link', 'ckanext-protocol-link')
     
 
 
