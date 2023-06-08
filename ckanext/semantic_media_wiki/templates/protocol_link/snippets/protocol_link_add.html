@@ -1,25 +1,38 @@
 {% import 'macros/form.html' as macro %}
- {# {% set action = h.url_for('dataset_reference.save_doi', _external=True) %}
- {% set action2 = h.url_for('dataset_reference.add_publication_manually', package_name=pkg_dict.name,  _external=True) %}
- {% asset 'ckanext-dataset-reference/publication-add-reference-css' %}
- {% asset 'ckanext-dataset-reference/publication-add-reference-js' %} #}
+{% set action = h.url_for('protocol_link.save_protocol', _external=True) %}
+ {# {% asset 'ckanext-dataset-reference/publication-add-reference-css' %} #}
+ {# {% asset 'ckanext-dataset-reference/publication-add-reference-js' %}  #}
 
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">{{_('Link Protocol')}}</button>
-{# <input type="hidden" id="doi-validity-url" value={{h.url_for('dataset_reference.doi_is_valid', _external=True)}}>
-<input type="hidden" id="bibtex-validity-url" value={{h.url_for('dataset_reference.bibtex_is_valid', _external=True)}}> #}
+<button type="button" class="btn btn-default" data-toggle="modal" data-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
 
-<div id="myModal" class="modal fade" role="dialog">
+<div id="protocolModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        {# <h4 class="modal-title">{{_('Add a reference to this dataset')}}</h4> #}
+        <h3 class="modal-title">{{_('Link a Protocol to this dataset')}}</h3>
       </div>
       <div class="modal-body">  
-        
+        <form id="protocol-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
+            {{ macro.input('protocol_name', 
+              id='protocol_name', 
+              label=_('Protocol Name'),                          
+              classes=['control-medium'] ,
+              placeholder="Dataset Protocol Name is")
+            }}
+
+            {{ macro.input('protocol_url', 
+              id='protocol_url', 
+              label=_('Protocol URL'),                          
+              classes=['control-medium'] ,
+              placeholder="https://service.tib.eu/sfb1368/wiki/MyProtocol")
+            }}
+            <input type="hidden" name="dataset_id" value={{pkg_dict.id}}>                             
       </div>
       <div class="modal-footer">
-      
+        <button id="protocol_link_btn" class="btn btn-success" type="submit">{{_('Link')}}</button>        
+        </form> 
+        <button id="protocol_link_close_btn" type="button" class="btn btn-default pull-left" data-dismiss="modal">{{_('Cancel')}}</button>        
       </div>
     </div>
 
