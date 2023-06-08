@@ -3,6 +3,8 @@
 from flask import request, redirect
 from datetime import datetime as _time
 import ckan.lib.helpers as h
+import ckan.plugins.toolkit as toolkit
+import json
 from ckanext.semantic_media_wiki.models.dataset_protocol_link import DatasetProtocolLink
 
 
@@ -21,10 +23,10 @@ class ProtocolLinkController():
             protocol_url = request.form.get('protocol_url')
             protocol_name = request.form.get('protocol_name')
             created_at = _time.now()
-            updated_at = create_at
+            updated_at = created_at            
             db_model = DatasetProtocolLink(
-                    dataset_id==dataset_id, 
-                    protocol_url==protocol_url, 
+                    dataset_id=dataset_id, 
+                    protocol_url=protocol_url, 
                     protocol_name=protocol_name, 
                     created_at=created_at, 
                     updated_at=updated_at
@@ -33,6 +35,7 @@ class ProtocolLinkController():
             return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
 
         except:
+            # raise
             return toolkit.abort(500, "Server issue")
     
 
@@ -41,10 +44,14 @@ class ProtocolLinkController():
     @staticmethod
     def get_protocol_link(dataset_id):
         try:
-            db_object = DatasetProtocolLink(dataset_id==dataset_id)
+            db_object = DatasetProtocolLink(dataset_id=dataset_id)
             protocol_link_obj = db_object.get_by_dataset(id=dataset_id)
-            return protocol_link_obj
+            protocols = {}
+            for res in protocol_link_obj:
+                protocols[res.protocol_name] = res.protocol_url
+            return json.dumps(protocols)
         except:
-            return {}
+            # raise
+            return json.dumps({})
 
 
