@@ -7,7 +7,7 @@
         <th scope="row" class="dataset-label">{{ _("Equipment(s)") }}</th>
 
         <td class="dataset-details" id="machinesTableRow">
-            <input id="dataset_id_for_machine" type="hidden" class="base_url" value="{{ h.url_for('semantic_media_wiki.get_machine_link', id=pkg_dict['id'], _external=True)}}">                                     
+            <input id="dataset_id_for_machine" type="hidden" class="base_url" value="{{ h.url_for('machine_link.get_machine_link', id=pkg_dict['id'], _external=True)}}">                                     
         </td>
     </tr>
     {{ super() }}

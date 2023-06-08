@@ -84,8 +84,8 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points='''
         [ckan.plugins]
-        semantic_media_wiki=ckanext.semantic_media_wiki.plugin:SemanticMediaWikiPlugin
-        sample_link=ckanext.semantic_media_wiki.plugin2:SampleLinkPlugin
+        machine_link=ckanext.semantic_media_wiki.machine_plugin:SemanticMediaWikiPlugin
+        sample_link=ckanext.semantic_media_wiki.sample_plugin:SampleLinkPlugin
 
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan

@@ -5,7 +5,7 @@
     {% if not h.is_enabled("sfb_layout")%}
         {% asset 'ckanext-semantic-media-wiki/resource-machine-js' %}
         {% set resource_id = resource['id']  %}
-        {% set dest_url = h.url_for('semantic_media_wiki.get_resource_machine', id=resource_id, _external=True) %}
+        {% set dest_url = h.url_for('machine_link.get_resource_machine', id=resource_id, _external=True) %}
         <input type="hidden" id="get_link_url" value='{{dest_url}}'>
         
         <div id="machine_link_box">
