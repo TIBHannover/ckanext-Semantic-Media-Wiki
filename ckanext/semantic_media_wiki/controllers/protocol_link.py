@@ -34,5 +34,17 @@ class ProtocolLinkController():
 
         except:
             return toolkit.abort(500, "Server issue")
-
     
+
+
+
+    @staticmethod
+    def get_protocol_link(dataset_id):
+        try:
+            db_object = DatasetProtocolLink(dataset_id==dataset_id)
+            protocol_link_obj = db_object.get_by_dataset(id=dataset_id)
+            return protocol_link_obj
+        except:
+            return {}
+
+

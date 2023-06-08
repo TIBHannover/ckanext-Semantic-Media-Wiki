@@ -31,6 +31,20 @@ class ProtocolLinkPlugin(plugins.SingletonPlugin):
             u'protocol_index',
             ProtocolLinkController.index,
             methods=['GET']
+            )  
+
+        blueprint.add_url_rule(
+            u'/smw/save_protocol',
+            u'save_protocol',
+            ProtocolLinkController.save_protocol_link,
+            methods=['POST']
+            )  
+
+        blueprint.add_url_rule(
+            u'/smw/get_protocol/<dataset_id>',
+            u'get_protocol',
+            ProtocolLinkController.get_protocol_link,
+            methods=['GET']
             )                
         
 
