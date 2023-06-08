@@ -53,7 +53,14 @@ class ProtocolLinkPlugin(plugins.SingletonPlugin):
             u'edit_protocol_view',
             ProtocolLinkController.protocol_edit_view,
             methods=['GET']
-            )                  
+            )
+
+        blueprint.add_url_rule(
+            u'/smw/unlink_protocol',
+            u'unlink_protocol',
+            ProtocolLinkController.unlink_protocols,
+            methods=['POST']
+            )                    
         
 
         return blueprint
