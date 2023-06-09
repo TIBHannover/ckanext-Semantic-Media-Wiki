@@ -13,6 +13,13 @@
         <div class="col-sm-12">
             <h3>You unlink Protocol(s) Here. Please Select the ones you like to unlink.</h3>
             <br>
+            {% if not protocols.vars %}
+                <div class="alert alert-info text-justify">
+                    <p>
+                        {{_('There is no Protocol linked to this dataset.')}}
+                    </p>
+                </div>
+            {% endif %}
             <form id="protocol-edit-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
                 {% for prot, link in protocols.items() %}
                       <label class="checkbox-container" value="{{prot}}" >{{prot}}
@@ -28,7 +35,9 @@
         </div>
         <div class="row">
           <div class="col-sm-12 text-center">
-              <button id="protocol_link_btn" class="btn btn-danger" type="submit">{{_('Unlink')}}</button>
+              {% if protocols.vars %}
+                <button id="protocol_link_btn" class="btn btn-danger" type="submit">{{_('Unlink')}}</button>
+              {% endif %}
               </form>
           </div>
         </div>    

@@ -49,6 +49,8 @@ class ProtocolLinkController():
             package = toolkit.get_action('package_show')({}, {'name_or_id': dataset_id})
             db_object = DatasetProtocolLink(dataset_id=dataset_id)
             protocol_link_obj = db_object.get_by_dataset(id=dataset_id)
+            if not protocol_link_obj:
+                return json.dumps({})
             protocols = {}
             for res in protocol_link_obj:
                 protocols[res.protocol_name] = res.protocol_url
@@ -62,16 +64,19 @@ class ProtocolLinkController():
     @staticmethod
     def protocol_edit_view(dataset_id):
         try:
+            Common.abort_if_dataset_editing_not_permit(dataset_id)
             package = toolkit.get_action('package_show')({}, {'name_or_id': dataset_id})
             db_object = DatasetProtocolLink(dataset_id=dataset_id)
             protocol_link_obj = db_object.get_by_dataset(id=dataset_id)
+            if not protocol_link_obj:
+                return render_template('edit_protocols.html', protocols={}, pkg_dict=package)    
             protocols = {}
             for res in protocol_link_obj:
                 protocols[res.protocol_name] = res.protocol_url
             return render_template('edit_protocols.html', protocols=protocols, pkg_dict=package)
         except:
             # raise
-            return toolkit.abort(404, "Not Found")
+            return toolkit.abort(403, "bad request")
     
 
 
