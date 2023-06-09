@@ -10,6 +10,10 @@
     display: none;
 }
 
+#protocol_add_alert_box{
+  display: none;
+}
+
 
 .checkbox-container {
     display: block;

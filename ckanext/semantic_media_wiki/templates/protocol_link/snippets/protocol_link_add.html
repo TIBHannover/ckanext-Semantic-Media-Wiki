@@ -1,7 +1,7 @@
 {% import 'macros/form.html' as macro %}
 {% set action = h.url_for('protocol_link.save_protocol', _external=True) %}
 {% asset 'ckanext-protocol-link/dataset-protocol-css' %}
-{% asset 'ckanext-protocol-link/dataset-protocol-js' %}
+{% asset 'ckanext-protocol-link/dataset-protocol-control-js' %}
 
 
 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
@@ -13,18 +13,27 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h3 class="modal-title">{{_('Link a Protocol to this dataset')}}</h3>
       </div>
-      <div class="modal-body">  
-        <form id="protocol-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
+      <div class="modal-body">
+        <div class="row" id="protocol_add_alert_box">
+            <div class="col-sm-12">
+                <div class="alert alert-danger text-justify">
+                    <p>
+                        {{_('These field(s) are mandatory.')}}
+                    </p>
+                </div>
+            </div>
+        </div>  
+        <form id="protocol-add-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
             {{ macro.input('protocol_name', 
-              id='protocol_name', 
+              id='protocol_name',                          
               label=_('Protocol Name'),                          
               classes=['control-medium'] ,
               placeholder="Dataset Protocol Name is")
             }}
 
             {{ macro.input('protocol_url', 
-              id='protocol_url', 
-              label=_('Protocol URL'),                          
+              id='protocol_url',               
+              label=_('Protocol URL'),    
               classes=['control-medium'] ,
               placeholder="https://service.tib.eu/sfb1368/wiki/MyProtocol")
             }}

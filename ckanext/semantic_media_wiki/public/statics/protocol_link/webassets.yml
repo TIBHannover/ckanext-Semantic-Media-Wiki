@@ -12,7 +12,21 @@ dataset-protocol-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
+      - vendor/jquery.ui.core     
+  contents:
+    - dataset_protocol.js
+
+
+dataset-protocol-control-js:  
+  output: ckanext-protocol-link/%(version)s_my.js
+  extra:
+    preload:
+      - base/main
+      - vendor/vendor
+      - vendor/bootstrap
+      - vendor/jquery
       - vendor/jquery.ui.core
       - vendor/select2
   contents:
-    - dataset_protocol.js
+    - control.js
+

@@ -91,6 +91,6 @@ class ProtocolLinkController():
                     
             return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
         except:
-            raise
-            # return toolkit.abort(404, "Not Found")
+            # raise
+            return toolkit.abort(500, "Server Issue")
 
