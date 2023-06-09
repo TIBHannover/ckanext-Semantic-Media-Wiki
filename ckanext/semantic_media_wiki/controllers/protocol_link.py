@@ -69,7 +69,7 @@ class ProtocolLinkController():
             db_object = DatasetProtocolLink(dataset_id=dataset_id)
             protocol_link_obj = db_object.get_by_dataset(id=dataset_id)
             if not protocol_link_obj:
-                return render_template('edit_protocols.html', protocols={}, pkg_dict=package)    
+                return render_template('edit_protocols.html', protocols=False, pkg_dict=package)    
             protocols = {}
             for res in protocol_link_obj:
                 protocols[res.protocol_name] = res.protocol_url
