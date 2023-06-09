@@ -85,8 +85,9 @@ class ProtocolLinkController():
                 db_object = DatasetProtocolLink(dataset_id=dataset_id)
                 protocol_link_obj = db_object.get_by_protocol_name(name=name)
                 if protocol_link_obj:
-                    protocol_link_obj.delete()
-                    protocol_link_obj.commit()
+                    for record in protocol_link_obj:
+                        record.delete()
+                        record.commit()
                     
             return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
         except:

@@ -8,9 +8,29 @@
 
 
 {% block primary_content_inner %}
+    {% set action = h.url_for('protocol_link.unlink_protocol', _external=True) %}
     <div class="row">
         <div class="col-sm-12">
-            
+            <h3>You unlink Protocol(s) Here. Please Select the ones you like to unlink.</h3>
+            <br>
+            <form id="protocol-edit-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
+                {% for prot, link in protocols.items() %}
+                      <label class="checkbox-container" value="{{prot}}" >{{prot}}
+                        <input type="checkbox" 
+                          class="protocol-box"
+                          name="protocol_list"
+                          value="{{prot}}" 
+                          >
+                        <span class="checkmark"></span>
+                      </label>
+                {% endfor %}
+                <input type="hidden" name="dataset_id" value={{pkg_dict.id}}>            
+        </div>
+        <div class="row">
+          <div class="col-sm-12 text-center">
+              <button id="protocol_link_btn" class="btn btn-danger" type="submit">{{_('Unlink')}}</button>
+              </form>
+          </div>
         </div>    
     </div>
 
