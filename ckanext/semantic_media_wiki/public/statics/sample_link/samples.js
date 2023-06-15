@@ -151,5 +151,9 @@ $(document).ready(function(){
       $('#sample-save-btn-spinner').css("display","inline-block");
     });
 
+    $('#sample-form').submit(function(e){
+      $('#next-step-loadin-animation').css('display', 'inline-block');            
+    });
+
     
 });

@@ -140,7 +140,7 @@ $(document).ready(function(){
 
     $('#machine-form').submit(function(e){
       $('#next-step-loadin-animation').css('display', 'inline-block');      
-  });
+    });
 
     
 });
