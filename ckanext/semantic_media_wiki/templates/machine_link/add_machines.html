@@ -58,7 +58,7 @@
         <a class="btn btn-danger pull-left" href="{{dest_url}}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this dataset?') }}">{{ _('Cancel & Delete Dataset') }}</a>        
       {% endif %}
       <button class="btn btn-default" name="save_btn" value="go-dataset-veiw" type="submit">{{ _('I add it later') }}</button>
-      <button class="btn btn-primary" name="save_btn" value="finish_machine" type="submit">{{ _('Save') }}</button>
+      <button class="btn btn-primary" name="save_btn" value="finish_machine" type="submit"><i class="fa fa-spinner fa-spin" id="next-step-loadin-animation"></i>{{ _('Save') }}</button>
     </div>      
   </form>
   

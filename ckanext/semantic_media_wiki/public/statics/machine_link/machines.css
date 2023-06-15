@@ -128,3 +128,8 @@
 .select2-results {
   max-height: 400px !important;
 }
+
+.fa.fa-spinner.fa-spin{
+  font-size: 14px;
+  display: none;
+}

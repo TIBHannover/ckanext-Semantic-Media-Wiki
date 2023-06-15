@@ -137,5 +137,10 @@ $(document).ready(function(){
       $('#resourcesModal' + id).modal('show'); 
     });
 
+
+    $('#machine-form').submit(function(e){
+      $('#next-step-loadin-animation').css('display', 'inline-block');      
+  });
+
     
 });

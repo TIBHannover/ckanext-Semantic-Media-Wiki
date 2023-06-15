@@ -135,3 +135,8 @@
 #sample-save-btn-spinner{
   display: none;
 }
+
+.fa.fa-spinner.fa-spin{
+  font-size: 14px;
+  display: none;
+}
