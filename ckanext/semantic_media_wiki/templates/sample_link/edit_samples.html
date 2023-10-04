@@ -27,7 +27,7 @@
                 chosen_resources=value,
                 the_sample=key 
             %}
-            <div class="col-sm-11">
+            <div class="col-sm-5">
                 <h4>{{_('Please select a Sample:')}}</h4>   
                 <select name={{'sample_link' ~ loop.index}} id={{'samples_dropdown_' ~ loop.index}} class="sample_dropdown" >
                     {% for sample in samples_list %}
@@ -44,18 +44,20 @@
                     <br>
                 </select>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-3 sample-action-area">
+                {% snippet 'snippets/sample_link_resource_count.html', 
+                    custom_class='sample-alert-box-edit',
+                    default_count=value|length,
+                    Id=loop.index
+                %}                
+            </div>
+            <div class="col-sm-3">
                 {% if loop.index > 1 %}
                     <a href="#" class="sample-remove-anchor" id={{ 'sample-remove-anchor' ~ loop.index }}>
                     <i class="fa fa-minus-circle remove-sample-icon"></i>
                     </a>
-                {% endif %}
-            </div>
-            {% snippet 'snippets/sample_link_resource_count.html', 
-                custom_class='sample-alert-box-edit',
-                default_count=value|length,
-                Id=loop.index
-            %} 
+                {% endif %} 
+            </div>            
         </div>
     {% endfor %}
     {% snippet 'snippets/sample_link_samples_dropdown.html', 

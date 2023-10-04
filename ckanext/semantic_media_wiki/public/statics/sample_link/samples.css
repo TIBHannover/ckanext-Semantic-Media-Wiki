@@ -1,6 +1,6 @@
 .sample-box{
     display: none;
-    margin-bottom: 15px;
+    padding: -10px;    
 }
 
 .checkbox-container {
@@ -99,10 +99,8 @@
 }
 
 .sample-alert-box-edit{
-  padding: 5px !important;
-  margin-top: 70px;
-  margin-left: 10px;
-  width: 50%;
+  padding: 2px !important;
+  margin-top: 40px;    
   text-align: center;
 }
 
@@ -110,7 +108,7 @@
 .remove-sample-icon{
   color: red;
   font-size: 35px !important;
-  margin-top: 50%;
+  margin-top: 40px;
 }
 
 .resource_count_edit{
@@ -139,4 +137,8 @@
 .fa.fa-spinner.fa-spin{
   font-size: 14px;
   display: none;
+}
+
+.sample-action-area{
+  display: inline-block !important;
 }
