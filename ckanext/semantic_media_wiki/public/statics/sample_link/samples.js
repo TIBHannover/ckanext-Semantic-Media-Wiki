@@ -73,6 +73,7 @@ $(document).ready(function(){
         $('#select-all-resources-' + id).click();
       }
       $('#sample_resource_count-' + id).text('0');
+      $('#sample_resource_count-message-box_' + id).parent().hide();
       $('#sample_resource_count-message-box_' + id).hide();
       $('#sample_box_id_' + id).fadeOut();
       $('#samples_dropdown_' + id).select2('val', '0');
@@ -121,10 +122,12 @@ $(document).ready(function(){
         }
         if(resourceCount !== 0){
           $('#sample_resource_count-' + id).text(resourceCount);
+          $('#sample_resource_count-message-box_' + id).parent().show();
           $('#sample_resource_count-message-box_' + id).show();
         }
         else{
           $('#sample_resource_count-' + id).text(0);
+          $('#sample_resource_count-message-box_' + id).parent().hide();
           $('#sample_resource_count-message-box_' + id).hide();
           $("#samples_dropdown_" + id).select2("val", "0"); // none selected
         }

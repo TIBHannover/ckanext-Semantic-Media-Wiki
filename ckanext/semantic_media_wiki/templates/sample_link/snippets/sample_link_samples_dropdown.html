@@ -8,7 +8,7 @@
             counter=(loop.index + offset),
             chosen_resources=value 
         %}
-        <div class="col-sm-11">
+        <div class="col-sm-5">
             <h4>{{_('Please select a Sample:')}}</h4>   
             <select name={{'sample_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
             {% for sample in samples %}           
@@ -18,17 +18,19 @@
             {% endfor %}
             </select>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-3 sample-alert-box-column">
+            {% snippet 'snippets/sample_link_resource_count.html', 
+                custom_class='sample-alert-box',
+                default_count=0,
+                Id=loop.index + offset
+            %}
+        </div>  
+        <div class="col-sm-3">
         {% if (loop.index + offset) > 1 %}
             <a href="#" class="sample-remove-anchor" id={{ 'sample-remove-anchor' ~ (loop.index + offset) }}>
                 <i class="fa fa-minus-circle remove-sample-icon"></i>
             </a>
         {% endif %}
-        </div>
-        {% snippet 'snippets/sample_link_resource_count.html', 
-            custom_class='sample-alert-box',
-            default_count=0,
-            Id=loop.index + offset
-        %}
+        </div>              
     </div>
 {% endfor %}

@@ -91,10 +91,12 @@
 
 .sample-alert-box{
   padding: 5px !important;
-  margin-top: 70px;
-  margin-left: 10px;
-  width: 50%;
-  text-align: center;
+  margin-top: 40px;
+  margin-left: 10px;  
+  text-align: center;  
+}
+
+.sample-alert-box-column{
   display: none;
 }
 
