@@ -102,11 +102,11 @@ class SampleLinkController():
         for resource in package['resources']:
             urls = SampleLinkHelper.get_sample_link(resource['id'])
             for name, url in urls.items(): 
-                if url not in resource_sample_data.keys():
-                    resource_sample_data[url] = [resource['id']]
-                    sample_link_name[url] = name
-                else:
+                try:
                     resource_sample_data[url].append(resource['id'])
+                except KeyError:
+                    resource_sample_data[url] = [resource['id']]
+                    sample_link_name[url] = name                                    
 
         return render_template('edit_samples.html', 
             pkg_dict=package, 
