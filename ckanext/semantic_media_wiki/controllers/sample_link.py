@@ -81,6 +81,7 @@ class SampleLinkController():
 
         if len(results) == 0:
             return '0'
+        results = sorted(results, key=lambda x:x[0])
         return json.dumps(results)
 
 
@@ -89,6 +90,7 @@ class SampleLinkController():
         urls = SampleLinkHelper.get_sample_link(id)
         if len(urls.keys()) == 0:
             return '0'
+        urls = {sample_name:urls[sample_name] for sample_name in sorted(urls)}
         return json.dumps(urls)
 
 
@@ -108,6 +110,7 @@ class SampleLinkController():
                     resource_sample_data[url] = [resource['id']]
                     sample_link_name[url] = name                                    
 
+        resource_sample_data = {sample_url:resource_sample_data[sample_url] for sample_url in sorted(resource_sample_data)}
         return render_template('edit_samples.html', 
             pkg_dict=package, 
             samples_list=samples, 
@@ -142,5 +145,6 @@ class SampleLinkController():
         urls = SampleLinkHelper.get_sample_link(resourec_id)
         if len(urls.keys()) == 0:
             return {}
+        urls = {sample_name:urls[sample_name] for sample_name in sorted(urls)}
         return urls
     
