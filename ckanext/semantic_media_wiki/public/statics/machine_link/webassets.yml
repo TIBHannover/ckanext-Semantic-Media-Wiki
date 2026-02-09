@@ -57,5 +57,5 @@ machine-image-modal-js:
       - vendor/jquery
       - vendor/jquery.ui.core
       - vendor/select2
-  contents:
-    - machine_image_modal.js
+#  contents:
+#    - machine_image_modal.js
