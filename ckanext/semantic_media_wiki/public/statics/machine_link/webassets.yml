@@ -16,8 +16,6 @@ machines-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - machines.js
   
@@ -29,8 +27,6 @@ resource-machine-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - resource_machine.js
   
@@ -42,8 +38,6 @@ dataset-machines-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - dataset_machines.js
 
@@ -55,7 +49,5 @@ machine-image-modal-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - machine_image_modal.js

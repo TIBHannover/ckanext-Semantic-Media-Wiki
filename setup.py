@@ -23,7 +23,7 @@ setup(
     long_description_content_type="text/markdown",
 
     # The project's main homepage.
-    url='https://github.com//ckanext-Semantic-Media-Wiki',
+    url='https://github.com/TIBHannover/ckanext-Semantic-Media-Wiki',
 
     # Author details
     author='''Pooya Oladazimi''',
@@ -45,7 +45,9 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
 
 

@@ -45,7 +45,7 @@ class DatasetProtocolLink(domain_object.DomainObject):
 
     @classmethod
     def get_by_protocol_name(cls, name, autoflush=True):
-        if not id:
+        if not name:
             return None
 
         exists = meta.Session.query(cls).filter(cls.protocol_name==name).first() is not None
@@ -54,6 +54,20 @@ class DatasetProtocolLink(domain_object.DomainObject):
         record = meta.Session.query(cls).filter(cls.protocol_name==name)
         record = record.autoflush(autoflush)        
         return record 
+
+    @classmethod
+    def get_by_dataset_protocol_name(cls, dataset_id, name, autoflush=True):
+        if not dataset_id or not name:
+            return None
+
+        query = meta.Session.query(cls).filter(
+            cls.dataset_id == dataset_id,
+            cls.protocol_name == name,
+        )
+        query = query.autoflush(autoflush)
+        if query.first() is None:
+            return False
+        return query
 
     
     def get_resource(self):
@@ -65,12 +79,11 @@ meta.mapper(
     DatasetProtocolLink,
     dataset_protocol_link_table,
     properties={
-        u"package": orm.relation(
+        u"package": orm.relationship(
             Package, backref=orm.backref(u"dataset_protocol_link", cascade=u"all, delete, delete-orphan")
         )
     },
 )
-
 
 
 

@@ -6,6 +6,10 @@ from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 import ckan.lib.helpers as h
 import json
 from ckanext.semantic_media_wiki.libs.commons import Common
+from werkzeug.exceptions import HTTPException
+import logging
+
+log = logging.getLogger(__name__)
 
 
 
@@ -31,10 +35,13 @@ class SampleLinkController():
             return toolkit.abort(403, "bad request")
         
         try:
+            sample_count = int(sample_count)
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
 
-        except:
+        except toolkit.ObjectNotFound:
             return toolkit.abort(400, "Package not found") 
+        except (TypeError, ValueError):
+            return toolkit.abort(400, "bad request")
         
         Common.abort_if_dataset_editing_not_permit(package['id'])                       
         action = request.form.get('save_btn')
@@ -42,7 +49,7 @@ class SampleLinkController():
             return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
         
         if action == 'finish_machine':
-            result = SampleLinkHelper.add_sample_links(request, int(sample_count))
+            result = SampleLinkHelper.add_sample_links(request, sample_count, package)
             if result != False:
                 return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
@@ -75,9 +82,11 @@ class SampleLinkController():
                         temp[0] = link
                         temp[1] = eq_name
                         results.append(temp)
-        except:
-            # raise
+        except toolkit.ObjectNotFound:
             return toolkit.abort(403, "bad request")
+        except Exception as exc:
+            log.exception("Failed to get sample links: %s", exc)
+            return toolkit.abort(500, "Server Issue")
 
         if len(results) == 0:
             return '0'
@@ -124,18 +133,29 @@ class SampleLinkController():
     def edit_save_samples():
         package_name = request.form.get('package')
         sample_count = request.form.get('sample_count')  
-        package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-        Common.abort_if_dataset_editing_not_permit(package['id'])        
-        action = request.form.get('save_btn')
-        if action == 'go-dataset-veiw': # cancel button
-            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
-        
-        if action == 'update_sample':
-            result = SampleLinkHelper.update_resource_sample(request, int(sample_count), package)
-            if result:
-                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
+        try:
+            sample_count = int(sample_count)
+            package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
+            Common.abort_if_dataset_editing_not_permit(package['id'])
+            action = request.form.get('save_btn')
+            if action == 'go-dataset-veiw': # cancel button
+                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
+            
+            if action == 'update_sample':
+                result = SampleLinkHelper.update_resource_sample(request, sample_count, package)
+                if result:
+                    return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
-            return toolkit.abort(500, "Server issue")    
+                return toolkit.abort(500, "Server issue")
+        except HTTPException:
+            raise
+        except toolkit.ObjectNotFound:
+            return toolkit.abort(400, "Package not found")
+        except (TypeError, ValueError):
+            return toolkit.abort(400, "bad request")
+        except Exception as exc:
+            log.exception("Failed to update sample links: %s", exc)
+            return toolkit.abort(500, "Server issue")
 
         return toolkit.abort(403, "bad request")
 

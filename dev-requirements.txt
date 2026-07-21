@@ -1,1 +1,5 @@
 pytest-ckan
+pytest-cov
+factory_boy
+pytest-factoryboy
+WebTest
