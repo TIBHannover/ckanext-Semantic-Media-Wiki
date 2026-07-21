@@ -7,6 +7,10 @@ from sqlalchemy.sql.expression import false
 import json
 import ckan.lib.helpers as h
 from ckanext.semantic_media_wiki.libs.commons import Common
+from werkzeug.exceptions import HTTPException
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class MediaWikiController():
@@ -29,6 +33,7 @@ class MediaWikiController():
         if package_name == None:
             return toolkit.abort(403, "bad request")        
         try:
+            machine_count = int(machine_count)
             package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
             Common.abort_if_dataset_editing_not_permit(package['id'])               
             action = request.form.get('save_btn')
@@ -36,9 +41,17 @@ class MediaWikiController():
                 return Helper.get_next_step_redirect(package_name)
             
             if action == 'finish_machine':
-                Helper.add_machine_links(request, int(machine_count))                
-                return Helper.get_next_step_redirect(package_name)                                        
-        except:
+                if Helper.add_machine_links(request, machine_count, package):
+                    return Helper.get_next_step_redirect(package_name)
+                return toolkit.abort(500, "Server Issue")
+        except HTTPException:
+            raise
+        except toolkit.ObjectNotFound:
+            return toolkit.abort(400, "Package not found")
+        except (TypeError, ValueError):
+            return toolkit.abort(400, "bad request")
+        except Exception as exc:
+            log.exception("Failed to save machine links: %s", exc)
             return toolkit.abort(500, "Server Issue") 
                
         return toolkit.abort(403, "bad request")
@@ -73,18 +86,29 @@ class MediaWikiController():
     def edit_save():
         package_name = request.form.get('package')
         machine_count = request.form.get('machine_count')  
-        package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
-        Common.abort_if_dataset_editing_not_permit(package['id'])
-        action = request.form.get('save_btn')
-        if action == 'go-dataset-veiw': # cancel button
-            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
-        
-        if action == 'update_machine':
-            result = Helper.update_resource_machine(request, int(machine_count), package)
-            if result:
-                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
+        try:
+            machine_count = int(machine_count)
+            package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})
+            Common.abort_if_dataset_editing_not_permit(package['id'])
+            action = request.form.get('save_btn')
+            if action == 'go-dataset-veiw': # cancel button
+                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
+            
+            if action == 'update_machine':
+                result = Helper.update_resource_machine(request, machine_count, package)
+                if result:
+                    return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    
 
-            return toolkit.abort(500, "Server issue")    
+                return toolkit.abort(500, "Server issue")
+        except HTTPException:
+            raise
+        except toolkit.ObjectNotFound:
+            return toolkit.abort(400, "Package not found")
+        except (TypeError, ValueError):
+            return toolkit.abort(400, "bad request")
+        except Exception as exc:
+            log.exception("Failed to update machine links: %s", exc)
+            return toolkit.abort(500, "Server issue")
 
         return toolkit.abort(403, "bad request")
     
@@ -112,9 +136,11 @@ class MediaWikiController():
                         temp[0] = link
                         temp[1] = eq_name
                         results.append(temp)
-        except:
-            # raise
+        except toolkit.ObjectNotFound:
             return toolkit.abort(403, "bad request")
+        except Exception as exc:
+            log.exception("Failed to get machine links: %s", exc)
+            return toolkit.abort(500, "Server Issue")
 
         if len(results) == 0:
             return '0'
@@ -142,6 +168,5 @@ class MediaWikiController():
         return [project_id, machine_endpoint, tools_endpoint]
         
     
-
 
 

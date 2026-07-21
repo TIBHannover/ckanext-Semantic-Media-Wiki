@@ -36,7 +36,7 @@ class ResourceEquipmentLink(domain_object.DomainObject):
         exists = meta.Session.query(cls).filter(cls.resource_id==id, cls.url == machine_url).first() is not None
         if not exists:
             return False
-        query = meta.Session.query(cls).filter(cls.resource_id==id)
+        query = meta.Session.query(cls).filter(cls.resource_id==id, cls.url == machine_url)
         query = query.autoflush(autoflush)
         record = query.first()
         return record
@@ -65,12 +65,11 @@ meta.mapper(
     ResourceEquipmentLink,
     resource_equipment_link_table,
     properties={
-        u"resource": orm.relation(
+        u"resource": orm.relationship(
             Resource, backref=orm.backref(u"resource_equipment_link", cascade=u"all, delete, delete-orphan")
         )
     },
 )
-
 
 
 
