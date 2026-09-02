@@ -1,6 +1,8 @@
 from pprint import pprint
 from mwclient import Site
 from datetime import datetime
+import logging
+log = logging.getLogger(__name__)
 
 class API():
     
@@ -8,7 +10,7 @@ class API():
     password = None
     site = None
     host = ""
-    path = "/wiki/"
+    path = "/wiki-sfb1153/"
     scheme = "https"
     query = ""
     target_sfb = ""
@@ -26,34 +28,45 @@ class API():
             self.image_field = "Image"
         else:
             self.image_field = "depiction"
-    
 
-    def pipeline(self):
+
+    def pipeline(self, offset=0, limit=9999999):
         results = []
         machines_imageUrl = {}
         self.login(self.host, self.path, self.scheme)
-        try:            
-            self.login(self.host, self.path, self.scheme)
-            raw_results = self.site.ask(self.query)                            
-            for answer in raw_results:
-                if not self.sample_query and answer and answer['printouts']:
-                    processed_answer = self.unpack_ask_response(answer) 
-                    results.append(processed_answer)                
-                    if self.image_field in processed_answer.keys():
-                        depiction_page =  processed_answer[self.image_field]
-                        depiction_url = self.mw_getfile_url(filepage=depiction_page)                                        
-                        machines_imageUrl[processed_answer['page']] = depiction_url
+        try:
+            # Build query (use self.query, not self.sample_query which is boolean!)
+            paged_query = f"{self.query}|limit={limit}|offset={offset}"
 
+            # SINGLE HTTP CALL (won’t auto-follow query-continue-offset)
+            data = self.site.raw_api(
+                "ask",
+                query=paged_query,
+                format="json"
+            )
+
+            smw_results = data.get("query", {}).get("results", {})  # dict: page_title -> answer_dict
+            log.debug(smw_results.items())
+
+            for _, answer in smw_results.items():
+                # ----- MODE A: normal behavior (not sample_query) -----
+                if (not self.sample_query) and answer and answer.get("printouts"):
+                    processed_answer = self.unpack_ask_response(answer)
+                    results.append(processed_answer)
+
+                    if self.image_field in processed_answer:
+                        depiction_page = processed_answer[self.image_field]
+                        depiction_url = self.mw_getfile_url(filepage=depiction_page)
+                        machines_imageUrl[processed_answer["page"]] = depiction_url
+
+                # ----- MODE B: sample_query behavior -----
                 elif self.sample_query:
                     answer_unpacked = self.unpack_ask_response(answer)
                     results.append(answer_unpacked)
+            return [results, machines_imageUrl]
 
-
-        except:
+        except Exception:
             return [[], {}]
-            
-        return [results, machines_imageUrl]
-
 
     def login(self, host: str, path: str, scheme: str):
         site_ = Site(host=host, path=path, scheme=scheme)
