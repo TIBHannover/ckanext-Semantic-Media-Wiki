@@ -74,7 +74,8 @@
         </div>
         {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
             custom_class='machine-alert-box-edit',
-            default_count=value|length,
+            chosen_resources=value,
+            resources=pkg_dict['resources'],
             Id=loop.index
         %} 
     {% endfor %}

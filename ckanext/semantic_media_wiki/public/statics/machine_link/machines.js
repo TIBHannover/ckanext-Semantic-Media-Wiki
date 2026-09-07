@@ -29,7 +29,7 @@ $(document).ready(function(){
        */
     $('.machine_dropdown').change(function(){
         let id = $(this).attr('id');
-        id = id[id.length - 1];
+        id = id.match(/\d+$/)[0];
         $('#machine_name_' + id).val($.trim($(this).select2('data').text));   
         $('#modalMachineName' + id).text($.trim($(this).select2('data').text));
         $('#resourcesModal' + id).modal({
@@ -64,7 +64,7 @@ $(document).ready(function(){
      */
     $('.select-all-resources').click(function(){
         let id = $(this).attr('id');
-        id = id[id.length - 1];
+        id = id.match(/\d+$/)[0];
         let checkBoxes = $('.resource-checkbox-input' + id);
         for(let i=0; i < checkBoxes.length; i++){
             if($(checkBoxes[i]).is(':visible')){
@@ -81,20 +81,20 @@ $(document).ready(function(){
      */
     $('.refModalAdd').click(function(){
         let id = $(this).attr('id');
-        id = id[id.length - 1];
+        id = id.match(/\d+$/)[0];
         let boxes = $('.resource-checkbox-input' + id);
-        let resourceCount = 0;
+        let resourceNames = [];
         for (let i=0; i < boxes.length; i++){
             if($(boxes[i]).prop('checked') == true){
-                resourceCount += 1;
+                resourceNames.push($(boxes[i]).attr('data-resource-name'));
             }
         }
-        if(resourceCount !== 0){
-          $('#machine_resource_count-' + id).text(resourceCount);
+        if(resourceNames.length !== 0){
+          $('#machine_resource_names-' + id).text(resourceNames.join(', '));
           $('#machine_resource_count-message-box_' + id).show();
         }
         else{
-          $('#machine_resource_count-' + id).text(0);
+          $('#machine_resource_names-' + id).text('No resource selected');
           $('#machine_resource_count-message-box_' + id).hide();
           $("#machines_dropdown_" + id).select2("val", "0"); // none selected
         }
@@ -106,7 +106,7 @@ $(document).ready(function(){
      */
     $('.machine-remove-anchor').click(function(){
         let id = $(this).attr('id');
-        id = id[id.length - 1];
+        id = id.match(/\d+$/)[0];
         let checkBoxes = $('.resource-checkbox-input' + id);
         for(let i=0; i < checkBoxes.length; i++){
             if($(checkBoxes[i]).prop('checked') == true){
@@ -116,7 +116,7 @@ $(document).ready(function(){
         if($('#select-all-resources-' + id).prop('checked') == true){
           $('#select-all-resources-' + id).click();
         }
-        $('#machine_resource_count-' + id).text('0');
+        $('#machine_resource_names-' + id).text('No resource selected');
         $('#machine_resource_count-message-box_' + id).hide();
         $('#machine_box_id_' + id).fadeOut();
         
@@ -129,7 +129,7 @@ $(document).ready(function(){
 
     $('.resource_count_edit').click(function(){
       let id = $(this).attr('id');
-      id = id[id.length - 1];
+      id = id.match(/\d+$/)[0];
       $('#resourcesModal' + id).modal({
         backdrop: 'static',
         keyboard: false
