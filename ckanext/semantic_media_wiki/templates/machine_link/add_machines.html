@@ -24,6 +24,13 @@
   <p>
     {{_('If you cannot find your Equipment, you can add it via the below button. Please refresh this page 
     if you add a new Equipment.')}}
+      <br>
+      <br><br>
+        <div class="alert alert-warning upload-related-parts" id="file-size-info-box">
+        <p>
+        {{_('Note: An Equipment can be a tool or machine.')}}
+        </p>
+      </div>
     <br><br>
     {% set taget_smw_url = h.get_smw_link() %}
     {% if taget_smw_url[0] == '1368' %}
