@@ -1,4 +1,5 @@
 {% set sample_count = resources|length + 30  %}
+<script type="application/json" id="sample-options">{{ samples|tojson }}</script>
 <input type="hidden" id="sample_count" name="sample_count" value="{{sample_count + offset + 1}}">
 {% for res in range(sample_count) %}
     <input type="hidden"  value="noPicked"  name={{ 'sample_name_' ~ (loop.index + offset) }} id={{ 'sample_name_' ~ (loop.index + offset) }} > 
