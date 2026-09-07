@@ -1,4 +1,6 @@
 # encoding: utf-8
+import logging
+log=logging.getLogger(__name__)
 
 import ckan.plugins.toolkit as toolkit
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -173,7 +175,8 @@ class SampleLinkHelper():
             username = credentials[0].split('=')[1]
             password = credentials[1].split('=')[1]
            
-        except:
+        except Exception:
+            #log.exception("Failed to read credentials from %r", credentials_path)
             return []
         
         api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)
@@ -201,6 +204,7 @@ class SampleLinkHelper():
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
         api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
         sfb = toolkit.config.get('ckanext.crc.project.id')                 
+        log.debug([credential_path, smw_base_url, api_host, query, sfb])
         return [credential_path, smw_base_url, api_host, query, sfb]
 
 
