@@ -1,0 +1,592 @@
+Index: ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><div id={{'resourcesModal' ~ counter}} class=\"modal fade\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title\">Sample: <div id={{'modalSampleName' ~ counter}}></div> </h4>\n      </div>\n      <div class=\"modal-body\">  \n        <b><i>\n          <p>{{_('Please link the data resource(s) to this Sample.')}}</p>\n        </i></b>\n        <label class=\"checkbox-container\">{{_('Select All')}}\n            <input type=\"checkbox\" class=\"select-all-resources\" id={{'select-all-resources-' ~ counter}}>\n            <span class=\"checkmark\"></span>\n        </label>\n          <br>\n        <div class=\"resources-list-box\">\n          {% for res in resources %}\n            {% if res.id in chosen_resources %}\n              <label class=\"checkbox-container\" value={{res.id}} >{{res.name}}\n                <input type=\"checkbox\" \n                  class=\"{{'resource-checkbox-input' ~ counter}}  resource-box\"\n                  name={{'sample_resources_list' ~ counter}} \n                  value={{res.id ~ '@@@' ~ the_machine}}\n                  checked\n                  >\n                <span class=\"checkmark\"></span>\n              </label>\n            {% else: %}\n                <label class=\"checkbox-container\" value={{res.id}} >{{res.name}}\n                  <input type=\"checkbox\" \n                    class=\"{{'resource-checkbox-input' ~ counter}}  resource-box\"\n                    name={{'sample_resources_list' ~ counter}} \n                    value={{res.id}}\n                    >\n                  <span class=\"checkmark\"></span>\n                </label>\n            {% endif %}\n          {% endfor %}\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" id={{'ref_modal_add_btn' ~ counter}} class=\"btn btn-primary refModalAdd\" data-dismiss=\"modal\">{{_('Save')}}</button>\n        <button type=\"button\" id={{'ref_add_close_btn' ~ counter}} type=\"button\" class=\"pull-left btn btn-default refModalClose\" data-dismiss=\"modal\">{{_('Close')}}</button>\n      </div>\n    </div>\n\n  </div>\n</div>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html
+--- a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html	(date 1788775013699)
+@@ -21,7 +21,8 @@
+                 <input type="checkbox" 
+                   class="{{'resource-checkbox-input' ~ counter}}  resource-box"
+                   name={{'sample_resources_list' ~ counter}} 
+-                  value={{res.id ~ '@@@' ~ the_machine}}
++                  value="{{res.id ~ '@@@' ~ the_sample}}"
++                  data-resource-name="{{ res.name or res.url }}"
+                   checked
+                   >
+                 <span class="checkmark"></span>
+@@ -32,6 +33,7 @@
+                     class="{{'resource-checkbox-input' ~ counter}}  resource-box"
+                     name={{'sample_resources_list' ~ counter}} 
+                     value={{res.id}}
++                    data-resource-name="{{ res.name or res.url }}"
+                     >
+                   <span class="checkmark"></span>
+                 </label>
+@@ -46,4 +48,4 @@
+     </div>
+ 
+   </div>
+-</div>
+\ No newline at end of file
++</div>
+Index: ckanext/semantic_media_wiki/controllers/media_wiki.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># encoding: utf-8\n\nimport ckan.plugins.toolkit as toolkit\nfrom flask import render_template, request, redirect\nfrom ckanext.semantic_media_wiki.libs.media_wiki import Helper\nfrom sqlalchemy.sql.expression import false\nimport json\nimport ckan.lib.helpers as h\nfrom ckanext.semantic_media_wiki.libs.commons import Common\n\n\nclass MediaWikiController():\n\n    def render_add_machines_view(id):\n        Common.abort_if_dataset_editing_not_permit(id)\n        package = toolkit.get_action('package_show')({}, {'name_or_id': id})        \n        machines = Helper.get_machines_list()\n        return render_template('add_machines.html', \n            pkg_dict=package, \n            machines_list=machines,\n            custom_stage=True            \n            )\n    \n\n\n    def save_machines():\n        package_name = request.form.get('package')\n        machine_count = request.form.get('machine_count')\n        if package_name == None:\n            return toolkit.abort(403, \"bad request\")        \n        try:\n            package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})\n            Common.abort_if_dataset_editing_not_permit(package['id'])               \n            action = request.form.get('save_btn')\n            if action == 'go-dataset-veiw': # \"I will add it later\" button\n                return Helper.get_next_step_redirect(package_name)\n            \n            if action == 'finish_machine':\n                Helper.add_machine_links(request, int(machine_count))                \n                return Helper.get_next_step_redirect(package_name)                                        \n        except:\n            return toolkit.abort(500, \"Server Issue\") \n               \n        return toolkit.abort(403, \"bad request\")\n    \n\n\n    def edit_machines_view(id):\n        Common.abort_if_dataset_editing_not_permit(id)\n        package = toolkit.get_action('package_show')({}, {'name_or_id': id})\n        machines = Helper.get_machines_list()\n        resource_machine_data = {}\n        machine_link_name = {}\n        for resource in package['resources']:\n            urls = Helper.get_machine_link(resource['id'])\n            for name, url in urls.items(): \n                if url not in resource_machine_data.keys():\n                    resource_machine_data[url] = [resource['id']]\n                    machine_link_name[url] = name\n                else:\n                    resource_machine_data[url].append(resource['id'])\n\n        return render_template('edit_machines.html', \n            pkg_dict=package, \n            machines_list=machines, \n            resource_data=resource_machine_data,            \n            machines_count=len(resource_machine_data.keys()),\n            machine_link_name=machine_link_name\n            )\n    \n\n\n    def edit_save():\n        package_name = request.form.get('package')\n        machine_count = request.form.get('machine_count')  \n        package = toolkit.get_action('package_show')({}, {'name_or_id': package_name})\n        Common.abort_if_dataset_editing_not_permit(package['id'])\n        action = request.form.get('save_btn')\n        if action == 'go-dataset-veiw': # cancel button\n            return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) \n        \n        if action == 'update_machine':\n            result = Helper.update_resource_machine(request, int(machine_count), package)\n            if result:\n                return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True))    \n\n            return toolkit.abort(500, \"Server issue\")    \n\n        return toolkit.abort(403, \"bad request\")\n    \n    \n\n    def get_machine_link(id):\n        if not toolkit.g.user: \n            return toolkit.abort(403, \"You are not authorized to access this function\" )\n                \n        try:\n            package = toolkit.get_action('package_show')({}, {'name_or_id': id})\n            machine_links = []\n            results = []\n            for res in package['resources']:\n                machien_urls = Helper.get_machine_link(res['id'])\n                if len(machien_urls.keys()) == 0:\n                    continue\n                for name, link in machien_urls.items():\n                    if link not in machine_links:\n                        machine_links.append(link)\n                        eq_name = name\n                        if name == '':\n                            eq_name = \"Link to the Equipment\"\n                        temp =  ['', '']\n                        temp[0] = link\n                        temp[1] = eq_name\n                        results.append(temp)\n        except:\n            # raise\n            return toolkit.abort(403, \"bad request\")\n\n        if len(results) == 0:\n            return '0'\n        return json.dumps(results)\n    \n\n\n    def get_resource_machine(id):\n        urls = Helper.get_machine_link(id)\n        if len(urls.keys()) == 0:\n            return '0'\n        return json.dumps(urls)\n    \n\n\n    def get_smw_endpoints():\n        project_id = toolkit.config.get('ckanext.crc.project.id')\n        if project_id == \"1368\":\n            machine_endpoint = toolkit.config.get('ckanext.smw.equipment.endpoint')\n            tools_endpoint = None\n            return [project_id, machine_endpoint, tools_endpoint]\n        \n        machine_endpoint = toolkit.config.get('ckanext.smw.machine.endpoint')\n        tools_endpoint = toolkit.config.get('ckanext.smw.tools.endpoint')\n        return [project_id, machine_endpoint, tools_endpoint]\n        \n    \n\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/controllers/media_wiki.py b/ckanext/semantic_media_wiki/controllers/media_wiki.py
+--- a/ckanext/semantic_media_wiki/controllers/media_wiki.py	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/controllers/media_wiki.py	(date 1788357129477)
+@@ -144,4 +144,3 @@
+     
+ 
+ 
+-
+Index: ckanext/semantic_media_wiki/public/statics/sample_link/samples.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>$(document).ready(function(){\n      $(\".sample_dropdown\").select2();\n    \n      /**\n       * Show the modal when a sample selected\n       * \n       */\n    \n      $('.sample_dropdown').change(function(){         \n          let id = $(this).attr('id');\n          id = id.split(\"samples_dropdown_\")[1];\n          $('#sample_name_' + id).val($.trim($(this).select2('data').text));   \n          $('#modalSampleName' + id).text($.trim($(this).select2('data').text));\n          $('#resourcesModal' + id).modal({\n            backdrop: 'static',\n            keyboard: false\n          });\n          $('#resourcesModal' + id).modal('show');        \n      }); \n\n\n\n    /**\n     * Add another sample selection box\n     * \n     */\n\n    if ($('#isEditMode') && $('#isEditMode').val() == '1'){\n      let sampleCount = $('#existed_samples_dropdown').val();\n      for(let i=1; i <= parseInt(sampleCount); i++){\n        $('#sample_box_id_' + i).show();\n      }\n    }\n    else{\n      $('#sample_box_id_1').show();\n    }\n    $('#add-another-sample-box').click(function(){\n      let all_not_visible = false;\n      let allSampleBoxes = $('.sample-box');      \n      for(let i=1; i <= allSampleBoxes.length; i++){        \n        if ($(allSampleBoxes[i]).is(':hidden')){\n          let prevSelectedId = $(allSampleBoxes[i - 1]).attr('id');\n          let currectId = $(allSampleBoxes[i]).attr('id');                    \n          currectId = currectId.split(\"sample_box_id_\")[1];\n          prevSelectedId = prevSelectedId[prevSelectedId.length - 1];\n          let prevSelect = $('#samples_dropdown_' + prevSelectedId).select2('data');\n          $(\"#samples_dropdown_\" + currectId).select2('data', { id:prevSelect.id, text: prevSelect.text});\n          $(allSampleBoxes[i]).fadeIn();\n          all_not_visible = true;\n          break;\n        }\n      }\n      if(!all_not_visible){\n        $(this).hide();\n      }\n    });\n\n\n    /**\n     * remove sample\n     * \n     */\n     $('.sample-remove-anchor').click(function(){\n      let id = $(this).attr('id');\n      id = id.split(\"sample-remove-anchor\")[1];      \n      let checkBoxes = $('.resource-checkbox-input' + id);\n      for(let i=0; i < checkBoxes.length; i++){\n          if($(checkBoxes[i]).prop('checked') == true){\n            $(checkBoxes[i]).click();\n          }\n      }\n      if($('#select-all-resources-' + id).prop('checked') == true){\n        $('#select-all-resources-' + id).click();\n      }\n      $('#sample_resource_count-' + id).text('0');\n      $('#sample_resource_count-message-box_' + id).parent().hide();\n      $('#sample_resource_count-message-box_' + id).hide();\n      $('#sample_box_id_' + id).fadeOut();\n      $('#samples_dropdown_' + id).select2('val', '0');\n\n      let removedElement = $('#sample_box_id_' + id);\n      id = parseInt(id);\n      for(let i=id + 1; i < $('.sample-box').length; i++ ){\n          if(!$('#sample_box_id_' + i).is(':hidden')){\n            $(removedElement).insertAfter($('#sample_box_id_' + i));\n          }\n      }\n  });\n\n\n    /**\n     * click the select all box\n     * \n     */\n    $('.select-all-resources').click(function(){\n        let id = $(this).attr('id');              \n        id = id.split(\"select-all-resources-\")[1];\n        let checkBoxes = $('.resource-checkbox-input' + id);\n        for(let i=0; i < checkBoxes.length; i++){\n            if($(checkBoxes[i]).is(':visible')){\n              if($(checkBoxes[i]).prop('checked') == !($(this).prop('checked'))){\n                  $(checkBoxes[i]).click();\n              }\n            }\n        }\n    });\n\n\n    /**\n     * Click Add button on a modal\n     * \n     */\n    $('.refModalAdd').click(function(){\n        let id = $(this).attr('id');        \n        id = id.split(\"ref_modal_add_btn\")[1];\n        let boxes = $('.resource-checkbox-input' + id);\n        let resourceCount = 0;\n        for (let i=0; i < boxes.length; i++){\n            if($(boxes[i]).prop('checked') == true){\n                resourceCount += 1;\n            }\n        }\n        if(resourceCount !== 0){\n          $('#sample_resource_count-' + id).text(resourceCount);\n          $('#sample_resource_count-message-box_' + id).parent().show();\n          $('#sample_resource_count-message-box_' + id).show();\n        }\n        else{\n          $('#sample_resource_count-' + id).text(0);\n          $('#sample_resource_count-message-box_' + id).parent().hide();\n          $('#sample_resource_count-message-box_' + id).hide();\n          $(\"#samples_dropdown_\" + id).select2(\"val\", \"0\"); // none selected\n        }\n    });\n\n    \n\n    /**\n     * click the edit mark on the resource count box\n     * \n     */\n\n    $('.resource_count_edit').click(function(){\n      let id = $(this).attr('id');      \n      id = id.split(\"sample_resource_count_edit_\")[1];\n      $('#resourcesModal' + id).modal({\n        backdrop: 'static',\n        keyboard: false\n       });\n      $('#resourcesModal' + id).modal('show'); \n    });\n\n    $('#sample_save_btn').click(function(){\n      $('#sample-save-btn-spinner').css(\"display\",\"inline-block\");\n    });\n\n    $('#sample-form').submit(function(e){\n      $('#next-step-loadin-animation').css('display', 'inline-block');            \n    });\n\n    \n});
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js b/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js
+--- a/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js	(date 1788775548803)
+@@ -1,15 +1,120 @@
+ $(document).ready(function(){
+-      $(".sample_dropdown").select2();
++    // One shared catalog for existing rows, new rows and range endpoints.
++    var blank = $('.sample-box').last();
++    var catalog = SampleRange.catalog(JSON.parse($('#sample-options').text()).map(function (sample) {
++        return {id: sample.value, text: sample.text};
++    }));
++    var insertionAnchor = blank;
++    var rowTemplate = blank.clone();
++    rowTemplate.find('.sample_dropdown').empty();
++    var templateId = blank.attr('id').split('sample_box_id_')[1];
++    var nextId = parseInt($('#sample_count').val(), 10);
++    function initializeSample(input) {
++        input.select2({
++            placeholder: 'None selected', allowClear: true,
++            query: function (query) { query.callback(catalog.query(query.term, query.page)); },
++            initSelection: function (element, callback) {
++                var id = element.val();
++                callback(catalog.byId[id] || {id: id, text: element.data('sample-text') || 'None selected'});
++            }
++        });
++    }
++    $('.sample_dropdown').each(function () { initializeSample($(this)); });
++
++    function newRow(sample) {
++        var id = nextId++;
++        var row = rowTemplate.clone();
++        row.find('*').addBack().each(function () {
++            var element = $(this);
++            ['id', 'name', 'class'].forEach(function (attribute) {
++                var value = element.attr(attribute);
++                if (value) element.attr(attribute, value.split(' ').map(function (token) {
++                    return token.replace(new RegExp(templateId + '$'), id);
++                }).join(' '));
++            });
++        });
++        var select = row.find('.sample_dropdown');
++        var input = $('<input>', {type: 'hidden', id: select.attr('id'), name: select.attr('name'),
++            'class': 'sample_dropdown', style: 'width:100%', value: sample.id});
++        select.replaceWith(input);
++        row.append($('<input>', {type: 'hidden', id: 'sample_name_' + id,
++            name: 'sample_name_' + id, value: sample.text}));
++        insertionAnchor.after(row);
++        insertionAnchor = row;
++        initializeSample(input);
++        $('#modalSampleName' + id).text(sample.text);
++        $('#sample_count').val(nextId);
++        row.show();
++        return row;
++    }
++
++    var from = $('#sample-range-from'), to = $('#sample-range-to');
++    [from, to].forEach(function (field) {
++        field.select2({
++            placeholder: field.data('placeholder'), allowClear: true,
++            query: function (query) {
++                query.callback(catalog.query(query.term, query.page, field === to ? from.val() : null));
++            }
++        });
++    });
++    $('#sample-range-resources').select2();
++    $('#sample-range').prop('hidden', false);
++    from.on('change', function () {
++        to.select2('val', '');
++        $('#sample-range-message').empty();
++    });
++    $('#sample-range-clear').on('click', function () {
++        from.select2('val', '');
++        to.select2('val', '');
++        $('#sample-range-resources').select2('val', []);
++        $('#sample-range-message').empty();
++    });
++    $('#sample-range-add').on('click', function () {
++        var result = catalog.range(from.val(), to.val());
++        var resources = $('#sample-range-resources').val() || [];
++        var message = $('#sample-range-message');
++        var errors = {
++            empty: 'Choose both From and To samples.',
++            unknown: 'Choose samples from the available list.',
++            family: 'Choose samples with the same prefix and a numeric suffix.',
++            reverse: 'To must not come before From in the sample list.'
++        };
++        if (result.error || !resources.length) {
++            message.addClass('text-danger').text(result.error ? errors[result.error] : 'Choose at least one data resource.');
++            return;
++        }
++        var rows = Object.create(null);
++        $('.sample_dropdown').each(function () {
++            if (this.value && this.value !== '0' && !rows[this.value]) rows[this.value] = $(this).closest('.sample-box');
++        });
++        var resourceSet = new Set(resources);
++        result.items.forEach(function (sample) {
++            var row = rows[sample.id] || newRow(sample);
++            rows[sample.id] = row;
++            row.find('.resource-box').each(function () {
++                if (resourceSet.has(this.value.split('@@@')[0])) $(this).prop('checked', true);
++            });
++            row.find('.refModalAdd').trigger('click');
++            row.show();
++        });
++        message.removeClass('text-danger').text(result.items.length + ' samples linked to the selected resources. Save the form to keep these changes.');
++    });
+     
+       /**
+        * Show the modal when a sample selected
+        * 
+        */
+     
+-      $('.sample_dropdown').change(function(){         
++      $('#sample-form').on('change', '.sample_dropdown', function(event){
+           let id = $(this).attr('id');
+           id = id.split("samples_dropdown_")[1];
+-          $('#sample_name_' + id).val($.trim($(this).select2('data').text));   
++          var selected = $(this).select2('data');
++          if (!selected || !selected.id || selected.id === '0') {
++              $('#sample_box_id_' + id).find('.resource-box').prop('checked', false);
++              $('#sample_resource_count-message-box_' + id).hide();
++              return;
++          }
++          $('#sample_name_' + id).val($.trim(selected.text));
+           $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
+           $('#resourcesModal' + id).modal({
+             backdrop: 'static',
+@@ -35,24 +140,12 @@
+       $('#sample_box_id_1').show();
+     }
+     $('#add-another-sample-box').click(function(){
+-      let all_not_visible = false;
+-      let allSampleBoxes = $('.sample-box');      
+-      for(let i=1; i <= allSampleBoxes.length; i++){        
+-        if ($(allSampleBoxes[i]).is(':hidden')){
+-          let prevSelectedId = $(allSampleBoxes[i - 1]).attr('id');
+-          let currectId = $(allSampleBoxes[i]).attr('id');                    
+-          currectId = currectId.split("sample_box_id_")[1];
+-          prevSelectedId = prevSelectedId[prevSelectedId.length - 1];
+-          let prevSelect = $('#samples_dropdown_' + prevSelectedId).select2('data');
+-          $("#samples_dropdown_" + currectId).select2('data', { id:prevSelect.id, text: prevSelect.text});
+-          $(allSampleBoxes[i]).fadeIn();
+-          all_not_visible = true;
+-          break;
+-        }
+-      }
+-      if(!all_not_visible){
+-        $(this).hide();
+-      }
++        var unused = $('.sample-box').filter(function () {
++            var value = $(this).find('.sample_dropdown').val();
++            return $(this).is(':hidden') && (!value || value === '0');
++        }).first();
++        if (unused.length) unused.show();
++        else newRow({id: '0', text: 'None selected'});
+     });
+ 
+ 
+@@ -60,8 +153,9 @@
+      * remove sample
+      * 
+      */
+-     $('.sample-remove-anchor').click(function(){
++     $('#sample-form').on('click', '.sample-remove-anchor', function(event){
+       let id = $(this).attr('id');
++      event.preventDefault();
+       id = id.split("sample-remove-anchor")[1];      
+       let checkBoxes = $('.resource-checkbox-input' + id);
+       for(let i=0; i < checkBoxes.length; i++){
+@@ -72,7 +166,7 @@
+       if($('#select-all-resources-' + id).prop('checked') == true){
+         $('#select-all-resources-' + id).click();
+       }
+-      $('#sample_resource_count-' + id).text('0');
++      $('#sample_resource_names-' + id).text('No resource selected');
+       $('#sample_resource_count-message-box_' + id).parent().hide();
+       $('#sample_resource_count-message-box_' + id).hide();
+       $('#sample_box_id_' + id).fadeOut();
+@@ -92,7 +186,7 @@
+      * click the select all box
+      * 
+      */
+-    $('.select-all-resources').click(function(){
++    $('#sample-form').on('click', '.select-all-resources', function(event){
+         let id = $(this).attr('id');              
+         id = id.split("select-all-resources-")[1];
+         let checkBoxes = $('.resource-checkbox-input' + id);
+@@ -110,23 +204,23 @@
+      * Click Add button on a modal
+      * 
+      */
+-    $('.refModalAdd').click(function(){
++    $('#sample-form').on('click', '.refModalAdd', function(event){
+         let id = $(this).attr('id');        
+         id = id.split("ref_modal_add_btn")[1];
+         let boxes = $('.resource-checkbox-input' + id);
+-        let resourceCount = 0;
++        let resourceNames = [];
+         for (let i=0; i < boxes.length; i++){
+             if($(boxes[i]).prop('checked') == true){
+-                resourceCount += 1;
++                resourceNames.push($(boxes[i]).data('resource-name'));
+             }
+         }
+-        if(resourceCount !== 0){
+-          $('#sample_resource_count-' + id).text(resourceCount);
++        if(resourceNames.length !== 0){
++          $('#sample_resource_names-' + id).text(resourceNames.join(', '));
+           $('#sample_resource_count-message-box_' + id).parent().show();
+           $('#sample_resource_count-message-box_' + id).show();
+         }
+         else{
+-          $('#sample_resource_count-' + id).text(0);
++          $('#sample_resource_names-' + id).text('No resource selected');
+           $('#sample_resource_count-message-box_' + id).parent().hide();
+           $('#sample_resource_count-message-box_' + id).hide();
+           $("#samples_dropdown_" + id).select2("val", "0"); // none selected
+@@ -140,7 +234,7 @@
+      * 
+      */
+ 
+-    $('.resource_count_edit').click(function(){
++    $('#sample-form').on('click', '.resource_count_edit', function(event){
+       let id = $(this).attr('id');      
+       id = id.split("sample_resource_count_edit_")[1];
+       $('#resourcesModal' + id).modal({
+@@ -159,4 +253,4 @@
+     });
+ 
+     
+-});
+\ No newline at end of file
++});
+Index: ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"package/edit_base.html\" %}\n{% import 'macros/form.html' as input_object %}\n\n{% block styles %}\n  {{ super() }}\n  {% asset 'ckanext-sample-link/samples-css' %}\n{% endblock styles %}\n\n\n{% block primary_content_inner %}\n    <p>\n        {{_('Here you can edit the samples linked to your data resources.')}}\n    </p>\n    <hr>\n    {% set action = h.url_for('sample_link.edit_save_samples', _external=True) %}\n    <form id=\"sample-form\" class=\"\" method=\"post\" action='{{action}}' data-module=\"basic-form\" enctype=\"multipart/form-data\"> \n    <input type=\"hidden\" name=\"package\"  value=\"{{pkg_dict['name']}}\">\n    <input type=\"hidden\" name=\"resources_length\" value=\"{{pkg_dict['resources']|length}}\">\n    <input type=\"hidden\" id=\"isEditMode\" value=\"1\">\n    <input type=\"hidden\" id=\"existed_samples_dropdown\" value=\"{{resource_data|length}}\">\n    {% for key, value in resource_data.items() %}\n        <input type=\"hidden\"  name={{ 'sample_name_' ~ loop.index }} id={{ 'sample_name_' ~ loop.index }} value='{{sample_link_name[key]}}'>\n        <div class=\"row sample-box\" id={{'sample_box_id_' ~ loop.index}}>\n            {% snippet 'snippets/sample_link_resources_modal.html', \n                resources=pkg_dict['resources'], \n                counter=loop.index, \n                chosen_resources=value,\n                the_sample=key \n            %}\n            <div class=\"col-sm-5\">\n                <h4>{{_('Please select a Sample:')}}</h4>   \n                <select name={{'sample_link' ~ loop.index}} id={{'samples_dropdown_' ~ loop.index}} class=\"sample_dropdown\" >\n                    {% for sample in samples_list %}\n                        {% if key == sample.value %}\n                            <option value={{sample.value}} selected>\n                                {{sample.text}}                  \n                            </option>\n                        {% else %} \n                            <option value={{sample.value}}>\n                                {{sample.text}}                  \n                            </option>\n                        {% endif %}\n                    {% endfor %}\n                    <br>\n                </select>\n            </div>\n            <div class=\"col-sm-3 sample-action-area\">\n                {% snippet 'snippets/sample_link_resource_count.html', \n                    custom_class='sample-alert-box-edit',\n                    default_count=value|length,\n                    Id=loop.index\n                %}                \n            </div>\n            <div class=\"col-sm-3\">\n                {% if loop.index > 1 %}\n                    <a href=\"#\" class=\"sample-remove-anchor\" id={{ 'sample-remove-anchor' ~ loop.index }}>\n                    <i class=\"fa fa-minus-circle remove-sample-icon\"></i>\n                    </a>\n                {% endif %} \n            </div>            \n        </div>\n    {% endfor %}\n    {% snippet 'snippets/sample_link_samples_dropdown.html', \n        resources=pkg_dict['resources'], \n        samples=samples_list,\n        offset=samples_count\n    %}\n    <br>\n    <button type=\"button\" class=\"btn btn-primary\" id=\"add-another-sample-box\">{{_('+ Another')}}</button>\n    <br><br><br><hr>\n    <div class=\"form-actions\">\n        <button class=\"btn btn-default\" name=\"save_btn\" value=\"go-dataset-veiw\" type=\"submit\">{{ _('Cancel') }}</button>\n        <button class=\"btn btn-primary\" name=\"save_btn\" value=\"update_sample\" type=\"submit\" id=\"sample_save_btn\">\n            {{ _('Update') }} \n            <i id=\"sample-save-btn-spinner\" class=\"fa fa-spinner fa-spin\"></i> \n        </button>\n    </div>      \n  </form>\n\n{% endblock %}\n\n{% block scripts %}\n  {{ super() }}\n  {% asset 'ckanext-sample-link/samples-js' %}\n{% endblock %}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html b/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html
+--- a/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html	(date 1788775548803)
+@@ -18,6 +18,7 @@
+     <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
+     <input type="hidden" id="isEditMode" value="1">
+     <input type="hidden" id="existed_samples_dropdown" value="{{resource_data|length}}">
++    {% snippet 'snippets/sample_link_range.html', resources=pkg_dict['resources'] %}
+     {% for key, value in resource_data.items() %}
+         <input type="hidden"  name={{ 'sample_name_' ~ loop.index }} id={{ 'sample_name_' ~ loop.index }} value='{{sample_link_name[key]}}'>
+         <div class="row sample-box" id={{'sample_box_id_' ~ loop.index}}>
+@@ -29,25 +30,15 @@
+             %}
+             <div class="col-sm-5">
+                 <h4>{{_('Please select a Sample:')}}</h4>   
+-                <select name={{'sample_link' ~ loop.index}} id={{'samples_dropdown_' ~ loop.index}} class="sample_dropdown" >
+-                    {% for sample in samples_list %}
+-                        {% if key == sample.value %}
+-                            <option value={{sample.value}} selected>
+-                                {{sample.text}}                  
+-                            </option>
+-                        {% else %} 
+-                            <option value={{sample.value}}>
+-                                {{sample.text}}                  
+-                            </option>
+-                        {% endif %}
+-                    {% endfor %}
+-                    <br>
+-                </select>
++                <input type="hidden" name="{{'sample_link' ~ loop.index}}"
++                       id="{{'samples_dropdown_' ~ loop.index}}" class="sample_dropdown" style="width:100%"
++                       value="{{ key }}" data-sample-text="{{ sample_link_name[key] }}">
+             </div>
+             <div class="col-sm-3 sample-action-area">
+                 {% snippet 'snippets/sample_link_resource_count.html', 
+                     custom_class='sample-alert-box-edit',
+-                    default_count=value|length,
++                    chosen_resources=value,
++                    resources=pkg_dict['resources'],
+                     Id=loop.index
+                 %}                
+             </div>
+Index: ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>samples-css:\n  output: ckanext-sample-link/%(version)s_my.css\n  contents:\n    - samples.css\n\ndataset-samples-css:\n  output: ckanext-sample-link/%(version)s_my.css\n  contents:\n    - dataset_samples.css\n\n\ndataset-samples-js:  \n  output: ckanext-sample-link/%(version)s_my.js\n  extra:\n    preload:\n      - base/main\n      - vendor/vendor\n      - vendor/bootstrap\n      - vendor/jquery\n      - vendor/jquery.ui.core\n      - vendor/select2\n  contents:\n    - dataset_samples.js\n\n\nsamples-js:  \n  output: ckanext-sample-link/%(version)s_my.js\n  extra:\n    preload:\n      - base/main\n      - vendor/vendor\n      - vendor/bootstrap\n      - vendor/jquery\n      - vendor/jquery.ui.core\n      - vendor/select2\n  contents:\n    - samples.js\n\nresource-sample-js:  \n  output: ckanext-sample-link/%(version)s_my.js\n  extra:\n    preload:\n      - base/main\n      - vendor/vendor\n      - vendor/bootstrap\n      - vendor/jquery\n      - vendor/jquery.ui.core\n      - vendor/select2\n  contents:\n    - resource_sample.js
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml b/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml
+--- a/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml	(date 1788775085187)
+@@ -34,6 +34,7 @@
+       - vendor/jquery.ui.core
+       - vendor/select2
+   contents:
++    - sample_range.js
+     - samples.js
+ 
+ resource-sample-js:  
+Index: ckanext/semantic_media_wiki/libs/sample_link.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># encoding: utf-8\n\nimport ckan.plugins.toolkit as toolkit\nfrom ckanext.semantic_media_wiki.libs.media_wiki_api import API\nfrom urllib import parse\nfrom datetime import datetime as _time\nfrom ckanext.semantic_media_wiki.models.resource_sample_link import ResourceSampleLink\n\n\n\nclass SampleLinkHelper():\n\n    def add_sample_links(request, resources_len):\n        '''\n            Save a sample link in db.\n\n            Arg:\n                - request: the request object\n                - resources_len: number of data resources in the dataset.\n            \n            Return:\n                - boolean\n        '''\n        \n        try:\n            for i in range(1, resources_len):    \n                link = request.form.get('sample_link' + str(i))\n                if link == '0': # not specified\n                    continue            \n                sample_name =request.form.get('sample_name_' + str(i))\n                if not sample_name or sample_name == '':\n                    sample_name = SampleLinkHelper.get_sample_name(link)\n                resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))\n                create_at = _time.now()\n                updated_at = create_at\n                for Id in resources_checkbox_list:\n                    resource_object = ResourceSampleLink(resource_id=Id, \n                        sample_url=link, \n                        sample_name=sample_name, \n                        create_at=create_at, \n                        updated_at=updated_at\n                        )\n                    resource_object.save()\n        except:\n            return False\n            \n        return True\n\n\n\n\n    def update_resource_sample(request, resources_len, package):\n        '''\n            Update a sample link in db.\n\n            Arg:\n                - request: the request object\n                - resources_len: number of data resources in the dataset.\n                - package: target dataset\n            \n            Return:\n                - boolean\n        '''\n        \n        try:\n            already_edited_resources = {}        \n            for i in range(1, resources_len):\n                link = request.form.get('sample_link' + str(i))\n                if link == '0':\n                   continue\n                sample_name = request.form.get('sample_name_' + str(i))                \n                resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))\n                updated_at = _time.now()\n                for entry in resources_checkbox_list:\n                    Id = entry.split('@@@')[0]\n                    if len(entry.split('@@@')) == 2:\n                        old_sample_url = entry.split('@@@')[1]\n                    else:\n                        old_sample_url = ''\n                    resource_record = ResourceSampleLink(resource_id=Id).get_by_resource_sample(id=Id, sample_url=old_sample_url)\n                    if not resource_record:\n                        # resource link does not exist --> add a new one\n                        create_at = _time.now()\n                        updated_at = create_at\n                        resource_object = ResourceSampleLink(Id, link, sample_name, create_at, updated_at)\n                        resource_object.save()\n                        if Id in already_edited_resources.keys():\n                            already_edited_resources[Id].append(link)\n                        else:\n                            already_edited_resources[Id] = [link]\n                        continue\n                                                                                                                 \n                    resource_record.sample_url = link\n                    resource_record.sample_name = sample_name\n                    resource_record.updated_at = updated_at\n                    resource_record.commit()\n                    if Id in already_edited_resources.keys():\n                        already_edited_resources[Id].append(link)\n                    else:\n                        already_edited_resources[Id] = [link]\n                \n                \n                for res in package['resources']:\n                    resource_objects = ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id'])\n                    if resource_objects:\n                        for record in resource_objects:\n                            if record.resource_id not in already_edited_resources.keys():\n                                record.delete()\n                                record.commit()\n                            elif record.sample_url not in already_edited_resources[res['id']]:                                \n                                record.delete()\n                                record.commit()\n            \n            package_extras = []\n            package_extras.append({\"key\": \"sample\", \"value\": \"True\"})\n            package['extras'] = package_extras           \n            toolkit.get_action('package_update')({},package)\n\n        except:\n            # raise \n            return False\n\n        return True\n    \n\n\n\n    def get_sample_name(sample_url):\n        '''\n            Get a sample name from SMW. \n        '''\n\n        samples = SampleLinkHelper.get_samples_list()\n        for sample in samples:\n            if sample['value'] == sample_url:\n                return sample['text']\n\n        return None\n\n\n\n    def get_sample_link(resource_id):\n        '''\n            Get a sample url from DB for a data resource.\n        '''\n\n        res_object = ResourceSampleLink(resource_id=resource_id)\n        results = res_object.get_by_resource(id=resource_id)\n        urls = {}\n        if results:\n            for record in results:\n                if record.sample_url != '0' and record.sample_name != '':\n                    urls[record.sample_name] = record.sample_url\n                elif record.sample_url != '0' and record.sample_name == '':\n                     urls[record.sample_url] = record.sample_url       \n            return urls\n\n        return {}\n\n\n\n\n\n    def get_samples_list():\n        samples = []\n        username = None\n        password = None\n        query = \"\"\n        credentials_path, smw_base_url, api_host, query, sfb = SampleLinkHelper.get_api_config()          \n        try:\n            credentials = open(credentials_path, 'r').read()\n            credentials = credentials.split('\\n')\n            username = credentials[0].split('=')[1]\n            password = credentials[1].split('=')[1]\n           \n        except:\n            return []\n        \n        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)\n        results, _ = api_call.pipeline()\n        if results and len(results) > 0:\n            temp = {}\n            temp['value'] = '0'\n            temp['text'] = 'None selected'\n            samples.append(temp)\n            for samp in results:\n                temp = {}\n                temp['value'] = smw_base_url + parse.quote(samp['page'])\n                temp['text'] = samp['page']\n                samples.append(temp)                        \n            return samples\n        \n        return []\n\n\n\n    @staticmethod\n    def get_api_config():                        \n        query = \"[[Category:Samples]]\"        \n        credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')\n        smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')\n        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        \n        sfb = toolkit.config.get('ckanext.crc.project.id')                 \n        return [credential_path, smw_base_url, api_host, query, sfb]\n\n\n\n    def check_plugin_enabled(plugin_name):\n        plugins = toolkit.config.get(\"ckan.plugins\")\n        if plugin_name in plugins:\n            return True\n        return False
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/libs/sample_link.py b/ckanext/semantic_media_wiki/libs/sample_link.py
+--- a/ckanext/semantic_media_wiki/libs/sample_link.py	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/libs/sample_link.py	(date 1788775318654)
+@@ -10,6 +10,20 @@
+ 
+ class SampleLinkHelper():
+ 
++    @staticmethod
++    def valid_sample_links(request, sample_count, stored=()):
++        """Validate new URLs once per submission, retaining existing edit values."""
++        submitted = {
++            request.form.get('sample_link' + str(i))
++            for i in range(1, sample_count)
++        } - {None, '', '0'}
++        new_links = submitted - set(stored)
++        if not new_links:
++            return True
++        available = {sample['value'] for sample in SampleLinkHelper.get_samples_list()}
++        return new_links <= available
++
++
+     def add_sample_links(request, resources_len):
+         '''
+             Save a sample link in db.
+@@ -23,9 +37,12 @@
+         '''
+         
+         try:
++            if not SampleLinkHelper.valid_sample_links(request, resources_len):
++                return False
++            saved = set()
+             for i in range(1, resources_len):    
+                 link = request.form.get('sample_link' + str(i))
+-                if link == '0': # not specified
++                if not link or link == '0': # not specified
+                     continue            
+                 sample_name =request.form.get('sample_name_' + str(i))
+                 if not sample_name or sample_name == '':
+@@ -34,6 +51,9 @@
+                 create_at = _time.now()
+                 updated_at = create_at
+                 for Id in resources_checkbox_list:
++                    if (Id, link) in saved:
++                        continue
++                    saved.add((Id, link))
+                     resource_object = ResourceSampleLink(resource_id=Id, 
+                         sample_url=link, 
+                         sample_name=sample_name, 
+@@ -63,16 +83,27 @@
+         '''
+         
+         try:
++            stored = {
++                record.sample_url
++                for res in package['resources']
++                for record in (ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id']) or [])
++            }
++            if not SampleLinkHelper.valid_sample_links(request, resources_len, stored):
++                return False
++            saved = set()
+             already_edited_resources = {}        
+             for i in range(1, resources_len):
+                 link = request.form.get('sample_link' + str(i))
+-                if link == '0':
++                if not link or link == '0':
+                    continue
+                 sample_name = request.form.get('sample_name_' + str(i))                
+                 resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))
+                 updated_at = _time.now()
+                 for entry in resources_checkbox_list:
+                     Id = entry.split('@@@')[0]
++                    if (Id, link) in saved:
++                        continue
++                    saved.add((Id, link))
+                     if len(entry.split('@@@')) == 2:
+                         old_sample_url = entry.split('@@@')[1]
+                     else:
+@@ -85,9 +116,9 @@
+                         resource_object = ResourceSampleLink(Id, link, sample_name, create_at, updated_at)
+                         resource_object.save()
+                         if Id in already_edited_resources.keys():
+-                            already_edited_resources[Id].append(link)
++                            already_edited_resources[Id].add(link)
+                         else:
+-                            already_edited_resources[Id] = [link]
++                            already_edited_resources[Id] = {link}
+                         continue
+                                                                                                                  
+                     resource_record.sample_url = link
+@@ -95,22 +126,22 @@
+                     resource_record.updated_at = updated_at
+                     resource_record.commit()
+                     if Id in already_edited_resources.keys():
+-                        already_edited_resources[Id].append(link)
++                        already_edited_resources[Id].add(link)
+                     else:
+-                        already_edited_resources[Id] = [link]
++                        already_edited_resources[Id] = {link}
+                 
+                 
+-                for res in package['resources']:
+-                    resource_objects = ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id'])
+-                    if resource_objects:
+-                        for record in resource_objects:
+-                            if record.resource_id not in already_edited_resources.keys():
+-                                record.delete()
+-                                record.commit()
+-                            elif record.sample_url not in already_edited_resources[res['id']]:                                
+-                                record.delete()
+-                                record.commit()
+-            
++            for res in package['resources']:
++                resource_objects = ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id'])
++                if resource_objects:
++                    for record in resource_objects:
++                        if record.resource_id not in already_edited_resources.keys():
++                            record.delete()
++                            record.commit()
++                        elif record.sample_url not in already_edited_resources[res['id']]:
++                            record.delete()
++                            record.commit()
++
+             package_extras = []
+             package_extras.append({"key": "sample", "value": "True"})
+             package['extras'] = package_extras           
+Index: ckanext/semantic_media_wiki/templates/sample_link/add_samples.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"package/new_resource.html\" %}\n{% import 'macros/form.html' as input_object %}\n\n{% block styles %}\n  {{ super() }}\n  {% asset 'ckanext-sample-link/samples-css' %}\n{% endblock styles %} \n\n{% block breadcrumb_content %}\n  {{ super() }}\n  {% if pkg %}\n    <li class=\"active\"><a href=\"#\">{{ _('Link Samples') }}</a></li>\n  {% endif %}\n{% endblock %}\n\n{% block form %}\n  {% block stages %}        \n      {% if custom_stage %}\n          {{ h.snippet('package/snippets/stages.html', stages=custom_stage, pkg_name=pkg_dict['name']) }}\n      {% endif %}\n  {% endblock %}\n\n  <h3>{{_('Please Select the Samples(s) for this dataset')}}:</h3>\n  <hr>\n  {% set action = h.url_for('sample_link.save_samples', _external=True) %}\n  <form id=\"sample-form\" class=\"\" method=\"post\" action='{{action}}' data-module=\"basic-form\" enctype=\"multipart/form-data\"> \n    <input type=\"hidden\" name=\"package\"  value=\"{{pkg_dict['name']}}\">\n    {% snippet 'snippets/sample_link_samples_dropdown.html', \n        resources=pkg_dict['resources'], \n        samples=samples,\n        offset=0 \n    %}\n    <br>\n    <button type=\"button\" class=\"btn btn-primary\" id=\"add-another-sample-box\">{{_('+ Another')}}</button>\n    <br><br><br><hr>\n    <div class=\"form-actions\">\n        {% if h.check_plugin_enabled('cancel_dataset_creation') %} \n        {% set dest_url = h.url_for('cancel_dataset_creation.cancel_dataset', package_id=pkg_dict['id'], is_draft=0, _external=True) %}\n        <a class=\"btn btn-danger pull-left\" href=\"{{dest_url}}\" data-module=\"confirm-action\" data-module-content=\"{{ _('Are you sure you want to delete this dataset?') }}\">{{ _('Cancel & Delete Dataset') }}</a>        \n      {% endif %}\n      <button class=\"btn btn-default\" name=\"save_btn\" value=\"go-dataset-veiw\" type=\"submit\">{{ _('I add it later') }}</button>\n      <button class=\"btn btn-primary\" name=\"save_btn\" value=\"finish_machine\" type=\"submit\"><i class=\"fa fa-spinner fa-spin\" id=\"next-step-loadin-animation\"></i>{{ _('Save') }}</button>\n    </div>      \n  </form>\n  \n{% endblock %}\n\n{% block scripts %}\n  {{ super() }}\n  {% asset 'ckanext-sample-link/samples-js' %}\n{% endblock %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html b/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html
+--- a/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html	(date 1788775013207)
+@@ -25,6 +25,7 @@
+   {% set action = h.url_for('sample_link.save_samples', _external=True) %}
+   <form id="sample-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
++    {% snippet 'snippets/sample_link_range.html', resources=pkg_dict['resources'] %}
+     {% snippet 'snippets/sample_link_samples_dropdown.html', 
+         resources=pkg_dict['resources'], 
+         samples=samples,
+@@ -48,4 +49,4 @@
+ {% block scripts %}
+   {{ super() }}
+   {% asset 'ckanext-sample-link/samples-js' %}
+-{% endblock %}
+\ No newline at end of file
++{% endblock %}
+Index: ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><div id={{ 'sample_resource_count-message-box_' ~ Id }} class=\"{{custom_class}} alert alert-success\">\n    <span  id={{ 'sample_resource_count-' ~ Id }}>{{default_count}}</span> &nbsp; resource(s)\n    <i class=\"fa fa-edit resource_count_edit\" id={{ 'sample_resource_count_edit_' ~ Id }}></i>\n</div>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html
+--- a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html	(date 1788351379963)
+@@ -1,4 +1,12 @@
+ <div id={{ 'sample_resource_count-message-box_' ~ Id }} class="{{custom_class}} alert alert-success">
+-    <span  id={{ 'sample_resource_count-' ~ Id }}>{{default_count}}</span> &nbsp; resource(s)
++    <span id={{ 'sample_resource_names-' ~ Id }}>
++      {%- if chosen_resources and resources -%}
++        {%- for resource in resources if resource.id in chosen_resources -%}
++          {{- resource.name or resource.url -}}{{- ', ' if not loop.last else '' -}}
++        {%- endfor -%}
++      {%- else -%}
++        {{- _('No resource selected') -}}
++      {%- endif -%}
++    </span>
+     <i class="fa fa-edit resource_count_edit" id={{ 'sample_resource_count_edit_' ~ Id }}></i>
+-</div>
+\ No newline at end of file
++</div>
+Index: ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% set sample_count = resources|length + 30  %}\n{% for res in range(sample_count) %}\n    <input type=\"hidden\" id=\"sample_count\" name=\"sample_count\" value=\"{{sample_count}}\">\n    <input type=\"hidden\"  value=\"noPicked\"  name={{ 'sample_name_' ~ (loop.index + offset) }} id={{ 'sample_name_' ~ (loop.index + offset) }} > \n    <div class=\"row sample-box\" id={{'sample_box_id_' ~ (loop.index + offset)}}>\n        {% snippet 'snippets/sample_link_resources_modal.html', \n            resources=resources, \n            counter=(loop.index + offset),\n            chosen_resources=value \n        %}\n        <div class=\"col-sm-5\">\n            <h4>{{_('Please select a Sample:')}}</h4>   \n            <select name={{'sample_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class=\"sample_dropdown\" >\n            {% for sample in samples %}           \n                <option value={{sample.value}}>\n                {{sample.text}} \n                </option>\n            {% endfor %}\n            </select>\n        </div>\n        <div class=\"col-sm-3 sample-alert-box-column\">\n            {% snippet 'snippets/sample_link_resource_count.html', \n                custom_class='sample-alert-box',\n                default_count=0,\n                Id=loop.index + offset\n            %}\n        </div>  \n        <div class=\"col-sm-3\">\n        {% if (loop.index + offset) > 1 %}\n            <a href=\"#\" class=\"sample-remove-anchor\" id={{ 'sample-remove-anchor' ~ (loop.index + offset) }}>\n                <i class=\"fa fa-minus-circle remove-sample-icon\"></i>\n            </a>\n        {% endif %}\n        </div>              \n    </div>\n{% endfor %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html
+--- a/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html	(revision 56f94ee470e14f7abbd1b5b5f3117d4986ef2fda)
++++ b/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html	(date 1788775548803)
+@@ -1,27 +1,24 @@
++<script id="sample-options" type="application/json">{{ samples|tojson }}</script>
+ {% set sample_count = resources|length + 30  %}
++<input type="hidden" id="sample_count" name="sample_count" value="{{sample_count + offset + 1}}">
+ {% for res in range(sample_count) %}
+-    <input type="hidden" id="sample_count" name="sample_count" value="{{sample_count}}">
+     <input type="hidden"  value="noPicked"  name={{ 'sample_name_' ~ (loop.index + offset) }} id={{ 'sample_name_' ~ (loop.index + offset) }} > 
+     <div class="row sample-box" id={{'sample_box_id_' ~ (loop.index + offset)}}>
+         {% snippet 'snippets/sample_link_resources_modal.html', 
+             resources=resources, 
+             counter=(loop.index + offset),
+-            chosen_resources=value 
++            chosen_resources=[]
+         %}
+         <div class="col-sm-5">
+             <h4>{{_('Please select a Sample:')}}</h4>   
+-            <select name={{'sample_link' ~ (loop.index + offset)}} id={{'samples_dropdown_' ~ (loop.index + offset)}} class="sample_dropdown" >
+-            {% for sample in samples %}           
+-                <option value={{sample.value}}>
+-                {{sample.text}} 
+-                </option>
+-            {% endfor %}
+-            </select>
++            <input type="hidden" name="{{'sample_link' ~ (loop.index + offset)}}"
++                   id="{{'samples_dropdown_' ~ (loop.index + offset)}}" class="sample_dropdown" style="width:100%" value="0">
+         </div>
+         <div class="col-sm-3 sample-alert-box-column">
+             {% snippet 'snippets/sample_link_resource_count.html', 
+                 custom_class='sample-alert-box',
+-                default_count=0,
++                chosen_resources=[],
++                resources=resources,
+                 Id=loop.index + offset
+             %}
+         </div>  
+@@ -33,4 +30,4 @@
+         {% endif %}
+         </div>              
+     </div>
+-{% endfor %}
+\ No newline at end of file
++{% endfor %}

@@ -1,0 +1,27 @@
+<fieldset id="sample-range" hidden>
+  <legend>{{ _('Select sample range') }}</legend>
+  <p class="help-block">{{ _('Use endpoints with the same prefix. Ranges follow the sample list order and include only available samples.') }}</p>
+  <div class="row">
+    <div class="col-sm-6 form-group">
+      <label for="sample-range-from">{{ _('From') }}</label>
+      <input type="hidden" id="sample-range-from" style="width:100%" data-placeholder="{{ _('From sample') }}">
+    </div>
+    <div class="col-sm-6 form-group">
+      <label for="sample-range-to">{{ _('To') }}</label>
+      <input type="hidden" id="sample-range-to" style="width:100%" data-placeholder="{{ _('To sample') }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="sample-range-resources">{{ _('Link every sample in this range to') }}</label>
+    <select id="sample-range-resources" multiple style="width:100%">
+      {% for resource in resources %}
+        <option value="{{ resource.id }}">{{ resource.name or resource.url }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="button" class="btn btn-primary" id="sample-range-add">{{ _('Add range') }}</button>
+  <button type="button" class="btn btn-default" id="sample-range-clear">{{ _('Clear range') }}</button>
+  <p id="sample-range-message" class="help-block" role="status" aria-live="polite"></p>
+  <hr>
+</fieldset>
+<h4>{{ _('Select individual samples') }}</h4>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b7ef0421-73a0-463b-a0b4-ed7b3e9c284f" name="Changes" comment="add: text note">
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/controllers/media_wiki.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/controllers/media_wiki.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/libs/sample_link.py" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/libs/sample_link.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/public/statics/sample_link/samples.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/public/statics/sample_link/webassets.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/machine_link/add_machines.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/machine_link/add_machines.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/machine_link/edit_machines.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/machine_link/edit_machines.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/add_samples.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/edit_samples.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resource_count.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_resources_modal.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html" beforeDir="false" afterPath="$PROJECT_DIR$/ckanext/semantic_media_wiki/templates/sample_link/snippets/sample_link_samples_dropdown.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="107" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="sfb1153_new_api" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;bhavin2897&quot;
+  }
+}</component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/TIBHannover/ckanext-Semantic-Media-Wiki.git&quot;,
+    &quot;accountId&quot;: &quot;849dcb34-4f2c-4d7e-bd9c-4840c703f903&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000226205459644" />
+      <entry key="S2" value="1.1152356116802598" />
+      <entry key="S5" value="1.6382996115661705" />
+      <entry key="S10" value="2.1297679114507395" />
+      <entry key="S30" value="2.653260481479329" />
+      <entry key="S60" value="2.818379736070362" />
+      <entry key="M2" value="2.9070278040876194" />
+      <entry key="M5" value="2.962373944194822" />
+      <entry key="M10" value="3.014812361606294" />
+      <entry key="M15" value="3.226503028766106" />
+      <entry key="M30" value="4.687729481154953" />
+      <entry key="H1" value="7.505571945733605" />
+      <entry key="H2" value="10.354016684205545" />
+      <entry key="H4" value="12.394270619326072" />
+      <entry key="D1" value="14.520270409682244" />
+      <entry key="W1" value="14.930263769842295" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.004100455795402608" />
+      <entry key="MS500" value="0.33310373693544054" />
+      <entry key="S2" value="0.8480148419736048" />
+      <entry key="S5" value="1.4663540877203278" />
+      <entry key="S10" value="2.013491632957252" />
+      <entry key="S30" value="2.603527660263224" />
+      <entry key="S60" value="2.7917608388306867" />
+      <entry key="M2" value="2.8932459158745503" />
+      <entry key="M5" value="2.9567431094285026" />
+      <entry key="M10" value="3.0119729882900694" />
+      <entry key="M15" value="3.224589846279544" />
+      <entry key="M30" value="4.686714757281238" />
+      <entry key="H1" value="7.5050099620344835" />
+      <entry key="H2" value="10.353708212073244" />
+      <entry key="H4" value="12.394106554979139" />
+      <entry key="D1" value="14.520241359802707" />
+      <entry key="W1" value="14.930259572877755" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="39QO9N5xuU19SHFdU30H4SwP6yT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "sfb1153__new__api",
+    "last_opened_file_path": "/home/katabathunib/trr375/extensions/ckanext-Semantic-Media-Wiki",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="ckanext-Semantic-Media-Wiki" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="ckanext-Semantic-Media-Wiki" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <module name="ckanext-Semantic-Media-Wiki" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-821f704e66d9-5bd6d13a2a75-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-262.9437.214" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b7ef0421-73a0-463b-a0b4-ed7b3e9c284f" name="Changes" comment="" />
+      <created>1770624676364</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770624676364</updated>
+    </task>
+    <task id="LOCAL-00001" summary="refactor: Changes based on new API for SMW SFB 1153">
+      <option name="closed" value="true" />
+      <created>1770653708299</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1770653708299</updated>
+    </task>
+    <task id="LOCAL-00002" summary="chore: migrate to CKAN 2.10">
+      <option name="closed" value="true" />
+      <created>1784629032602</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1784629032602</updated>
+    </task>
+    <task id="LOCAL-00003" summary="chore: migrate to CKAN 2.10">
+      <option name="closed" value="true" />
+      <created>1784629660854</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1784629660854</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add: text note">
+      <option name="closed" value="true" />
+      <created>1788776654680</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1788776654680</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor: Changes based on new API for SMW SFB 1153" />
+    <MESSAGE value="chore: migrate to CKAN 2.10" />
+    <MESSAGE value="add: text note" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: text note" />
+  </component>
+</project>

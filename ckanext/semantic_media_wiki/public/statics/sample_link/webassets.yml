@@ -34,6 +34,7 @@ samples-js:
       - vendor/jquery.ui.core
       - vendor/select2
   contents:
+    - sample_range.js
     - samples.js
 
 resource-sample-js:  
