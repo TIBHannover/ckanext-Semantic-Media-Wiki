@@ -5,10 +5,38 @@ Tests for the ckanext-semantic-media-wiki extension.
 
 '''
 
+import logging
+from pathlib import Path
+
 import pytest
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from os import path
 from ckanext.semantic_media_wiki.tests.libs import TestHelper
+
+
+ASSET_ROOT = Path(__file__).parents[1] / "public" / "statics"
+
+
+def test_webassets_do_not_reference_obsolete_jquery_ui_bundle():
+    for webassets_file in ASSET_ROOT.rglob("webassets.yml"):
+        assert "vendor/jquery.ui.core" not in webassets_file.read_text()
+
+
+@pytest.mark.ckan_config(
+    "ckan.plugins", "machine_link sample_link protocol_link"
+)
+@pytest.mark.ckan_config("SECRET_KEY", "test_secret")
+@pytest.mark.usefixtures("with_plugins")
+def test_affected_asset_bundle_includes_without_unknown_assets(app, caplog):
+    from ckan.lib.webassets_tools import include_asset
+
+    caplog.set_level(logging.ERROR, logger="ckan.lib.webassets_tools")
+
+    with app.flask_app.test_request_context("/"):
+        include_asset("ckanext-protocol-link/dataset-protocol-js")
+
+    assert "Trying to include unknown asset" not in caplog.text
+    assert "vendor/jquery.ui.core" not in caplog.text
 
 @pytest.mark.usefixtures('with_plugins', 'with_request_context')
 class TestMediaWiki(object):
