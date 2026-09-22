@@ -29,7 +29,7 @@ class API():
     password = None
     site = None
     host = ""
-    path = "/wiki/"
+    path = "/wiki-sfb1153/"
     scheme = "https"
     query = ""
     target_sfb = ""
@@ -68,9 +68,11 @@ class API():
                 format="json"
             )
 
-            smw_results = data.get("query", {}).get("results", {})
+            smw_results = data.get("query", {}).get("results", {})  # dict: page_title -> answer_dict
+            log.debug(smw_results.items())
 
             for _, answer in smw_results.items():
+                # ----- MODE A: normal behavior (not sample_query) -----
                 if (not self.sample_query) and answer and answer.get("printouts"):
                     processed_answer = self.unpack_ask_response(answer)
                     results.append(processed_answer)
@@ -80,6 +82,7 @@ class API():
                         depiction_url = self.mw_getfile_url(filepage=depiction_page)
                         machines_imageUrl[processed_answer["page"]] = depiction_url
 
+                # ----- MODE B: sample_query behavior -----
                 elif self.sample_query:
                     answer_unpacked = self.unpack_ask_response(answer)
                     results.append(answer_unpacked)

@@ -151,7 +151,7 @@ class Helper():
             machines_list.append(temp)
             for machine in results:
                 temp = {}
-                temp['value'] = smw_base_url + parse.quote(machine['page'])
+                temp['value'] = smw_base_url.rstrip('/') + '/' + parse.quote(machine['page'])
                 temp['text'] = machine['page']
                 if machine_imageUrl.get( machine['page']):
                     temp['image'] = machine_imageUrl.get( machine['page'])
