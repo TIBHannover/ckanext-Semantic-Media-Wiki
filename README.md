@@ -10,7 +10,9 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-|  2.9 | Yes    |
+| 2.9 | Yes |
+| 2.10 | Yes |
+| 2.11 | CI target |
 | earlier | No |           |
 
 
@@ -31,15 +33,29 @@ To install ckanext-Semantic-Media-Wiki:
         pip install -e .
         pip install -r requirements.txt
 
-3. Add `semantic_media_wiki` and `sample_link` to the `ckan.plugins` setting in your CKAN
+3. Add the required plugin names to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
+   SFB1153 uses:
+
+        ckan.plugins = ... machine_link sample_link
+
+   SFB1368 uses:
+
+        ckan.plugins = ... machine_link protocol_link
+
+   The full extension test configuration loads all three plugins together:
+
+        ckan.plugins = ... machine_link sample_link protocol_link
+
 4. Upgrade the CKAN database to add the plugin table:
 
-        ckan -c /etc/ckan/default/ckan.ini db upgrade -p semantic_media_wiki
+        ckan -c /etc/ckan/default/ckan.ini db upgrade -p machine_link
 
         ckan -c /etc/ckan/default/ckan.ini db upgrade -p sample_link
+
+        ckan -c /etc/ckan/default/ckan.ini db upgrade -p protocol_link
 
 
 4. Restart CKAN and supervisor. For example if you've deployed CKAN with nginx on Ubuntu:
@@ -59,7 +75,13 @@ These plugins need the following variables provided in `ckan.ini`
         
         ckanext.smw.baseUrl=""
 
-        ckanext.smw.mediaWiki.api.endpont=""
+        ckanext.smw.mediaWiki.api.endpoint=""
+
+        ckanext.smw.mediaWiki.path="/wiki/"
+
+        ckanext.smw.mediaWiki.scheme="https"
+
+        ckanext.smw.mediaWiki.timeout=30
         
         ckanext.smw.equipment.endpoint=""
         
@@ -67,12 +89,26 @@ These plugins need the following variables provided in `ckan.ini`
         
         ckanext.smw.tools.endpoint=""
 
+The legacy misspelled key `ckanext.smw.mediaWiki.api.endpont` is still read
+as a fallback, but new configuration should use
+`ckanext.smw.mediaWiki.api.endpoint`.
+
 
 
 ## Tests
 
 To run the tests, do:
 
-    pytest --ckan-ini=test.ini  --disable-pytest-warnings  ckanext/semantic_media_wiki/tests/
+    pytest --ckan-ini=test.ini --disable-warnings ckanext/semantic_media_wiki
 
+The tests mock MediaWiki calls and must not call a real MediaWiki server.
+
+For a later combined docker-ckan integration test with dependent extensions:
+
+* install this extension together with the dependent SFB1153/SFB1368 plugins;
+* enable `machine_link sample_link` for SFB1153;
+* enable `machine_link protocol_link` for SFB1368;
+* provide test-only MediaWiki endpoint/configuration or mocks;
+* verify plugin load order and template interactions with the dependent layout
+  extensions.
 

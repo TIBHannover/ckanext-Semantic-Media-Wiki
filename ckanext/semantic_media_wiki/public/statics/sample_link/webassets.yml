@@ -17,8 +17,6 @@ dataset-samples-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - dataset_samples.js
 
@@ -31,8 +29,6 @@ samples-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - samples.js
 
@@ -44,7 +40,5 @@ resource-sample-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/jquery.ui.core
-      - vendor/select2
   contents:
     - resource_sample.js

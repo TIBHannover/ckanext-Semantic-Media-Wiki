@@ -7,6 +7,10 @@ import ckan.plugins.toolkit as toolkit
 import json
 from ckanext.semantic_media_wiki.models.dataset_protocol_link import DatasetProtocolLink
 from ckanext.semantic_media_wiki.libs.commons import Common
+from werkzeug.exceptions import HTTPException
+import logging
+
+log = logging.getLogger(__name__)
 
 
 
@@ -21,9 +25,13 @@ class ProtocolLinkController():
     def save_protocol_link():
         try:            
             dataset_id = request.form.get('dataset_id')
+            if not dataset_id:
+                return toolkit.abort(400, "bad request")
             Common.abort_if_dataset_editing_not_permit(dataset_id)
             protocol_url = request.form.get('protocol_url')
             protocol_name = request.form.get('protocol_name')
+            if not protocol_url or not protocol_name:
+                return toolkit.abort(400, "bad request")
             created_at = _time.now()
             updated_at = created_at            
             db_model = DatasetProtocolLink(
@@ -36,8 +44,10 @@ class ProtocolLinkController():
             db_model.save()
             return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
 
-        except:
-            # raise
+        except HTTPException:
+            raise
+        except Exception as exc:
+            log.exception("Failed to save protocol link: %s", exc)
             return toolkit.abort(500, "Server issue")
     
 
@@ -55,8 +65,10 @@ class ProtocolLinkController():
             for res in protocol_link_obj:
                 protocols[res.protocol_name] = res.protocol_url
             return json.dumps(protocols)
-        except:
-            # raise
+        except toolkit.ObjectNotFound:
+            return json.dumps({})
+        except Exception as exc:
+            log.exception("Failed to get protocol links: %s", exc)
             return json.dumps({})
 
 
@@ -74,9 +86,13 @@ class ProtocolLinkController():
             for res in protocol_link_obj:
                 protocols[res.protocol_name] = res.protocol_url
             return render_template('edit_protocols.html', protocols=protocols, pkg_dict=package)
-        except:
-            # raise
+        except HTTPException:
+            raise
+        except toolkit.ObjectNotFound:
             return toolkit.abort(403, "bad request")
+        except Exception as exc:
+            log.exception("Failed to render protocol edit view: %s", exc)
+            return toolkit.abort(500, "Server issue")
     
 
 
@@ -84,18 +100,24 @@ class ProtocolLinkController():
     def unlink_protocols():
         try:
             dataset_id = request.form.get('dataset_id')
+            if not dataset_id:
+                return toolkit.abort(400, "bad request")
             Common.abort_if_dataset_editing_not_permit(dataset_id)
             selectedProtocols = request.form.getlist('protocol_list')
             for name in selectedProtocols:
                 db_object = DatasetProtocolLink(dataset_id=dataset_id)
-                protocol_link_obj = db_object.get_by_protocol_name(name=name)
+                protocol_link_obj = db_object.get_by_dataset_protocol_name(
+                    dataset_id=dataset_id,
+                    name=name,
+                )
                 if protocol_link_obj:
                     for record in protocol_link_obj:
                         record.delete()
                         record.commit()
                     
             return redirect(h.url_for('dataset.read', id=str(dataset_id) ,  _external=True))
-        except:
-            # raise
+        except HTTPException:
+            raise
+        except Exception as exc:
+            log.exception("Failed to unlink protocol links: %s", exc)
             return toolkit.abort(500, "Server Issue")
-

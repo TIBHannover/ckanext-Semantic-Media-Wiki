@@ -1,16 +1,20 @@
 # encoding: utf-8
 
 import ckan.plugins.toolkit as toolkit
-from ckanext.semantic_media_wiki.libs.media_wiki_api import API
+from ckanext.semantic_media_wiki.libs.media_wiki_api import API, read_credentials
 from urllib import parse
 from datetime import datetime as _time
 from ckanext.semantic_media_wiki.models.resource_sample_link import ResourceSampleLink
+from ckanext.semantic_media_wiki.libs.commons import Common
+import logging
+
+log = logging.getLogger(__name__)
 
 
 
 class SampleLinkHelper():
 
-    def add_sample_links(request, resources_len):
+    def add_sample_links(request, resources_len, package):
         '''
             Save a sample link in db.
 
@@ -23,7 +27,8 @@ class SampleLinkHelper():
         '''
         
         try:
-            for i in range(1, resources_len):    
+            allowed_resource_ids = {res['id'] for res in package.get('resources', [])}
+            for i in range(1, resources_len + 1):
                 link = request.form.get('sample_link' + str(i))
                 if link == '0': # not specified
                     continue            
@@ -34,6 +39,8 @@ class SampleLinkHelper():
                 create_at = _time.now()
                 updated_at = create_at
                 for Id in resources_checkbox_list:
+                    if Id not in allowed_resource_ids:
+                        continue
                     resource_object = ResourceSampleLink(resource_id=Id, 
                         sample_url=link, 
                         sample_name=sample_name, 
@@ -41,7 +48,8 @@ class SampleLinkHelper():
                         updated_at=updated_at
                         )
                     resource_object.save()
-        except:
+        except Exception as exc:
+            log.exception("Failed to add sample links: %s", exc)
             return False
             
         return True
@@ -63,8 +71,9 @@ class SampleLinkHelper():
         '''
         
         try:
+            allowed_resource_ids = {res['id'] for res in package.get('resources', [])}
             already_edited_resources = {}        
-            for i in range(1, resources_len):
+            for i in range(1, resources_len + 1):
                 link = request.form.get('sample_link' + str(i))
                 if link == '0':
                    continue
@@ -77,6 +86,8 @@ class SampleLinkHelper():
                         old_sample_url = entry.split('@@@')[1]
                     else:
                         old_sample_url = ''
+                    if Id not in allowed_resource_ids:
+                        continue
                     resource_record = ResourceSampleLink(resource_id=Id).get_by_resource_sample(id=Id, sample_url=old_sample_url)
                     if not resource_record:
                         # resource link does not exist --> add a new one
@@ -111,13 +122,10 @@ class SampleLinkHelper():
                                 record.delete()
                                 record.commit()
             
-            package_extras = []
-            package_extras.append({"key": "sample", "value": "True"})
-            package['extras'] = package_extras           
-            toolkit.get_action('package_update')({},package)
+            Common.set_package_extra(package, "sample", "True")
 
-        except:
-            # raise 
+        except Exception as exc:
+            log.exception("Failed to update sample links: %s", exc)
             return False
 
         return True
@@ -166,17 +174,27 @@ class SampleLinkHelper():
         username = None
         password = None
         query = ""
-        credentials_path, smw_base_url, api_host, query, sfb = SampleLinkHelper.get_api_config()          
+        (
+            credentials_path, smw_base_url, api_host, query, sfb,
+            api_path, api_scheme, timeout,
+        ) = SampleLinkHelper.get_api_config()
         try:
-            credentials = open(credentials_path, 'r').read()
-            credentials = credentials.split('\n')
-            username = credentials[0].split('=')[1]
-            password = credentials[1].split('=')[1]
-           
-        except:
+            username, password = read_credentials(credentials_path)
+        except (OSError, IndexError, KeyError, ValueError) as exc:
+            log.warning("MediaWiki credentials could not be read: %s", exc)
             return []
         
-        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)
+        api_call = API(
+            username=username,
+            password=password,
+            query=query,
+            host=api_host,
+            target_sfb=sfb,
+            sample_query=True,
+            path=api_path,
+            scheme=api_scheme,
+            timeout=timeout,
+        )
         results, _ = api_call.pipeline()
         if results and len(results) > 0:
             temp = {}
@@ -199,9 +217,19 @@ class SampleLinkHelper():
         query = "[[Category:Samples]]"        
         credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
-        sfb = toolkit.config.get('ckanext.crc.project.id')                 
-        return [credential_path, smw_base_url, api_host, query, sfb]
+        api_host = (
+            toolkit.config.get('ckanext.smw.mediaWiki.api.endpoint')
+            or toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')
+        )
+        api_path = toolkit.config.get('ckanext.smw.mediaWiki.path', '/wiki/')
+        api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.scheme', 'https')
+        timeout = toolkit.config.get('ckanext.smw.mediaWiki.timeout', 30)
+        try:
+            timeout = float(timeout)
+        except (TypeError, ValueError):
+            timeout = 30
+        sfb = (toolkit.config.get('ckanext.crc.project.id') or '').strip()
+        return [credential_path, smw_base_url, api_host, query, sfb, api_path, api_scheme, timeout]
 
 
 
