@@ -3,6 +3,7 @@
 from unittest.mock import Mock, patch
 
 import pytest
+import requests
 
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 
@@ -20,7 +21,10 @@ class TestMediaWiki:
             assert api.login("example.org", "/wiki/", "https") is True
 
         site_class.assert_called_once_with(
-            host="example.org", path="/wiki/", scheme="https"
+            host="example.org",
+            path="/wiki/",
+            scheme="https",
+            reqs={"timeout": 30},
         )
         site.login.assert_called_once_with(username="username", password="password")
         assert api.site is site
@@ -80,6 +84,8 @@ class TestMediaWiki:
         api = API(None, None, "query", "example.org", "1368")
         api.login = Mock()
         api.site = Mock()
-        api.site.raw_api.side_effect = RuntimeError("service unavailable")
+        api.site.raw_api.side_effect = requests.exceptions.RequestException(
+            "service unavailable"
+        )
 
         assert api.pipeline() == [[], {}]
