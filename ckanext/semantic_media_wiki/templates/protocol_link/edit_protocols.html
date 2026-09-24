@@ -23,6 +23,7 @@
             
             {% else %}
               <form id="protocol-edit-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
+                  {{ h.csrf_input() }}
                   {% for prot, link in protocols.items() %}
                         <label class="checkbox-container" value="{{prot}}" >{{prot}}
                           <input type="checkbox" 

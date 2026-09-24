@@ -1,122 +1,80 @@
-# encoding: utf-8
-
-'''
-Tests for the ckanext-semantic-media-wiki extension.
-
-'''
+from datetime import datetime
+from unittest.mock import Mock, patch
 
 import pytest
+
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
-from os import path
-from ckanext.semantic_media_wiki.tests.libs import TestHelper
-
-@pytest.mark.usefixtures('with_plugins', 'with_request_context')
-class TestMediaWiki(object):
-
-    username = None
-    password = None
-    host_1153 = "service.tib.eu/sfb1153"
-    host_1368 = "service.tib.eu/sfb1368"
-    query = "[[Category:Equipment]]|?hasManufacturer|?hasModel"  # all Equipments (machines and tools)
+from ckanext.semantic_media_wiki.machine_plugin import SemanticMediaWikiPlugin
+from ckanext.semantic_media_wiki.protocol_plugin import ProtocolLinkPlugin
+from ckanext.semantic_media_wiki.sample_plugin import SampleLinkPlugin
 
 
-    def test_APIcredential_exist_1368(self):
-        '''
-            The api needs username and password which has to be 
-            in /etc/ckan/default/credentials/smw1368.txt
-        '''
-        assert path.isdir('/etc/ckan/default/credentials/') == True  ## the directory exists
-        assert path.isfile('/etc/ckan/default/credentials/smw1368.txt') == True  ## the file exists
-        try:
-            credentials = open('/etc/ckan/default/credentials/smw1368.txt', 'r').read()
-            credentials = credentials.split('\n')
-            self.username = credentials[0].split('=')[1]
-            self.password = credentials[1].split('=')[1]
-           
-        except:
-            print("The credential file structure is wrong.")
-            assert False
-        
-        assert True
-    
+def test_api_login_uses_configured_endpoint_and_credentials():
+    site = Mock()
+    with patch("ckanext.semantic_media_wiki.libs.media_wiki_api.Site", return_value=site) as site_cls:
+        api = API("user", "secret", "[[Category:Device]]", "wiki.example", "1153")
+        assert api.login("wiki.example", "/wiki/", "https") is True
 
-    def test_APIcredential_exist_1153(self):
-        '''
-            The api needs username and password which has to be 
-            in /etc/ckan/default/credentials/smw1153.txt
-        '''
-        assert path.isdir('/etc/ckan/default/credentials/') == True  ## the directory exists
-        assert path.isfile('/etc/ckan/default/credentials/smw1153.txt') == True  ## the file exists
-        try:
-            credentials = open('/etc/ckan/default/credentials/smw1153.txt', 'r').read()
-            credentials = credentials.split('\n')
-            self.username = credentials[0].split('=')[1]
-            self.password = credentials[1].split('=')[1]
-           
-        except:
-            print("The credential file structure is wrong.")
-            assert False
-        
-        assert True
+    site_cls.assert_called_once_with(host="wiki.example", path="/wiki/", scheme="https")
+    site.login.assert_called_once_with(username="user", password="secret")
 
 
+def test_pipeline_paginates_query_and_maps_image_url():
+    response = {
+        "query": {
+            "results": {
+                "Machine A": {
+                    "fulltext": "Machine A",
+                    "printouts": {"Image": [{"fulltext": "File:machine.png"}]},
+                }
+            }
+        }
+    }
+    api = API("user", "secret", "[[Category:Device]]", "wiki.example", "1153")
+    api.login = Mock()
+    api.site = Mock()
+    api.site.raw_api.return_value = response
+    api.mw_getfile_url = Mock(return_value="https://wiki.example/machine.png")
 
-    def test_media_wiki_API_call_1368(self):
-        '''
-            Test the mediaWiki 1368 API call 
-        '''
+    results, images = api.pipeline(offset=25, limit=50)
 
-        try:
-            credentials_path, smw_base_url, api_host, query, sfb = TestHelper.get_api_config('1368')
-            credentials = open(credentials_path, 'r').read()
-            credentials = credentials.split('\n')
-            self.username = credentials[0].split('=')[1]
-            self.password = credentials[1].split('=')[1]
-           
-        except:
-            print("The credentials do not exist.")
-            assert False
-        
-        try:
-            api_call = API(username=self.username, password=self.password, query=query, host=api_host, target_sfb=sfb)
-            results, machine_imageUrl = api_call.pipeline()
-        except:
-            print("API call failed.")
-            assert False
-        
-        if not results or len(results) == 0:
-            print("API returns nothing.")
-            assert False
+    api.site.raw_api.assert_called_once_with(
+        "ask", query="[[Category:Device]]|limit=50|offset=25", format="json"
+    )
+    assert results == [{"page": "Machine A", "Image": "File:machine.png"}]
+    assert images == {"Machine A": "https://wiki.example/machine.png"}
 
-        assert True
-    
 
-    def test_media_wiki_API_call_1153(self):
-        '''
-            Test the mediaWiki 1153 API call 
-        '''
+def test_sample_pipeline_keeps_results_without_printouts():
+    api = API("", "", "[[Category:Samples]]", "wiki.example", "1368", sample_query=True)
+    api.login = Mock()
+    api.site = Mock()
+    api.site.raw_api.return_value = {
+        "query": {"results": {"Sample A": {"fulltext": "Sample A", "printouts": {}}}}
+    }
 
-        try:
-            credentials_path, smw_base_url, api_host, query, sfb = TestHelper.get_api_config('1153')
-            credentials = open(credentials_path, 'r').read()
-            credentials = credentials.split('\n')
-            self.username = credentials[0].split('=')[1]
-            self.password = credentials[1].split('=')[1]
-           
-        except:
-            print("The credentials do not exist.")
-            assert False
-        
-        try:
-            api_call = API(username=self.username, password=self.password, query=query, host=api_host, target_sfb=sfb)
-            results, machine_imageUrl = api_call.pipeline()
-        except:
-            print("API call failed.")
-            assert False
-        
-        if not results or len(results) == 0:
-            print("API returns nothing.")
-            assert False
+    results, images = api.pipeline()
 
-        assert True
+    assert results == [{"page": "Sample A"}]
+    assert images == {}
 
+
+def test_unpack_ask_response_converts_timestamps():
+    api = API("", "", "query", "wiki.example", "1368")
+    result = api.unpack_ask_response(
+        {"fulltext": "Page", "printouts": {"Created": [{"timestamp": "0"}]}}
+    )
+
+    assert result == {"page": "Page", "Created": datetime.fromtimestamp(0)}
+
+
+@pytest.mark.parametrize(
+    ("plugin", "route_count"),
+    [
+        (SemanticMediaWikiPlugin, 6),
+        (SampleLinkPlugin, 6),
+        (ProtocolLinkPlugin, 5),
+    ],
+)
+def test_plugins_register_expected_routes(plugin, route_count):
+    assert len(plugin().get_blueprint().deferred_functions) == route_count

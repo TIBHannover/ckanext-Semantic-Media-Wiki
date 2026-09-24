@@ -8,10 +8,10 @@ This CKAN extension includes `semantic_media_wiki` plugin that aim to able users
 
 Compatibility with core CKAN versions:
 
-| CKAN version    | Compatible?   |
-| --------------- | ------------- |
-|  2.9 | Yes    |
-| earlier | No |           |
+| CKAN version | Python | Compatible? |
+| ------------ | ------ | ----------- |
+| 2.10 | 3.8-3.11 | Yes |
+| 2.11 | 3.10-3.12 | Yes |
 
 
 
@@ -31,15 +31,17 @@ To install ckanext-Semantic-Media-Wiki:
         pip install -e .
         pip install -r requirements.txt
 
-3. Add `semantic_media_wiki` and `sample_link` to the `ckan.plugins` setting in your CKAN
+3. Add `machine_link`, `sample_link`, and `protocol_link` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
 4. Upgrade the CKAN database to add the plugin table:
 
-        ckan -c /etc/ckan/default/ckan.ini db upgrade -p semantic_media_wiki
+        ckan -c /etc/ckan/default/ckan.ini db upgrade -p machine_link
 
         ckan -c /etc/ckan/default/ckan.ini db upgrade -p sample_link
+
+        ckan -c /etc/ckan/default/ckan.ini db upgrade -p protocol_link
 
 
 4. Restart CKAN and supervisor. For example if you've deployed CKAN with nginx on Ubuntu:
@@ -73,6 +75,6 @@ These plugins need the following variables provided in `ckan.ini`
 
 To run the tests, do:
 
-    pytest --ckan-ini=test.ini  --disable-pytest-warnings  ckanext/semantic_media_wiki/tests/
+    pytest --ckan-ini=test.ini --disable-warnings ckanext/semantic_media_wiki/tests/
 
-
+The test suite uses mocked Semantic MediaWiki responses and does not require production credentials or network access.

@@ -4,13 +4,13 @@
 {% asset 'ckanext-protocol-link/dataset-protocol-control-js' %}
 
 
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
+<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
 
 <div id="protocolModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
         <h3 class="modal-title">{{_('Link a Protocol to this dataset')}}</h3>
       </div>
       <div class="modal-body">
@@ -24,6 +24,7 @@
             </div>
         </div>  
         <form id="protocol-add-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
+            {{ h.csrf_input() }}
             {{ macro.input('protocol_name', 
               id='protocol_name',                          
               label=_('Protocol Name'),                          
@@ -42,7 +43,7 @@
       <div class="modal-footer">
         <button id="protocol_link_btn" class="btn btn-success" type="submit">{{_('Link')}}</button>        
         </form> 
-        <button id="protocol_link_close_btn" type="button" class="btn btn-default pull-left" data-dismiss="modal">{{_('Cancel')}}</button>        
+        <button id="protocol_link_close_btn" type="button" class="btn btn-secondary float-start" data-bs-dismiss="modal">{{_('Cancel')}}</button>
       </div>
     </div>
 
