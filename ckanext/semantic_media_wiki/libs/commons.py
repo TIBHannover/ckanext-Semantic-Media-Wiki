@@ -3,7 +3,7 @@
 import ckan.plugins.toolkit as toolkit
 
 
-class Common():
+class Common:
 
     @staticmethod
     def abort_if_dataset_editing_not_permit(package_id):
@@ -20,7 +20,5 @@ class Common():
 
     @staticmethod     
     def check_plugin_enabled(plugin_name):
-        plugins = toolkit.config.get("ckan.plugins")
-        if plugin_name in plugins:
-            return True
-        return False
+        enabled_plugins = toolkit.config.get("ckan.plugins", "").split()
+        return plugin_name in enabled_plugins

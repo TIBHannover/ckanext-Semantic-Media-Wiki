@@ -1,1 +1,2 @@
-pytest-ckan
+pytest>=7,<9
+pytest-cov>=4,<7

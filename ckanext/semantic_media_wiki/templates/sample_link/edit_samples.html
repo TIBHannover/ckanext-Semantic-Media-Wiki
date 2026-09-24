@@ -14,6 +14,7 @@
     <hr>
     {% set action = h.url_for('sample_link.edit_save_samples', _external=True) %}
     <form id="sample-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
+    {{ h.csrf_input() }}
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
     <input type="hidden" name="resources_length" value="{{pkg_dict['resources']|length}}">
     <input type="hidden" id="isEditMode" value="1">
