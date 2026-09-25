@@ -26,6 +26,7 @@
   <form id="sample-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data"> 
     {{ h.csrf_input() }}
     <input type="hidden" name="package"  value="{{pkg_dict['name']}}">
+    {% snippet 'snippets/sample_link_range.html', resources=pkg_dict['resources'] %}
     {% snippet 'snippets/sample_link_samples_dropdown.html', 
         resources=pkg_dict['resources'], 
         samples=samples,

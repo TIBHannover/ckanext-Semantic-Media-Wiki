@@ -29,7 +29,8 @@
     </div>
     {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
         custom_class='machine-alert-box',
-        default_count=0,
+        chosen_resources=[],
+        resources=resources,
         Id=loop.index + offset
     %}
 {% endfor %}

@@ -1,4 +1,12 @@
 <div id={{ 'machine_resource_count-message-box_' ~ Id }} class="{{custom_class}} alert alert-success">
-    <span  id={{ 'machine_resource_count-' ~ Id }}>{{default_count}}</span> &nbsp; resource(s)
+    <span id={{ 'machine_resource_names-' ~ Id }}>
+      {%- if chosen_resources and resources -%}
+        {%- for resource in resources if resource.id in chosen_resources -%}
+          {{- resource.name or resource.url -}}{{- ', ' if not loop.last else '' -}}
+        {%- endfor -%}
+      {%- else -%}
+        {{- _('No resource selected') -}}
+      {%- endif -%}
+    </span>
     <i class="fa fa-edit resource_count_edit" id={{ 'machine_resource_count_edit_' ~ Id }}></i>
 </div>

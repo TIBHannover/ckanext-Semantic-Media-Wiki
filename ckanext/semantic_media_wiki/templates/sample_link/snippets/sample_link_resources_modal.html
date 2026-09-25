@@ -21,7 +21,8 @@
                 <input type="checkbox" 
                   class="{{'resource-checkbox-input' ~ counter}}  resource-box"
                   name={{'sample_resources_list' ~ counter}} 
-                  value={{res.id ~ '@@@' ~ the_machine}}
+                  value="{{res.id ~ '@@@' ~ the_sample}}"
+                  data-resource-name="{{ res.name or res.url }}"
                   checked
                   >
                 <span class="checkmark"></span>
@@ -32,6 +33,7 @@
                     class="{{'resource-checkbox-input' ~ counter}}  resource-box"
                     name={{'sample_resources_list' ~ counter}} 
                     value={{res.id}}
+                    data-resource-name="{{ res.name or res.url }}"
                     >
                   <span class="checkmark"></span>
                 </label>

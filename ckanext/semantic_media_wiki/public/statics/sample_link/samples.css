@@ -70,6 +70,16 @@
     width: 100%;
 }
 
+/* Keep single-select clear icons separate from the label and dropdown arrow. */
+#sample-form .select2-container .select2-choice .select2-search-choice-close {
+  left: auto;
+  right: 24px;
+}
+
+#sample-form .select2-container.select2-allowclear .select2-choice .select2-chosen {
+  margin-right: 42px;
+}
+
 .sample_url_div{
     display: none;
 }

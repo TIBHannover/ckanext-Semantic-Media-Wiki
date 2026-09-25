@@ -1,4 +1,7 @@
 # encoding: utf-8
+import logging
+
+log = logging.getLogger(__name__)
 
 import ckan.plugins.toolkit as toolkit
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -9,6 +12,20 @@ from ckanext.semantic_media_wiki.models.resource_sample_link import ResourceSamp
 
 
 class SampleLinkHelper():
+
+    @staticmethod
+    def valid_sample_links(request, sample_count, stored=()):
+        """Validate new URLs once per submission, retaining existing edit values."""
+        submitted = {
+            request.form.get('sample_link' + str(i))
+            for i in range(1, sample_count)
+        } - {None, '', '0'}
+        new_links = submitted - set(stored)
+        if not new_links:
+            return True
+        available = {sample['value'] for sample in SampleLinkHelper.get_samples_list()}
+        return new_links <= available
+
 
     def add_sample_links(request, resources_len):
         '''
@@ -23,9 +40,12 @@ class SampleLinkHelper():
         '''
         
         try:
+            if not SampleLinkHelper.valid_sample_links(request, resources_len):
+                return False
+            saved = set()
             for i in range(1, resources_len):    
                 link = request.form.get('sample_link' + str(i))
-                if link == '0': # not specified
+                if not link or link == '0': # not specified
                     continue            
                 sample_name =request.form.get('sample_name_' + str(i))
                 if not sample_name or sample_name == '':
@@ -34,6 +54,9 @@ class SampleLinkHelper():
                 create_at = _time.now()
                 updated_at = create_at
                 for Id in resources_checkbox_list:
+                    if (Id, link) in saved:
+                        continue
+                    saved.add((Id, link))
                     resource_object = ResourceSampleLink(resource_id=Id, 
                         sample_url=link, 
                         sample_name=sample_name, 
@@ -63,16 +86,27 @@ class SampleLinkHelper():
         '''
         
         try:
+            stored = {
+                record.sample_url
+                for res in package['resources']
+                for record in (ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id']) or [])
+            }
+            if not SampleLinkHelper.valid_sample_links(request, resources_len, stored):
+                return False
+            saved = set()
             already_edited_resources = {}        
             for i in range(1, resources_len):
                 link = request.form.get('sample_link' + str(i))
-                if link == '0':
+                if not link or link == '0':
                    continue
                 sample_name = request.form.get('sample_name_' + str(i))                
                 resources_checkbox_list = request.form.getlist('sample_resources_list' + str(i))
                 updated_at = _time.now()
                 for entry in resources_checkbox_list:
                     Id = entry.split('@@@')[0]
+                    if (Id, link) in saved:
+                        continue
+                    saved.add((Id, link))
                     if len(entry.split('@@@')) == 2:
                         old_sample_url = entry.split('@@@')[1]
                     else:
@@ -85,9 +119,9 @@ class SampleLinkHelper():
                         resource_object = ResourceSampleLink(Id, link, sample_name, create_at, updated_at)
                         resource_object.save()
                         if Id in already_edited_resources.keys():
-                            already_edited_resources[Id].append(link)
+                            already_edited_resources[Id].add(link)
                         else:
-                            already_edited_resources[Id] = [link]
+                            already_edited_resources[Id] = {link}
                         continue
                                                                                                                  
                     resource_record.sample_url = link
@@ -95,22 +129,22 @@ class SampleLinkHelper():
                     resource_record.updated_at = updated_at
                     resource_record.commit()
                     if Id in already_edited_resources.keys():
-                        already_edited_resources[Id].append(link)
+                        already_edited_resources[Id].add(link)
                     else:
-                        already_edited_resources[Id] = [link]
+                        already_edited_resources[Id] = {link}
                 
                 
-                for res in package['resources']:
-                    resource_objects = ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id'])
-                    if resource_objects:
-                        for record in resource_objects:
-                            if record.resource_id not in already_edited_resources.keys():
-                                record.delete()
-                                record.commit()
-                            elif record.sample_url not in already_edited_resources[res['id']]:                                
-                                record.delete()
-                                record.commit()
-            
+            for res in package['resources']:
+                resource_objects = ResourceSampleLink(resource_id=res['id']).get_by_resource(id=res['id'])
+                if resource_objects:
+                    for record in resource_objects:
+                        if record.resource_id not in already_edited_resources.keys():
+                            record.delete()
+                            record.commit()
+                        elif record.sample_url not in already_edited_resources[res['id']]:
+                            record.delete()
+                            record.commit()
+
             package_extras = []
             package_extras.append({"key": "sample", "value": "True"})
             package['extras'] = package_extras           
@@ -173,7 +207,7 @@ class SampleLinkHelper():
             username = credentials[0].split('=')[1]
             password = credentials[1].split('=')[1]
            
-        except:
+        except Exception:
             return []
         
         api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)
@@ -201,6 +235,7 @@ class SampleLinkHelper():
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
         api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
         sfb = toolkit.config.get('ckanext.crc.project.id')                 
+        log.debug([credential_path, smw_base_url, api_host, query, sfb])
         return [credential_path, smw_base_url, api_host, query, sfb]
 
 

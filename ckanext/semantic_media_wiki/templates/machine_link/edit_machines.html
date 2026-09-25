@@ -8,6 +8,13 @@
 
 
 {% block primary_content_inner %}
+    <br>
+        <div class="alert alert-warning upload-related-parts" id="file-size-info-box">
+        <p>
+        {{_('Note: An Equipment can be a tool or machine.')}}
+        </p>
+      </div>
+<br>
     <p>
         {{_('If you cannot find your Equipment, you can add it via the below button. Please refresh this page 
         if you add a new Equipment.')}}
@@ -68,7 +75,8 @@
         </div>
         {% snippet 'snippets/semantic_media_wiki_resource_count.html', 
             custom_class='machine-alert-box-edit',
-            default_count=value|length,
+            chosen_resources=value,
+            resources=pkg_dict['resources'],
             Id=loop.index
         %} 
     {% endfor %}

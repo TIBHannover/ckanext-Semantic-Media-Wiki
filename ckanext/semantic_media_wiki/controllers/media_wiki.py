@@ -7,6 +7,8 @@ from sqlalchemy.sql.expression import false
 import json
 import ckan.lib.helpers as h
 from ckanext.semantic_media_wiki.libs.commons import Common
+import logging
+log = logging.getLogger(__name__)
 
 
 class MediaWikiController():
@@ -112,8 +114,8 @@ class MediaWikiController():
                         temp[0] = link
                         temp[1] = eq_name
                         results.append(temp)
-        except:
-            # raise
+        except Exception:
+            log.exception("SMW call failed")
             return toolkit.abort(403, "bad request")
 
         if len(results) == 0:
@@ -142,6 +144,4 @@ class MediaWikiController():
         return [project_id, machine_endpoint, tools_endpoint]
         
     
-
-
 
