@@ -20,5 +20,7 @@ class Common:
 
     @staticmethod     
     def check_plugin_enabled(plugin_name):
-        enabled_plugins = toolkit.config.get("ckan.plugins", "").split()
+        enabled_plugins = toolkit.config.get("ckan.plugins", [])
+        if isinstance(enabled_plugins, str):
+            enabled_plugins = enabled_plugins.split()
         return plugin_name in enabled_plugins
