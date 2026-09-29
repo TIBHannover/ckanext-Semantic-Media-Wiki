@@ -12,11 +12,22 @@ from ckanext.semantic_media_wiki.sample_plugin import SampleLinkPlugin
 
 
 ASSET_ROOT = Path(__file__).parents[1] / "public" / "statics"
+TEMPLATE_ROOT = Path(__file__).parents[1] / "templates"
 
 
 def test_webassets_do_not_reference_obsolete_jquery_ui_bundle():
     for webassets_file in ASSET_ROOT.rglob("webassets.yml"):
         assert "vendor/jquery.ui.core" not in webassets_file.read_text()
+
+
+@pytest.mark.parametrize("link_type", ["machine_link", "sample_link"])
+def test_resource_templates_only_use_registered_plugin_helper(link_type):
+    template = TEMPLATE_ROOT / link_type / "package" / "resource_read.html"
+    source = template.read_text()
+
+    assert "h.is_enabled" not in source
+    assert 'h.check_plugin_enabled("sfb_layout")' in source
+    assert 'h.check_plugin_enabled("crc1153_layout")' in source
 
 
 @pytest.mark.ckan_config("ckan.plugins", "machine_link sample_link protocol_link")

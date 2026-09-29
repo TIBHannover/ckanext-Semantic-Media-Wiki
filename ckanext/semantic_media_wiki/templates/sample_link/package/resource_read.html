@@ -2,7 +2,7 @@
 
 {% block resource_read_url %}    
     {{ super() }}
-    {% if not h.is_enabled("sfb_layout")%}
+    {% if not h.check_plugin_enabled("sfb_layout") and not h.check_plugin_enabled("crc1153_layout") %}
         {% asset 'ckanext-sample-link/resource-sample-js' %}
         {% set resource_id = resource['id']  %}
         {% set dest_url = h.url_for('sample_link.get_resource_sample', id=resource_id, _external=True) %}
@@ -14,4 +14,3 @@
         <br><br>
     {% endif %}
 {% endblock %}
-
