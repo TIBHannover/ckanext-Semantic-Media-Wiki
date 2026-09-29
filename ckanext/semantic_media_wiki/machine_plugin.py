@@ -6,6 +6,7 @@ from ckanext.semantic_media_wiki.libs.commons import Common
 
 
 
+@toolkit.blanket.config_declarations
 class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IBlueprint)

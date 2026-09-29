@@ -1,0 +1,18 @@
+version: 1
+groups:
+  - annotation: Semantic MediaWiki settings
+    options:
+      - key: ckanext.crc.project.id
+        description: CRC project identifier used to select project-specific MediaWiki behavior.
+      - key: ckanext.mediaWiki_credentials_path
+        description: Path to the JSON file containing the MediaWiki username and password.
+      - key: ckanext.smw.baseUrl
+        description: Base URL used when constructing links to Semantic MediaWiki pages.
+      - key: ckanext.smw.mediaWiki.api.endpont
+        description: MediaWiki API host used for Semantic MediaWiki queries.
+      - key: ckanext.smw.equipment.endpoint
+        description: Semantic MediaWiki query endpoint for equipment records.
+      - key: ckanext.smw.machine.endpoint
+        description: Semantic MediaWiki query endpoint for machine records.
+      - key: ckanext.smw.tools.endpoint
+        description: Semantic MediaWiki query endpoint for tool records.

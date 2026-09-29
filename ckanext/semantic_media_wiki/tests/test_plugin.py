@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import ckan.plugins as plugins
 import pytest
 
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
@@ -13,6 +14,15 @@ from ckanext.semantic_media_wiki.sample_plugin import SampleLinkPlugin
 
 ASSET_ROOT = Path(__file__).parents[1] / "public" / "statics"
 TEMPLATE_ROOT = Path(__file__).parents[1] / "templates"
+CUSTOM_CONFIG_KEYS = (
+    "ckanext.crc.project.id",
+    "ckanext.mediaWiki_credentials_path",
+    "ckanext.smw.baseUrl",
+    "ckanext.smw.mediaWiki.api.endpont",
+    "ckanext.smw.equipment.endpoint",
+    "ckanext.smw.machine.endpoint",
+    "ckanext.smw.tools.endpoint",
+)
 
 
 def test_webassets_do_not_reference_obsolete_jquery_ui_bundle():
@@ -43,6 +53,29 @@ def test_affected_asset_bundle_includes_without_unknown_assets(app, caplog):
 
     assert "Trying to include unknown asset" not in caplog.text
     assert "vendor/jquery.ui.core" not in caplog.text
+
+
+def test_primary_plugin_implements_config_declarations():
+    assert plugins.IConfigDeclaration.implemented_by(SemanticMediaWikiPlugin)
+
+
+@pytest.mark.ckan_config("ckan.plugins", "machine_link sample_link protocol_link")
+@pytest.mark.ckan_config("SECRET_KEY", "test_secret")
+@pytest.mark.usefixtures("with_plugins")
+def test_plugins_load_with_all_custom_options_declared(ckan_config, caplog):
+    caplog.set_level(logging.WARNING, logger="ckan.common")
+
+    for key in CUSTOM_CONFIG_KEYS:
+        assert ckan_config.is_declared(key)
+        ckan_config.get(key)
+
+    warning_messages = [
+        record.getMessage()
+        for phase in ("setup", "call")
+        for record in caplog.get_records(phase)
+    ]
+    for key in CUSTOM_CONFIG_KEYS:
+        assert f"Option {key} is not declared" not in warning_messages
 
 
 def test_api_login_uses_configured_endpoint_and_credentials():

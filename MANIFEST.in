@@ -1,4 +1,5 @@
 include README.md
+include CHANGELOG.md
 include LICENSE
 include requirements.txt
-recursive-include ckanext/semantic_media_wiki *.html *.json *.js *.less *.css *.mo
+recursive-include ckanext/semantic_media_wiki *.html *.json *.yaml *.js *.less *.css *.mo
