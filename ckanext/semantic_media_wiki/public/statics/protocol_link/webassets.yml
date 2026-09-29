@@ -24,7 +24,5 @@ dataset-protocol-control-js:
       - vendor/vendor
       - vendor/bootstrap
       - vendor/jquery
-      - vendor/select2
   contents:
     - control.js
-

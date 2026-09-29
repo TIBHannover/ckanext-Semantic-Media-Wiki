@@ -1,3 +1,13 @@
+function showResourceModal(id) {
+    var modal = document.getElementById('resourcesModal' + id);
+    var options = {backdrop: 'static', keyboard: false};
+    if (window.bootstrap && window.bootstrap.Modal) {
+        window.bootstrap.Modal.getOrCreateInstance(modal, options).show();
+    } else {
+        $(modal).modal(options).modal('show');
+    }
+}
+
 $(document).ready(function(){
     // One shared catalog for existing rows, new rows and range endpoints.
     var blank = $('.sample-box').last();
@@ -116,11 +126,7 @@ $(document).ready(function(){
           }
           $('#sample_name_' + id).val($.trim(selected.text));
           $('#modalSampleName' + id).text($.trim($(this).select2('data').text));
-          $('#resourcesModal' + id).modal({
-            backdrop: 'static',
-            keyboard: false
-          });
-          $('#resourcesModal' + id).modal('show');        
+          showResourceModal(id);
       }); 
 
 
@@ -237,11 +243,7 @@ $(document).ready(function(){
     $('#sample-form').on('click', '.resource_count_edit', function(event){
       let id = $(this).attr('id');      
       id = id.split("sample_resource_count_edit_")[1];
-      $('#resourcesModal' + id).modal({
-        backdrop: 'static',
-        keyboard: false
-       });
-      $('#resourcesModal' + id).modal('show'); 
+      showResourceModal(id);
     });
 
     $('#sample_save_btn').click(function(){

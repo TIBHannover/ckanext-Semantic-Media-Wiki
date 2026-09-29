@@ -6,13 +6,15 @@
 
 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#protocolModal"><i class="fa fa-arrow-right"></i>  {{_('Link Protocol')}}</button>
 
-<div id="protocolModal" class="modal fade" role="dialog">
+<div id="protocolModal" class="modal fade" tabindex="-1" aria-labelledby="protocol-modal-title" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
+        <h3 id="protocol-modal-title" class="modal-title">{{_('Link a Protocol to this dataset')}}</h3>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
-        <h3 class="modal-title">{{_('Link a Protocol to this dataset')}}</h3>
       </div>
+      <form id="protocol-add-form" method="post" action="{{ action }}" data-module="basic-form" enctype="multipart/form-data">
+        {{ h.csrf_input() }}
       <div class="modal-body">
         <div class="row" id="protocol_add_alert_box">
             <div class="col-sm-12">
@@ -23,8 +25,6 @@
                 </div>
             </div>
         </div>  
-        <form id="protocol-add-form" class="" method="post" action='{{action}}' data-module="basic-form" enctype="multipart/form-data">
-            {{ h.csrf_input() }}
             {{ macro.input('protocol_name', 
               id='protocol_name',                          
               label=_('Protocol Name'),                          
@@ -38,13 +38,13 @@
               classes=['control-medium'] ,
               placeholder="https://service.tib.eu/sfb1368/wiki/MyProtocol")
             }}
-            <input type="hidden" name="dataset_id" value={{pkg_dict.id}}>
+            <input type="hidden" name="dataset_id" value="{{ pkg_dict.id }}">
       </div>
       <div class="modal-footer">
         <button id="protocol_link_btn" class="btn btn-success" type="submit">{{_('Link')}}</button>        
-        </form> 
         <button id="protocol_link_close_btn" type="button" class="btn btn-secondary float-start" data-bs-dismiss="modal">{{_('Cancel')}}</button>
       </div>
+      </form>
     </div>
 
   </div>

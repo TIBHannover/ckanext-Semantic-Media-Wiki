@@ -17,6 +17,16 @@ function formatState (state) {
     return $state;
   };
 
+function showResourceModal(id) {
+    let modal = document.getElementById('resourcesModal' + id);
+    let options = {backdrop: 'static', keyboard: false};
+    if (window.bootstrap && window.bootstrap.Modal) {
+      window.bootstrap.Modal.getOrCreateInstance(modal, options).show();
+    } else {
+      $(modal).modal(options).modal('show');
+    }
+}
+
 $(document).ready(function(){
          
     $("select.machine_dropdown").select2({
@@ -32,11 +42,7 @@ $(document).ready(function(){
         id = id.match(/\d+$/)[0];
         $('#machine_name_' + id).val($.trim($(this).select2('data').text));   
         $('#modalMachineName' + id).text($.trim($(this).select2('data').text));
-        $('#resourcesModal' + id).modal({
-          backdrop: 'static',
-          keyboard: false
-         });
-        $('#resourcesModal' + id).modal('show');                   
+        showResourceModal(id);
     }); 
 
     /**
@@ -130,11 +136,7 @@ $(document).ready(function(){
     $('.resource_count_edit').click(function(){
       let id = $(this).attr('id');
       id = id.match(/\d+$/)[0];
-      $('#resourcesModal' + id).modal({
-        backdrop: 'static',
-        keyboard: false
-       });
-      $('#resourcesModal' + id).modal('show'); 
+      showResourceModal(id);
     });
 
 
