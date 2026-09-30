@@ -1,6 +1,7 @@
 # ckanext-Semantic-Media-Wiki
 
-This CKAN extension includes `semantic_media_wiki` plugin that aim to able users to link machines on semantic media wiki to resources/datasets in CKAN.
+This CKAN extension provides `machine_link`, `sample_link`, and `protocol_link`
+plugins for linking Semantic MediaWiki entities to CKAN datasets and resources.
 
 
 
@@ -35,7 +36,7 @@ To install ckanext-Semantic-Media-Wiki:
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
-4. Upgrade the CKAN database to add the plugin table:
+4. Upgrade the CKAN database to add each plugin's table:
 
         ckan -c /etc/ckan/default/ckan.ini db upgrade -p machine_link
 
@@ -44,7 +45,7 @@ To install ckanext-Semantic-Media-Wiki:
         ckan -c /etc/ckan/default/ckan.ini db upgrade -p protocol_link
 
 
-4. Restart CKAN and supervisor. For example if you've deployed CKAN with nginx on Ubuntu:
+5. Restart CKAN and supervisor. For example if you've deployed CKAN with nginx on Ubuntu:
 
         sudo service supervisor reload
         sudo service nginx reload

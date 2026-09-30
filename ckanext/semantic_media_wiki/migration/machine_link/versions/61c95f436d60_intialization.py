@@ -15,10 +15,17 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
+TABLE_NAME = 'resource_equipment_link'
+
 
 def upgrade():
-     op.create_table(
-        'resource_equipment_link',
+    # Older releases exposed this migration as ``semantic_media_wiki``. Keep
+    # upgrades from them safe while establishing machine_link's version record.
+    if sa.inspect(op.get_bind()).has_table(TABLE_NAME):
+        return
+
+    op.create_table(
+        TABLE_NAME,
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
         sa.Column('resource_id', sa.UnicodeText(), sa.ForeignKey('resource.id'), nullable=False),
         sa.Column('url', sa.UnicodeText(), nullable=False),
@@ -29,4 +36,4 @@ def upgrade():
 
 
 def downgrade():
-   op.drop_table('resource_equipment_link')
+    op.drop_table(TABLE_NAME)

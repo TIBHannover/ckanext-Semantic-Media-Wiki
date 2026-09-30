@@ -3,3 +3,4 @@ include CHANGELOG.md
 include LICENSE
 include requirements.txt
 recursive-include ckanext/semantic_media_wiki *.html *.json *.yaml *.js *.less *.css *.mo
+recursive-include ckanext/semantic_media_wiki/migration *.ini *.mako *.py README

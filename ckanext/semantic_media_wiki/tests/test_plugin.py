@@ -1,5 +1,6 @@
-import logging
 from datetime import datetime
+import importlib.util
+import logging
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -9,12 +10,79 @@ import yaml
 
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from ckanext.semantic_media_wiki.machine_plugin import SemanticMediaWikiPlugin
+from ckanext.semantic_media_wiki.models.dataset_protocol_link import (
+    dataset_protocol_link_table,
+)
+from ckanext.semantic_media_wiki.models.resource_mediawiki_link import (
+    resource_equipment_link_table,
+)
+from ckanext.semantic_media_wiki.models.resource_sample_link import (
+    resource_sample_link_table,
+)
 from ckanext.semantic_media_wiki.protocol_plugin import ProtocolLinkPlugin
 from ckanext.semantic_media_wiki.sample_plugin import SampleLinkPlugin
 
 
 ASSET_ROOT = Path(__file__).parents[1] / "public" / "statics"
 TEMPLATE_ROOT = Path(__file__).parents[1] / "templates"
+MIGRATION_ROOT = Path(__file__).parents[1] / "migration"
+PLUGIN_TABLES = {
+    "machine_link": resource_equipment_link_table,
+    "sample_link": resource_sample_link_table,
+    "protocol_link": dataset_protocol_link_table,
+}
+
+
+def _load_revision(plugin_name):
+    revision_path = next((MIGRATION_ROOT / plugin_name / "versions").glob("*.py"))
+    spec = importlib.util.spec_from_file_location(
+        f"test_{plugin_name}_migration", revision_path
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize(("plugin_name", "model_table"), PLUGIN_TABLES.items())
+def test_plugin_migration_matches_model_table(monkeypatch, plugin_name, model_table):
+    migration_dir = MIGRATION_ROOT / plugin_name
+    assert (migration_dir / "alembic.ini").is_file()
+
+    revision = _load_revision(plugin_name)
+    created = {}
+
+    if plugin_name == "machine_link":
+        inspector = Mock()
+        inspector.has_table.return_value = False
+        monkeypatch.setattr(revision.sa, "inspect", lambda bind: inspector)
+        monkeypatch.setattr(revision.op, "get_bind", Mock())
+
+    def capture_table(name, *columns):
+        created["name"] = name
+        created["columns"] = [column.name for column in columns]
+
+    monkeypatch.setattr(revision.op, "create_table", capture_table)
+    revision.upgrade()
+
+    assert created["name"] == model_table.name
+    assert created["columns"] == list(model_table.columns.keys())
+
+
+def test_machine_migration_accepts_table_created_by_legacy_plugin(monkeypatch):
+    revision = _load_revision("machine_link")
+    inspector = Mock()
+    inspector.has_table.return_value = True
+    monkeypatch.setattr(revision.sa, "inspect", lambda bind: inspector)
+    monkeypatch.setattr(revision.op, "get_bind", Mock())
+    create_table = Mock()
+    monkeypatch.setattr(revision.op, "create_table", create_table)
+
+    revision.upgrade()
+
+    inspector.has_table.assert_called_once_with("resource_equipment_link")
+    create_table.assert_not_called()
+
+
 CUSTOM_CONFIG_KEYS = (
     "ckanext.crc.project.id",
     "ckanext.mediaWiki_credentials_path",
