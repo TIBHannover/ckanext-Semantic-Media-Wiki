@@ -40,14 +40,3 @@ dataset-machines-js:
       - vendor/jquery
   contents:
     - dataset_machines.js
-
-machine-image-modal-js:  
-  output: ckanext-semantic-media-wiki/%(version)s_my.js
-  extra:
-    preload:
-      - base/main
-      - vendor/vendor
-      - vendor/bootstrap
-      - vendor/jquery
-#  contents:
-#    - machine_image_modal.js

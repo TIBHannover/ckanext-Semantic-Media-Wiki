@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 import ckan.plugins as plugins
 import pytest
+import yaml
 
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from ckanext.semantic_media_wiki.machine_plugin import SemanticMediaWikiPlugin
@@ -28,6 +29,20 @@ CUSTOM_CONFIG_KEYS = (
 def test_webassets_do_not_reference_obsolete_jquery_ui_bundle():
     for webassets_file in ASSET_ROOT.rglob("webassets.yml"):
         assert "vendor/jquery.ui.core" not in webassets_file.read_text()
+
+
+def test_webasset_bundles_have_existing_contents():
+    for webassets_file in ASSET_ROOT.rglob("webassets.yml"):
+        bundles = yaml.safe_load(webassets_file.read_text())
+        for name, bundle in bundles.items():
+            assert bundle.get("contents"), f"{name} must not be empty"
+            for content in bundle["contents"]:
+                assert (webassets_file.parent / content).is_file()
+
+    machine_bundles = yaml.safe_load(
+        (ASSET_ROOT / "machine_link" / "webassets.yml").read_text()
+    )
+    assert "machine-image-modal-js" not in machine_bundles
 
 
 @pytest.mark.parametrize("link_type", ["machine_link", "sample_link"])
