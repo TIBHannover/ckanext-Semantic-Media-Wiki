@@ -9,7 +9,11 @@ groups:
       - key: ckanext.smw.baseUrl
         description: Base URL used when constructing links to Semantic MediaWiki pages.
       - key: ckanext.smw.mediaWiki.api.endpont
-        description: MediaWiki API host used for Semantic MediaWiki queries.
+        description: MediaWiki API hostname used for Semantic MediaWiki queries (legacy misspelled key).
+      - key: ckanext.smw.mediaWiki.api.path
+        description: MediaWiki installation path used for API requests (defaults by CRC project).
+      - key: ckanext.smw.mediaWiki.api.scheme
+        description: URL scheme used for MediaWiki API requests (defaults to https).
       - key: ckanext.smw.equipment.endpoint
         description: Semantic MediaWiki query endpoint for equipment records.
       - key: ckanext.smw.machine.endpoint

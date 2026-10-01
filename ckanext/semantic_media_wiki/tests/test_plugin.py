@@ -2,13 +2,16 @@ from datetime import datetime
 import importlib.util
 import logging
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, mock_open, patch
 
 import ckan.plugins as plugins
+import ckan.plugins.toolkit as toolkit
 import pytest
 import yaml
 
+from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
+from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 from ckanext.semantic_media_wiki.machine_plugin import SemanticMediaWikiPlugin
 from ckanext.semantic_media_wiki.models.dataset_protocol_link import (
     dataset_protocol_link_table,
@@ -88,6 +91,8 @@ CUSTOM_CONFIG_KEYS = (
     "ckanext.mediaWiki_credentials_path",
     "ckanext.smw.baseUrl",
     "ckanext.smw.mediaWiki.api.endpont",
+    "ckanext.smw.mediaWiki.api.path",
+    "ckanext.smw.mediaWiki.api.scheme",
     "ckanext.smw.equipment.endpoint",
     "ckanext.smw.machine.endpoint",
     "ckanext.smw.tools.endpoint",
@@ -161,14 +166,132 @@ def test_plugins_load_with_all_custom_options_declared(ckan_config, caplog):
         assert f"Option {key} is not declared" not in warning_messages
 
 
-def test_api_login_uses_configured_endpoint_and_credentials():
+def test_api_uses_sfb1153_default_path():
+    api = API("", "", "query", "smw.service.tib.eu", "1153")
+
+    assert api.path == "/wiki-sfb1153/"
+    assert api.scheme == "https"
+
+
+def test_api_uses_sfb1368_default_path():
+    api = API("", "", "query", "service.tib.eu", "1368")
+
+    assert api.path == "/sfb1368/wiki/"
+    assert api.scheme == "https"
+
+
+def test_api_uses_explicit_path_and_scheme():
+    api = API(
+        "",
+        "",
+        "query",
+        "wiki.example",
+        "custom",
+        path="/custom/wiki/",
+        scheme="http",
+    )
+
+    assert api.path == "/custom/wiki/"
+    assert api.scheme == "http"
+
+
+def test_api_requires_path_for_unknown_project():
+    with pytest.raises(ValueError, match="api.path must be configured"):
+        API("", "", "query", "wiki.example", "custom")
+
+
+def test_api_login_uses_sfb1368_endpoint_and_credentials():
     site = Mock()
     with patch("ckanext.semantic_media_wiki.libs.media_wiki_api.Site", return_value=site) as site_cls:
-        api = API("user", "secret", "[[Category:Device]]", "wiki.example", "1153")
-        assert api.login("wiki.example", "/wiki/", "https") is True
+        api = API("user", "secret", "[[Category:Equipment]]", "service.tib.eu", "1368")
+        assert api.login(api.host, api.path, api.scheme) is True
 
-    site_cls.assert_called_once_with(host="wiki.example", path="/wiki/", scheme="https")
+    site_cls.assert_called_once_with(
+        host="service.tib.eu", path="/sfb1368/wiki/", scheme="https"
+    )
     site.login.assert_called_once_with(username="user", password="secret")
+
+
+@pytest.mark.parametrize("config_getter", [Helper.get_api_config, SampleLinkHelper.get_api_config])
+def test_api_config_reads_explicit_host_path_and_scheme(monkeypatch, config_getter):
+    monkeypatch.setitem(toolkit.config, "ckanext.crc.project.id", "1368")
+    monkeypatch.setitem(
+        toolkit.config, "ckanext.smw.mediaWiki.api.endpont", "service.tib.eu"
+    )
+    monkeypatch.setitem(
+        toolkit.config, "ckanext.smw.mediaWiki.api.path", "/custom/wiki/"
+    )
+    monkeypatch.setitem(toolkit.config, "ckanext.smw.mediaWiki.api.scheme", "http")
+
+    config = config_getter()
+
+    assert config[2] == "service.tib.eu"
+    assert config[5:] == ["/custom/wiki/", "http"]
+
+
+def test_machine_api_receives_connection_settings(monkeypatch):
+    monkeypatch.setattr(
+        Helper,
+        "get_api_config",
+        staticmethod(
+            lambda: [
+                "/credentials",
+                "https://service.tib.eu/sfb1368/wiki/",
+                "service.tib.eu",
+                "[[Category:Equipment]]",
+                "1368",
+                "/sfb1368/wiki/",
+                "https",
+            ]
+        ),
+    )
+    with patch("builtins.open", mock_open(read_data="username=user\npassword=secret")):
+        with patch("ckanext.semantic_media_wiki.libs.media_wiki.API") as api_cls:
+            api_cls.return_value.pipeline.return_value = ([], {})
+            Helper.get_machines_list()
+
+    api_cls.assert_called_once_with(
+        username="user",
+        password="secret",
+        query="[[Category:Equipment]]",
+        host="service.tib.eu",
+        target_sfb="1368",
+        path="/sfb1368/wiki/",
+        scheme="https",
+    )
+
+
+def test_sample_api_receives_connection_settings(monkeypatch):
+    monkeypatch.setattr(
+        SampleLinkHelper,
+        "get_api_config",
+        staticmethod(
+            lambda: [
+                "/credentials",
+                "https://service.tib.eu/sfb1368/wiki/",
+                "service.tib.eu",
+                "[[Category:Samples]]",
+                "1368",
+                "/sfb1368/wiki/",
+                "https",
+            ]
+        ),
+    )
+    with patch("builtins.open", mock_open(read_data="username=user\npassword=secret")):
+        with patch("ckanext.semantic_media_wiki.libs.sample_link.API") as api_cls:
+            api_cls.return_value.pipeline.return_value = ([], {})
+            SampleLinkHelper.get_samples_list()
+
+    api_cls.assert_called_once_with(
+        username="user",
+        password="secret",
+        query="[[Category:Samples]]",
+        host="service.tib.eu",
+        target_sfb="1368",
+        sample_query=True,
+        path="/sfb1368/wiki/",
+        scheme="https",
+    )
 
 
 def test_pipeline_paginates_query_and_maps_image_url():

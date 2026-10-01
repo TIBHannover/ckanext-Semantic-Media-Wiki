@@ -10,24 +10,48 @@ class API():
     password = None
     site = None
     host = ""
-    path = "/wiki-sfb1153/"
-    scheme = "https"
     query = ""
     target_sfb = ""
     image_field = ""
 
 
-    def __init__(self, username, password, query, host, target_sfb, sample_query=False):
+    def __init__(
+        self,
+        username,
+        password,
+        query,
+        host,
+        target_sfb,
+        sample_query=False,
+        path=None,
+        scheme="https",
+    ):
         self.username = username
         self.password = password
         self.query = query
         self.host = host
         self.sample_query = sample_query
-        self.target_sfb = target_sfb
+        self.target_sfb = str(target_sfb or "").strip()
+        self.path = path or self.default_path(self.target_sfb)
+        self.scheme = scheme or "https"
         if self.target_sfb == "1153":
             self.image_field = "Image"
         else:
             self.image_field = "depiction"
+
+    @staticmethod
+    def default_path(target_sfb):
+        paths = {
+            "1153": "/wiki-sfb1153/",
+            "1368": "/sfb1368/wiki/",
+        }
+        try:
+            return paths[target_sfb]
+        except KeyError:
+            raise ValueError(
+                "ckanext.smw.mediaWiki.api.path must be configured "
+                "for project {}".format(target_sfb or "<unset>")
+            )
 
 
     def pipeline(self, offset=0, limit=9999999):

@@ -200,7 +200,7 @@ class SampleLinkHelper():
         username = None
         password = None
         query = ""
-        credentials_path, smw_base_url, api_host, query, sfb = SampleLinkHelper.get_api_config()          
+        credentials_path, smw_base_url, api_host, query, sfb, api_path, api_scheme = SampleLinkHelper.get_api_config()
         try:
             credentials = open(credentials_path, 'r').read()
             credentials = credentials.split('\n')
@@ -210,7 +210,16 @@ class SampleLinkHelper():
         except Exception:
             return []
         
-        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb, sample_query=True)
+        api_call = API(
+            username=username,
+            password=password,
+            query=query,
+            host=api_host,
+            target_sfb=sfb,
+            sample_query=True,
+            path=api_path,
+            scheme=api_scheme,
+        )
         results, _ = api_call.pipeline()
         if results and len(results) > 0:
             temp = {}
@@ -233,10 +242,20 @@ class SampleLinkHelper():
         query = "[[Category:Samples]]"        
         credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
-        sfb = toolkit.config.get('ckanext.crc.project.id')                 
-        log.debug([credential_path, smw_base_url, api_host, query, sfb])
-        return [credential_path, smw_base_url, api_host, query, sfb]
+        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')
+        api_path = toolkit.config.get('ckanext.smw.mediaWiki.api.path')
+        api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.api.scheme') or 'https'
+        sfb = toolkit.config.get('ckanext.crc.project.id')
+        log.debug([credential_path, smw_base_url, api_host, query, sfb, api_path, api_scheme])
+        return [
+            credential_path,
+            smw_base_url,
+            api_host,
+            query,
+            sfb,
+            api_path,
+            api_scheme,
+        ]
 
 
 

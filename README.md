@@ -62,13 +62,31 @@ These plugins need the following variables provided in `ckan.ini`
         
         ckanext.smw.baseUrl=""
 
-        ckanext.smw.mediaWiki.api.endpont=""
+        # Legacy misspelled key; the value must contain only the hostname.
+        ckanext.smw.mediaWiki.api.endpont="service.tib.eu"
+
+        # Optional. Defaults: /wiki-sfb1153/ for project 1153 and
+        # /sfb1368/wiki/ for project 1368.
+        ckanext.smw.mediaWiki.api.path="/sfb1368/wiki/"
+
+        ckanext.smw.mediaWiki.api.scheme="https"
         
         ckanext.smw.equipment.endpoint=""
         
         ckanext.smw.machine.endpoint=""
         
         ckanext.smw.tools.endpoint=""
+
+For an SFB1368 deployment using environment variables, configure:
+
+        CKANEXT__CRC__PROJECT__ID=1368
+        CKANEXT__SMW__MEDIAWIKI__API__ENDPONT=service.tib.eu
+        CKANEXT__SMW__MEDIAWIKI__API__PATH=/sfb1368/wiki/
+        CKANEXT__SMW__MEDIAWIKI__API__SCHEME=https
+
+`CKANEXT__SMW__MEDIAWIKI__API__ENDPONT` retains the historical spelling for
+backward compatibility and must contain only the hostname, without a scheme or
+path.
 
 
 

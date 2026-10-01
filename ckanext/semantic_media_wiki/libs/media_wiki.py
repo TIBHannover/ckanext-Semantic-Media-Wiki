@@ -120,7 +120,7 @@ class Helper():
         username = None
         password = None
         query = ""
-        credentials_path, smw_base_url, api_host, query, sfb = Helper.get_api_config()          
+        credentials_path, smw_base_url, api_host, query, sfb, api_path, api_scheme = Helper.get_api_config()
         try:
             credentials = open(credentials_path, 'r').read()
             credentials = credentials.split('\n')
@@ -130,7 +130,15 @@ class Helper():
         except:
             return [[], []]
         
-        api_call = API(username=username, password=password, query=query, host=api_host, target_sfb=sfb)
+        api_call = API(
+            username=username,
+            password=password,
+            query=query,
+            host=api_host,
+            target_sfb=sfb,
+            path=api_path,
+            scheme=api_scheme,
+        )
         results, machine_imageUrl = api_call.pipeline()
         if results and len(results) > 0:
             temp = {}
@@ -164,7 +172,9 @@ class Helper():
     def get_api_config():
         credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')        
+        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')
+        api_path = toolkit.config.get('ckanext.smw.mediaWiki.api.path')
+        api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.api.scheme') or 'https'
         sfb = toolkit.config.get('ckanext.crc.project.id')        
         query = ""
         if  sfb.strip() == "1368":
@@ -172,7 +182,15 @@ class Helper():
         else:
             query = "[[Category:Device]]|?HasManufacturer|?HasImage|?HasType"
 
-        return [credential_path, smw_base_url, api_host, query, sfb.strip()]
+        return [
+            credential_path,
+            smw_base_url,
+            api_host,
+            query,
+            sfb.strip(),
+            api_path,
+            api_scheme,
+        ]
     
 
 
@@ -183,5 +201,4 @@ class Helper():
         return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
     
     
-
 
