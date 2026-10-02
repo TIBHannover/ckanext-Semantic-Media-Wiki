@@ -90,7 +90,7 @@ CUSTOM_CONFIG_KEYS = (
     "ckanext.crc.project.id",
     "ckanext.mediaWiki_credentials_path",
     "ckanext.smw.baseUrl",
-    "ckanext.smw.mediaWiki.api.endpont",
+    "ckanext.smw.mediaWiki.api.endpoint",
     "ckanext.smw.mediaWiki.api.path",
     "ckanext.smw.mediaWiki.api.scheme",
     "ckanext.smw.equipment.endpoint",
@@ -216,7 +216,7 @@ def test_api_login_uses_sfb1368_endpoint_and_credentials():
 def test_api_config_reads_explicit_host_path_and_scheme(monkeypatch, config_getter):
     monkeypatch.setitem(toolkit.config, "ckanext.crc.project.id", "1368")
     monkeypatch.setitem(
-        toolkit.config, "ckanext.smw.mediaWiki.api.endpont", "service.tib.eu"
+        toolkit.config, "ckanext.smw.mediaWiki.api.endpoint", "service.tib.eu"
     )
     monkeypatch.setitem(
         toolkit.config, "ckanext.smw.mediaWiki.api.path", "/custom/wiki/"

@@ -242,7 +242,7 @@ class SampleLinkHelper():
         query = "[[Category:Samples]]"        
         credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
         smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpont')
+        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpoint')
         api_path = toolkit.config.get('ckanext.smw.mediaWiki.api.path')
         api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.api.scheme') or 'https'
         sfb = toolkit.config.get('ckanext.crc.project.id')

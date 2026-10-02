@@ -8,8 +8,8 @@ groups:
         description: Path to the JSON file containing the MediaWiki username and password.
       - key: ckanext.smw.baseUrl
         description: Base URL used when constructing links to Semantic MediaWiki pages.
-      - key: ckanext.smw.mediaWiki.api.endpont
-        description: MediaWiki API hostname used for Semantic MediaWiki queries (legacy misspelled key).
+      - key: ckanext.smw.mediaWiki.api.endpoint
+        description: MediaWiki API hostname used for Semantic MediaWiki queries.
       - key: ckanext.smw.mediaWiki.api.path
         description: MediaWiki installation path used for API requests (defaults by CRC project).
       - key: ckanext.smw.mediaWiki.api.scheme
