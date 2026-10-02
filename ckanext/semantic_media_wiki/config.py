@@ -3,7 +3,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-MEDIAWIKI_CREDENTIALS_PATH = "ckanext.mediawiki_credentials_path"
+MEDIAWIKI_CREDENTIALS_PATH = "ckanext.smw.mediawiki_credentials_path"
 SMW_BASE_URL = "ckanext.smw.baseurl"
 MEDIAWIKI_API_ENDPOINT = "ckanext.smw.mediawiki.api.endpoint"
 MEDIAWIKI_API_PATH = "ckanext.smw.mediawiki.api.path"

@@ -58,7 +58,7 @@ These plugins need the following variables provided in `ckan.ini`
 
         ckanext.crc.project.id="CRC_Project_ID"
 
-        ckanext.mediawiki_credentials_path=""
+        ckanext.smw.mediawiki_credentials_path=""
         
         ckanext.smw.baseurl=""
 
@@ -80,7 +80,7 @@ These plugins need the following variables provided in `ckan.ini`
 For an SFB1368 deployment using environment variables, configure:
 
         CKANEXT__CRC__PROJECT__ID=1368
-        CKANEXT__MEDIAWIKI_CREDENTIALS_PATH=/etc/ckan/default/mediawiki-credentials
+        CKANEXT__SMW__MEDIAWIKI_CREDENTIALS_PATH=/etc/ckan/default/mediawiki-credentials
         CKANEXT__SMW__BASEURL=https://service.tib.eu/sfb1368/wiki/
         CKANEXT__SMW__MEDIAWIKI__API__ENDPOINT=service.tib.eu
         CKANEXT__SMW__MEDIAWIKI__API__PATH=/sfb1368/wiki/

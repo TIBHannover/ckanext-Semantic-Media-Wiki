@@ -4,7 +4,7 @@ groups:
     options:
       - key: ckanext.crc.project.id
         description: CRC project identifier used to select project-specific MediaWiki behavior.
-      - key: ckanext.mediawiki_credentials_path
+      - key: ckanext.smw.mediawiki_credentials_path
         legacy_key: ckanext.mediaWiki_credentials_path
         description: Path to the JSON file containing the MediaWiki username and password.
       - key: ckanext.smw.baseurl

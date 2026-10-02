@@ -99,7 +99,7 @@ def test_machine_migration_accepts_table_created_by_legacy_plugin(monkeypatch):
 
 CUSTOM_CONFIG_KEYS = (
     "ckanext.crc.project.id",
-    "ckanext.mediawiki_credentials_path",
+    "ckanext.smw.mediawiki_credentials_path",
     "ckanext.smw.baseurl",
     "ckanext.smw.mediawiki.api.endpoint",
     "ckanext.smw.mediawiki.api.path",
@@ -144,7 +144,10 @@ def test_config_declaration_preserves_canonical_values(canonical):
         ("ckanext.smw.mediawiki.api.endpoint", "ckanext.smw.mediaWiki.api.endpoint"),
         ("ckanext.smw.mediawiki.api.path", "ckanext.smw.mediaWiki.api.path"),
         ("ckanext.smw.mediawiki.api.scheme", "ckanext.smw.mediaWiki.api.scheme"),
-        ("ckanext.mediawiki_credentials_path", "ckanext.mediaWiki_credentials_path"),
+        (
+            "ckanext.smw.mediawiki_credentials_path",
+            "ckanext.mediaWiki_credentials_path",
+        ),
     ],
 )
 def test_config_declaration_resolves_legacy_keys(caplog, canonical, legacy):
@@ -212,7 +215,7 @@ def test_endpoint_declaration_uses_32_key_as_native_legacy_key():
         ),
         ("CKANEXT__SMW__BASEURL", SMW_BASE_URL),
         (
-            "CKANEXT__MEDIAWIKI_CREDENTIALS_PATH",
+            "CKANEXT__SMW__MEDIAWIKI_CREDENTIALS_PATH",
             MEDIAWIKI_CREDENTIALS_PATH,
         ),
     ],
