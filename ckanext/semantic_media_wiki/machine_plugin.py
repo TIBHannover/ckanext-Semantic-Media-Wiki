@@ -1,6 +1,7 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from flask import Blueprint
+from ckanext.semantic_media_wiki.config import apply_historical_endpoint_config
 from ckanext.semantic_media_wiki.controllers.media_wiki import MediaWikiController
 from ckanext.semantic_media_wiki.libs.commons import Common
 
@@ -15,6 +16,7 @@ class SemanticMediaWikiPlugin(plugins.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config_):
+        apply_historical_endpoint_config(config_)
         toolkit.add_template_directory(config_, 'templates/machine_link')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('public/statics/machine_link', 'ckanext-semantic-media-wiki')

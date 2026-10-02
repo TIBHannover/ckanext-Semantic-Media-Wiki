@@ -4,6 +4,13 @@ import logging
 log = logging.getLogger(__name__)
 
 import ckan.plugins.toolkit as toolkit
+from ckanext.semantic_media_wiki.config import (
+    MEDIAWIKI_API_ENDPOINT,
+    MEDIAWIKI_API_PATH,
+    MEDIAWIKI_API_SCHEME,
+    MEDIAWIKI_CREDENTIALS_PATH,
+    SMW_BASE_URL,
+)
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from urllib import parse
 from datetime import datetime as _time
@@ -240,11 +247,11 @@ class SampleLinkHelper():
     @staticmethod
     def get_api_config():                        
         query = "[[Category:Samples]]"        
-        credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
-        smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpoint')
-        api_path = toolkit.config.get('ckanext.smw.mediaWiki.api.path')
-        api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.api.scheme') or 'https'
+        credential_path = toolkit.config.get(MEDIAWIKI_CREDENTIALS_PATH)
+        smw_base_url = toolkit.config.get(SMW_BASE_URL)
+        api_host = toolkit.config.get(MEDIAWIKI_API_ENDPOINT)
+        api_path = toolkit.config.get(MEDIAWIKI_API_PATH)
+        api_scheme = toolkit.config.get(MEDIAWIKI_API_SCHEME) or 'https'
         sfb = toolkit.config.get('ckanext.crc.project.id')
         log.debug([credential_path, smw_base_url, api_host, query, sfb, api_path, api_scheme])
         return [

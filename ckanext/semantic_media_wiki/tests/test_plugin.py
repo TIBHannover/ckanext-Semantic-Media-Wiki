@@ -6,9 +6,20 @@ from unittest.mock import Mock, mock_open, patch
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+from ckan.common import CKANConfig
+from ckan.config.declaration import Declaration
 import pytest
 import yaml
 
+from ckanext.semantic_media_wiki.config import (
+    LEGACY_MEDIAWIKI_API_ENDPONT,
+    MEDIAWIKI_API_ENDPOINT,
+    MEDIAWIKI_API_PATH,
+    MEDIAWIKI_API_SCHEME,
+    MEDIAWIKI_CREDENTIALS_PATH,
+    SMW_BASE_URL,
+    apply_historical_endpoint_config,
+)
 from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
@@ -88,15 +99,145 @@ def test_machine_migration_accepts_table_created_by_legacy_plugin(monkeypatch):
 
 CUSTOM_CONFIG_KEYS = (
     "ckanext.crc.project.id",
-    "ckanext.mediaWiki_credentials_path",
-    "ckanext.smw.baseUrl",
-    "ckanext.smw.mediaWiki.api.endpoint",
-    "ckanext.smw.mediaWiki.api.path",
-    "ckanext.smw.mediaWiki.api.scheme",
+    "ckanext.mediawiki_credentials_path",
+    "ckanext.smw.baseurl",
+    "ckanext.smw.mediawiki.api.endpoint",
+    "ckanext.smw.mediawiki.api.path",
+    "ckanext.smw.mediawiki.api.scheme",
     "ckanext.smw.equipment.endpoint",
     "ckanext.smw.machine.endpoint",
     "ckanext.smw.tools.endpoint",
 )
+
+CONFIG_DECLARATION = Path(__file__).parents[1] / "config_declaration.yaml"
+
+
+def _resolve_declared_config(values):
+    declaration = Declaration()
+    declaration.load_dict(yaml.safe_load(CONFIG_DECLARATION.read_text()))
+    config = CKANConfig(values)
+    declaration.make_safe(config)
+    apply_historical_endpoint_config(config)
+    return config
+
+
+@pytest.mark.parametrize(
+    "canonical",
+    [
+        SMW_BASE_URL,
+        MEDIAWIKI_API_ENDPOINT,
+        MEDIAWIKI_API_PATH,
+        MEDIAWIKI_API_SCHEME,
+        MEDIAWIKI_CREDENTIALS_PATH,
+    ],
+)
+def test_config_declaration_preserves_canonical_values(canonical):
+    config = _resolve_declared_config({canonical: "canonical-value"})
+
+    assert config[canonical] == "canonical-value"
+
+
+@pytest.mark.parametrize(
+    ("canonical", "legacy"),
+    [
+        ("ckanext.smw.baseurl", "ckanext.smw.baseUrl"),
+        ("ckanext.smw.mediawiki.api.endpoint", "ckanext.smw.mediaWiki.api.endpoint"),
+        ("ckanext.smw.mediawiki.api.path", "ckanext.smw.mediaWiki.api.path"),
+        ("ckanext.smw.mediawiki.api.scheme", "ckanext.smw.mediaWiki.api.scheme"),
+        ("ckanext.mediawiki_credentials_path", "ckanext.mediaWiki_credentials_path"),
+    ],
+)
+def test_config_declaration_resolves_legacy_keys(caplog, canonical, legacy):
+    config = _resolve_declared_config({legacy: "legacy-value"})
+
+    assert config[canonical] == "legacy-value"
+    assert (
+        f"Config option '{legacy}' is deprecated. Use '{canonical}' instead"
+        in caplog.text
+    )
+
+
+def test_historical_endpoint_typo_is_supported(caplog):
+    config = _resolve_declared_config({LEGACY_MEDIAWIKI_API_ENDPONT: "old.example"})
+
+    assert config[MEDIAWIKI_API_ENDPOINT] == "old.example"
+    assert LEGACY_MEDIAWIKI_API_ENDPONT in caplog.text
+
+
+@pytest.mark.parametrize(
+    "legacy",
+    ["ckanext.smw.mediaWiki.api.endpoint", LEGACY_MEDIAWIKI_API_ENDPONT],
+)
+def test_canonical_endpoint_takes_precedence(caplog, legacy):
+    config = _resolve_declared_config(
+        {MEDIAWIKI_API_ENDPOINT: "canonical.example", legacy: "legacy.example"}
+    )
+
+    assert config[MEDIAWIKI_API_ENDPOINT] == "canonical.example"
+    assert legacy not in caplog.text
+
+
+def test_32_endpoint_takes_precedence_over_historical_typo():
+    config = _resolve_declared_config(
+        {
+            "ckanext.smw.mediaWiki.api.endpoint": "3-2.example",
+            LEGACY_MEDIAWIKI_API_ENDPONT: "older.example",
+        }
+    )
+
+    assert config[MEDIAWIKI_API_ENDPOINT] == "3-2.example"
+
+
+def test_endpoint_declaration_uses_32_key_as_native_legacy_key():
+    declaration = Declaration()
+    declaration.load_dict(yaml.safe_load(CONFIG_DECLARATION.read_text()))
+
+    assert (
+        declaration.get(MEDIAWIKI_API_ENDPOINT).legacy_key
+        == "ckanext.smw.mediaWiki.api.endpoint"
+    )
+
+
+@pytest.mark.parametrize(
+    ("environment_key", "canonical"),
+    [
+        (
+            "CKANEXT__SMW__MEDIAWIKI__API__ENDPOINT",
+            MEDIAWIKI_API_ENDPOINT,
+        ),
+        ("CKANEXT__SMW__MEDIAWIKI__API__PATH", MEDIAWIKI_API_PATH),
+        (
+            "CKANEXT__SMW__MEDIAWIKI__API__SCHEME",
+            MEDIAWIKI_API_SCHEME,
+        ),
+        ("CKANEXT__SMW__BASEURL", SMW_BASE_URL),
+        (
+            "CKANEXT__MEDIAWIKI_CREDENTIALS_PATH",
+            MEDIAWIKI_CREDENTIALS_PATH,
+        ),
+    ],
+)
+def test_normal_ckanext_environment_mapping_matches_declared_key(
+    environment_key, canonical
+):
+    derived_key = environment_key.lower().replace("__", ".")
+
+    assert derived_key == canonical
+    assert canonical in _resolve_declared_config({derived_key: "environment-value"})
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "ckanext.smw.machine.endpoint",
+        "ckanext.smw.tools.endpoint",
+        "ckanext.smw.equipment.endpoint",
+    ],
+)
+def test_existing_lowercase_endpoint_keys_remain_unchanged(key):
+    config = _resolve_declared_config({key: "query.example"})
+
+    assert config[key] == "query.example"
 
 
 def test_webassets_do_not_reference_obsolete_jquery_ui_bundle():
@@ -215,16 +356,17 @@ def test_api_login_uses_sfb1368_endpoint_and_credentials():
 @pytest.mark.parametrize("config_getter", [Helper.get_api_config, SampleLinkHelper.get_api_config])
 def test_api_config_reads_explicit_host_path_and_scheme(monkeypatch, config_getter):
     monkeypatch.setitem(toolkit.config, "ckanext.crc.project.id", "1368")
+    monkeypatch.setitem(toolkit.config, MEDIAWIKI_CREDENTIALS_PATH, "/credentials")
+    monkeypatch.setitem(toolkit.config, SMW_BASE_URL, "https://wiki.example/")
     monkeypatch.setitem(
-        toolkit.config, "ckanext.smw.mediaWiki.api.endpoint", "service.tib.eu"
+        toolkit.config, MEDIAWIKI_API_ENDPOINT, "service.tib.eu"
     )
-    monkeypatch.setitem(
-        toolkit.config, "ckanext.smw.mediaWiki.api.path", "/custom/wiki/"
-    )
-    monkeypatch.setitem(toolkit.config, "ckanext.smw.mediaWiki.api.scheme", "http")
+    monkeypatch.setitem(toolkit.config, MEDIAWIKI_API_PATH, "/custom/wiki/")
+    monkeypatch.setitem(toolkit.config, MEDIAWIKI_API_SCHEME, "http")
 
     config = config_getter()
 
+    assert config[:2] == ["/credentials", "https://wiki.example/"]
     assert config[2] == "service.tib.eu"
     assert config[5:] == ["/custom/wiki/", "http"]
 

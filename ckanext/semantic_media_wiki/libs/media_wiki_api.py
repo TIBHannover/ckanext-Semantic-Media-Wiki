@@ -49,7 +49,7 @@ class API():
             return paths[target_sfb]
         except KeyError:
             raise ValueError(
-                "ckanext.smw.mediaWiki.api.path must be configured "
+                "ckanext.smw.mediawiki.api.path must be configured "
                 "for project {}".format(target_sfb or "<unset>")
             )
 

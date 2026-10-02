@@ -6,6 +6,13 @@ from datetime import datetime as _time
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from urllib import parse
 import ckan.plugins.toolkit as toolkit
+from ckanext.semantic_media_wiki.config import (
+    MEDIAWIKI_API_ENDPOINT,
+    MEDIAWIKI_API_PATH,
+    MEDIAWIKI_API_SCHEME,
+    MEDIAWIKI_CREDENTIALS_PATH,
+    SMW_BASE_URL,
+)
 from ckanext.semantic_media_wiki.libs.commons import Common
 from flask import redirect
 import ckan.lib.helpers as h
@@ -170,11 +177,11 @@ class Helper():
     
 
     def get_api_config():
-        credential_path = toolkit.config.get('ckanext.mediaWiki_credentials_path')
-        smw_base_url = toolkit.config.get('ckanext.smw.baseUrl')
-        api_host = toolkit.config.get('ckanext.smw.mediaWiki.api.endpoint')
-        api_path = toolkit.config.get('ckanext.smw.mediaWiki.api.path')
-        api_scheme = toolkit.config.get('ckanext.smw.mediaWiki.api.scheme') or 'https'
+        credential_path = toolkit.config.get(MEDIAWIKI_CREDENTIALS_PATH)
+        smw_base_url = toolkit.config.get(SMW_BASE_URL)
+        api_host = toolkit.config.get(MEDIAWIKI_API_ENDPOINT)
+        api_path = toolkit.config.get(MEDIAWIKI_API_PATH)
+        api_scheme = toolkit.config.get(MEDIAWIKI_API_SCHEME) or 'https'
         sfb = toolkit.config.get('ckanext.crc.project.id')        
         query = ""
         if  sfb.strip() == "1368":
@@ -201,4 +208,3 @@ class Helper():
         return redirect(h.url_for('dataset.read', id=str(package_name) ,  _external=True)) 
     
     
-
