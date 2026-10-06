@@ -167,7 +167,7 @@ class API():
             if title:
                 url_titles[url] = title
 
-        existence = self.pages_exist(url_titles.values())
+        existence = self.pages_exist(list(url_titles.values()))
         return {
             url: existence.get(url_titles[url], False) if url in url_titles else True
             for url in urls
