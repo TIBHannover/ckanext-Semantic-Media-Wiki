@@ -120,6 +120,9 @@ class MediaWikiController():
 
         if len(results) == 0:
             return '0'
+        status = Helper.get_smw_link_status(item[0] for item in results)
+        for item in results:
+            item.append(status.get(item[0], False))
         return json.dumps(results)
     
 
@@ -128,7 +131,11 @@ class MediaWikiController():
         urls = Helper.get_machine_link(id)
         if len(urls.keys()) == 0:
             return '0'
-        return json.dumps(urls)
+        status = Helper.get_smw_link_status(urls.values())
+        return json.dumps({
+            name: {"url": url, "exists": status.get(url, False)}
+            for name, url in urls.items()
+        })
     
 
 
@@ -144,4 +151,3 @@ class MediaWikiController():
         return [project_id, machine_endpoint, tools_endpoint]
         
     
-

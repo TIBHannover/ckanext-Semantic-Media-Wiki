@@ -7,6 +7,7 @@ import ckan.plugins.toolkit as toolkit
 import json
 from ckanext.semantic_media_wiki.models.dataset_protocol_link import DatasetProtocolLink
 from ckanext.semantic_media_wiki.libs.commons import Common
+from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 
 
 
@@ -52,8 +53,14 @@ class ProtocolLinkController():
             if not protocol_link_obj:
                 return json.dumps({})
             protocols = {}
+            status = Helper.get_smw_link_status(
+                res.protocol_url for res in protocol_link_obj
+            )
             for res in protocol_link_obj:
-                protocols[res.protocol_name] = res.protocol_url
+                protocols[res.protocol_name] = {
+                    "url": res.protocol_url,
+                    "exists": status.get(res.protocol_url, False),
+                }
             return json.dumps(protocols)
         except:
             # raise
@@ -98,4 +105,3 @@ class ProtocolLinkController():
         except:
             # raise
             return toolkit.abort(500, "Server Issue")
-

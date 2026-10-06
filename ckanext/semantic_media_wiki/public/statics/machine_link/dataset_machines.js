@@ -14,7 +14,7 @@ function get_resource_link(target, url){
             if(result !== '0'){
                 let block = ''; 
                 for (let i=0; i < result.length; i++){
-                    block += build(result[i][0], result[i][1]);
+                    block += build(result[i][0], result[i][1], result[i][2]);
                 }
                 $(target).append(block);
                 $('.machine-link').fadeIn();
@@ -23,8 +23,11 @@ function get_resource_link(target, url){
     });
 }
 
-function build(url, name){
+function build(url, name, exists){
     let machineName = '<div class="machine-name-tag">' + name + '</div>';
+    if (!exists) {
+        return '<span class="machine-link-unavailable">' + machineName + '</span>';
+    }
     let anchor = '<a href="' + url + '" target="_blank" class="machine-link">' + machineName + '</a>';
     return '<span>' + anchor + '</span>';
 

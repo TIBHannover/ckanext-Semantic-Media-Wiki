@@ -13,7 +13,7 @@ function get_resource_link(target, url){
             if(result !== '0'){
                 let block = ''; 
                 for (let i=0; i < result.length; i++){
-                    block += build(result[i][0], result[i][1]);
+                    block += build(result[i][0], result[i][1], result[i][2]);
                 }
                 $(target).append(block);
                 $('.sample-link').fadeIn();
@@ -22,8 +22,11 @@ function get_resource_link(target, url){
     });
 }
 
-function build(url, name){
+function build(url, name, exists){
     let sampleName = '<div class="sample-name-tag">' + name + '</div>';
+    if (!exists) {
+        return '<span class="sample-link-unavailable">' + sampleName + '</span>';
+    }
     let anchor = '<a href="' + url + '" target="_blank" class="sample-link">' + sampleName + '</a>';
     return '<span>' + anchor + '</span>';
 

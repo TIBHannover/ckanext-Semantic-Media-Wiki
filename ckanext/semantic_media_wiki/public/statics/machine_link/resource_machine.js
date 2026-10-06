@@ -10,10 +10,14 @@ $(document).ready(function(){
             }
             else{
                 $.each(result, function(key,value){
-                    let anchor = '<a href="';
-                    anchor += value;
-                    anchor += ('" target="_blank">' + key + '</a><br>');
-                    $('#equipment_list').append(anchor);
+                    if (value.exists) {
+                        $('#equipment_list').append(
+                            $('<a>', {href: value.url, target: '_blank', text: key}),
+                            '<br>'
+                        );
+                    } else {
+                        $('#equipment_list').append($('<span>', {text: key}), '<br>');
+                    }
                 });
 
             }            
@@ -23,4 +27,3 @@ $(document).ready(function(){
 
 
 });
-

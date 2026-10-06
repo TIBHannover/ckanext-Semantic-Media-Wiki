@@ -13,7 +13,7 @@ function get_protocol_link(target, url){
             if(result){
                 let block = ''; 
                 Object.entries(result).map(([key, value]) => {
-                    block += buildPortocolTag(value, key);
+                    block += buildPortocolTag(value.url, key, value.exists);
                 });            
                 $(target).append(block);
                 $('.protocol-link').fadeIn();
@@ -22,8 +22,11 @@ function get_protocol_link(target, url){
     });
 }
 
-function buildPortocolTag(url, name){
+function buildPortocolTag(url, name, exists){
     let protocolName = '<div class="protocol-name-tag">' + name + '</div>';
+    if (!exists) {
+        return '<span class="protocol-link-unavailable">' + protocolName + '</span>';
+    }
     let anchor = '<a href="' + url + '" target="_blank" class="protocol-link">' + protocolName + '</a>';
     return '<span>' + anchor + '</span>';
 

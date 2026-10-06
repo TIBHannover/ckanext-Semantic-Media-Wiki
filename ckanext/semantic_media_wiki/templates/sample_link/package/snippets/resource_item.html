@@ -29,12 +29,17 @@
       {% endif %}
     </p>
   {% endblock %}
-  {% if h.get_samples_for_a_resource(res.id).keys()|length != 0 %}
+  {% set sample_links = h.get_samples_for_a_resource(res.id) %}
+  {% if sample_links.keys()|length != 0 %}
     <small><strong>{{_('Samples:')}}</strong></small>
     <ul>
-    {% for name, url in h.get_samples_for_a_resource(res.id).items() %}
+    {% for name, link in sample_links.items() %}
         <li>
-            <a href="{{url}}" target="_blank">{{name}}</a>
+            {% if link.exists %}
+              <a href="{{link.url}}" target="_blank">{{name}}</a>
+            {% else %}
+              {{name}}
+            {% endif %}
         </li>
     {% endfor %}    
   </ul>

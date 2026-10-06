@@ -2,7 +2,7 @@ from datetime import datetime
 import importlib.util
 import logging
 from pathlib import Path
-from unittest.mock import Mock, mock_open, patch
+from unittest.mock import Mock, call, mock_open, patch
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
@@ -470,15 +470,20 @@ def test_pipeline_paginates_query_and_maps_image_url():
     api = API("user", "secret", "[[Category:Device]]", "wiki.example", "1153")
     api.login = Mock()
     api.site = Mock()
-    api.site.raw_api.return_value = response
+    api.site.raw_api.side_effect = [
+        response,
+        {"query": {"pages": [{"pageid": 1, "title": "Machine A"}]}},
+    ]
     api.mw_getfile_url = Mock(return_value="https://wiki.example/machine.png")
 
     results, images = api.pipeline(offset=25, limit=50)
 
-    api.site.raw_api.assert_called_once_with(
+    assert api.site.raw_api.call_args_list[0] == call(
         "ask", query="[[Category:Device]]|limit=50|offset=25", format="json"
     )
-    assert results == [{"page": "Machine A", "Image": "File:machine.png"}]
+    assert results == [
+        {"page": "Machine A", "Image": "File:machine.png", "exists": True}
+    ]
     assert images == {"Machine A": "https://wiki.example/machine.png"}
 
 
@@ -486,14 +491,67 @@ def test_sample_pipeline_keeps_results_without_printouts():
     api = API("", "", "[[Category:Samples]]", "wiki.example", "1368", sample_query=True)
     api.login = Mock()
     api.site = Mock()
-    api.site.raw_api.return_value = {
-        "query": {"results": {"Sample A": {"fulltext": "Sample A", "printouts": {}}}}
-    }
+    api.site.raw_api.side_effect = [
+        {"query": {"results": {"Sample A": {"fulltext": "Sample A", "printouts": {}}}}},
+        {"query": {"pages": [{"ns": 0, "title": "Sample A", "missing": True}]}},
+    ]
 
     results, images = api.pipeline()
 
-    assert results == [{"page": "Sample A"}]
+    assert results == [{"page": "Sample A", "exists": False}]
     assert images == {}
+
+
+def test_pages_exist_handles_missing_pages_and_redirects():
+    api = API("", "", "query", "wiki.example", "1368")
+    api.site = Mock()
+    api.site.raw_api.return_value = {
+        "query": {
+            "redirects": [{"from": "Old Name", "to": "Current Name"}],
+            "pages": [
+                {"pageid": 1, "title": "Current Name"},
+                {"ns": 0, "title": "Missing Page", "missing": True},
+            ],
+        }
+    }
+
+    result = api.pages_exist(["Old Name", "Missing Page"])
+
+    assert result == {"Old Name": True, "Missing Page": False}
+    api.site.raw_api.assert_called_once_with(
+        "query",
+        prop="info",
+        titles="Old Name|Missing Page",
+        redirects=1,
+        format="json",
+        formatversion=2,
+    )
+
+
+def test_pages_exist_batches_requests_and_fails_closed():
+    api = API("", "", "query", "wiki.example", "1368")
+    api.site = Mock()
+    api.site.raw_api.side_effect = RuntimeError("wiki unavailable")
+    titles = ["Page {}".format(index) for index in range(51)]
+
+    result = api.pages_exist(titles)
+
+    assert result == {title: False for title in titles}
+    assert api.site.raw_api.call_count == 2
+
+
+def test_urls_exist_only_validates_configured_wiki_pages():
+    api = API("", "", "query", "wiki.example", "1368")
+    api.pages_exist = Mock(return_value={"Existing Page": True})
+    valid_url = "https://wiki.example/sfb1368/Existing_Page"
+    outside_url = "https://outside.example/sfb1368/Existing_Page"
+
+    result = api.urls_exist(
+        [valid_url, outside_url], "https://wiki.example/sfb1368/"
+    )
+
+    assert result == {valid_url: True, outside_url: True}
+    api.pages_exist.assert_called_once_with(["Existing Page"])
 
 
 def test_unpack_ask_response_converts_timestamps():

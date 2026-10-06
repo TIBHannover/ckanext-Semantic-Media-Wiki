@@ -6,6 +6,7 @@ from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 import ckan.lib.helpers as h
 import json
 from ckanext.semantic_media_wiki.libs.commons import Common
+from ckanext.semantic_media_wiki.libs.media_wiki import Helper
 
 
 
@@ -82,6 +83,9 @@ class SampleLinkController():
         if len(results) == 0:
             return '0'
         results = sorted(results, key=lambda x:x[0])
+        status = Helper.get_smw_link_status(item[0] for item in results)
+        for item in results:
+            item.append(status.get(item[0], False))
         return json.dumps(results)
 
 
@@ -91,7 +95,11 @@ class SampleLinkController():
         if len(urls.keys()) == 0:
             return '0'
         urls = {sample_name:urls[sample_name] for sample_name in sorted(urls)}
-        return json.dumps(urls)
+        status = Helper.get_smw_link_status(urls.values())
+        return json.dumps({
+            name: {"url": url, "exists": status.get(url, False)}
+            for name, url in urls.items()
+        })
 
 
 
@@ -146,5 +154,9 @@ class SampleLinkController():
         if len(urls.keys()) == 0:
             return {}
         urls = {sample_name:urls[sample_name] for sample_name in sorted(urls)}
-        return urls
+        status = Helper.get_smw_link_status(urls.values())
+        return {
+            name: {"url": url, "exists": status.get(url, False)}
+            for name, url in urls.items()
+        }
     

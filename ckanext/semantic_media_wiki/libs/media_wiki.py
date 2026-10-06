@@ -20,6 +20,35 @@ import ckan.lib.helpers as h
 
 class Helper():
 
+    @staticmethod
+    def get_smw_link_status(urls):
+        """Return URL existence flags, failing closed when SMW is unavailable."""
+        urls = list(dict.fromkeys(urls))
+        if not urls:
+            return {}
+        try:
+            credentials_path, base_url, host, query, sfb, path, scheme = Helper.get_api_config()
+            with open(credentials_path, 'r') as credentials_file:
+                credentials = dict(
+                    line.strip().split('=', 1)
+                    for line in credentials_file
+                    if '=' in line
+                )
+            api = API(
+                username=credentials.get('username'),
+                password=credentials.get('password'),
+                query=query,
+                host=host,
+                target_sfb=sfb,
+                path=path,
+                scheme=scheme,
+            )
+            api.login(host, path, scheme)
+            return api.urls_exist(urls, base_url)
+        except Exception:
+            log.exception("Could not validate SMW page links")
+            return {url: False for url in urls}
+
 
     def add_machine_links(request, resources_len):
         

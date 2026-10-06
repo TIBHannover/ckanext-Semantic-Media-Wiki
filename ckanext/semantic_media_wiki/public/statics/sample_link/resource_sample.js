@@ -10,14 +10,17 @@ $(document).ready(function(){
             }
             else{
                 $.each(result, function(key,value){
-                    let anchor = '<a href="';
-                    anchor += value;
-                    anchor += ('" target="_blank">' + key + '</a><br>');
-                    $('#sample_list').append(anchor);
+                    if (value.exists) {
+                        $('#sample_list').append(
+                            $('<a>', {href: value.url, target: '_blank', text: key}),
+                            '<br>'
+                        );
+                    } else {
+                        $('#sample_list').append($('<span>', {text: key}), '<br>');
+                    }
                 });
 
             }            
         }
     });
 });
-
