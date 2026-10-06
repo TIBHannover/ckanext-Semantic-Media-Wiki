@@ -13,7 +13,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version="3.2.2",
+    version="3.2.3",
 
     description="Link CKAN datasets and resources to Semantic MediaWiki entities",
     long_description=long_description,

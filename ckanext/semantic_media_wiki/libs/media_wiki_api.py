@@ -43,7 +43,7 @@ class API():
     def default_path(target_sfb):
         paths = {
             "1153": "/wiki-sfb1153/",
-            "1368": "/sfb1368/wiki/",
+            "1368": "/wiki-sfb1368/",
         }
         try:
             return paths[target_sfb]

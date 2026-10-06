@@ -318,9 +318,9 @@ def test_api_uses_sfb1153_default_path():
 
 
 def test_api_uses_sfb1368_default_path():
-    api = API("", "", "query", "service.tib.eu", "1368")
+    api = API("", "", "query", "smw.service.tib.eu", "1368")
 
-    assert api.path == "/sfb1368/wiki/"
+    assert api.path == "/wiki-sfb1368/"
     assert api.scheme == "https"
 
 
@@ -347,11 +347,17 @@ def test_api_requires_path_for_unknown_project():
 def test_api_login_uses_sfb1368_endpoint_and_credentials():
     site = Mock()
     with patch("ckanext.semantic_media_wiki.libs.media_wiki_api.Site", return_value=site) as site_cls:
-        api = API("user", "secret", "[[Category:Equipment]]", "service.tib.eu", "1368")
+        api = API(
+            "user",
+            "secret",
+            "[[Category:Equipment]]",
+            "smw.service.tib.eu",
+            "1368",
+        )
         assert api.login(api.host, api.path, api.scheme) is True
 
     site_cls.assert_called_once_with(
-        host="service.tib.eu", path="/sfb1368/wiki/", scheme="https"
+        host="smw.service.tib.eu", path="/wiki-sfb1368/", scheme="https"
     )
     site.login.assert_called_once_with(username="user", password="secret")
 
@@ -362,7 +368,7 @@ def test_api_config_reads_explicit_host_path_and_scheme(monkeypatch, config_gett
     monkeypatch.setitem(toolkit.config, MEDIAWIKI_CREDENTIALS_PATH, "/credentials")
     monkeypatch.setitem(toolkit.config, SMW_BASE_URL, "https://wiki.example/")
     monkeypatch.setitem(
-        toolkit.config, MEDIAWIKI_API_ENDPOINT, "service.tib.eu"
+        toolkit.config, MEDIAWIKI_API_ENDPOINT, "smw.service.tib.eu"
     )
     monkeypatch.setitem(toolkit.config, MEDIAWIKI_API_PATH, "/custom/wiki/")
     monkeypatch.setitem(toolkit.config, MEDIAWIKI_API_SCHEME, "http")
@@ -370,7 +376,7 @@ def test_api_config_reads_explicit_host_path_and_scheme(monkeypatch, config_gett
     config = config_getter()
 
     assert config[:2] == ["/credentials", "https://wiki.example/"]
-    assert config[2] == "service.tib.eu"
+    assert config[2] == "smw.service.tib.eu"
     assert config[5:] == ["/custom/wiki/", "http"]
 
 
@@ -381,28 +387,35 @@ def test_machine_api_receives_connection_settings(monkeypatch):
         staticmethod(
             lambda: [
                 "/credentials",
-                "https://service.tib.eu/sfb1368/wiki/",
-                "service.tib.eu",
+                "https://smw.service.tib.eu/sfb1368/",
+                "smw.service.tib.eu",
                 "[[Category:Equipment]]",
                 "1368",
-                "/sfb1368/wiki/",
+                "/wiki-sfb1368/",
                 "https",
             ]
         ),
     )
     with patch("builtins.open", mock_open(read_data="username=user\npassword=secret")):
         with patch("ckanext.semantic_media_wiki.libs.media_wiki.API") as api_cls:
-            api_cls.return_value.pipeline.return_value = ([], {})
-            Helper.get_machines_list()
+            api_cls.return_value.pipeline.return_value = (
+                [{"page": "Hand-operated press LP M4S50"}],
+                {},
+            )
+            machines = Helper.get_machines_list()
 
     api_cls.assert_called_once_with(
         username="user",
         password="secret",
         query="[[Category:Equipment]]",
-        host="service.tib.eu",
+        host="smw.service.tib.eu",
         target_sfb="1368",
-        path="/sfb1368/wiki/",
+        path="/wiki-sfb1368/",
         scheme="https",
+    )
+    assert machines[1]["value"] == (
+        "https://smw.service.tib.eu/sfb1368/"
+        "Hand-operated%20press%20LP%20M4S50"
     )
 
 
@@ -413,30 +426,34 @@ def test_sample_api_receives_connection_settings(monkeypatch):
         staticmethod(
             lambda: [
                 "/credentials",
-                "https://service.tib.eu/sfb1368/wiki/",
-                "service.tib.eu",
+                "https://smw.service.tib.eu/sfb1368/",
+                "smw.service.tib.eu",
                 "[[Category:Samples]]",
                 "1368",
-                "/sfb1368/wiki/",
+                "/wiki-sfb1368/",
                 "https",
             ]
         ),
     )
     with patch("builtins.open", mock_open(read_data="username=user\npassword=secret")):
         with patch("ckanext.semantic_media_wiki.libs.sample_link.API") as api_cls:
-            api_cls.return_value.pipeline.return_value = ([], {})
-            SampleLinkHelper.get_samples_list()
+            api_cls.return_value.pipeline.return_value = (
+                [{"page": "Sample A"}],
+                {},
+            )
+            samples = SampleLinkHelper.get_samples_list()
 
     api_cls.assert_called_once_with(
         username="user",
         password="secret",
         query="[[Category:Samples]]",
-        host="service.tib.eu",
+        host="smw.service.tib.eu",
         target_sfb="1368",
         sample_query=True,
-        path="/sfb1368/wiki/",
+        path="/wiki-sfb1368/",
         scheme="https",
     )
+    assert samples[1]["value"] == "https://smw.service.tib.eu/sfb1368/Sample%20A"
 
 
 def test_pipeline_paginates_query_and_maps_image_url():
