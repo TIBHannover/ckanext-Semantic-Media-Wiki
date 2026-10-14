@@ -71,7 +71,7 @@ class API():
             )
 
             smw_results = data.get("query", {}).get("results", {})  # dict: page_title -> answer_dict
-            log.debug(smw_results.items())
+            #log.debug(smw_results.items())
 
             existing_pages = self.pages_exist(
                 answer.get("fulltext")
