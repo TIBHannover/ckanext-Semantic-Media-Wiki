@@ -2,14 +2,17 @@ from datetime import datetime
 import importlib.util
 import logging
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock, call, mock_open, patch
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.common import CKANConfig
 from ckan.config.declaration import Declaration
+from ckan.tests import factories
 import pytest
 import yaml
+from werkzeug.datastructures import MultiDict
 
 from ckanext.semantic_media_wiki.config import (
     LEGACY_MEDIAWIKI_API_ENDPONT,
@@ -21,6 +24,7 @@ from ckanext.semantic_media_wiki.config import (
     apply_historical_endpoint_config,
 )
 from ckanext.semantic_media_wiki.libs.media_wiki import Helper
+from ckanext.semantic_media_wiki.libs.commons import Common
 from ckanext.semantic_media_wiki.libs.media_wiki_api import API
 from ckanext.semantic_media_wiki.libs.sample_link import SampleLinkHelper
 from ckanext.semantic_media_wiki.machine_plugin import SemanticMediaWikiPlugin
@@ -573,3 +577,125 @@ def test_unpack_ask_response_converts_timestamps():
 )
 def test_plugins_register_expected_routes(plugin, route_count):
     assert len(plugin().get_blueprint().deferred_functions) == route_count
+
+
+@pytest.mark.ckan_config("ckan.plugins", "machine_link sample_link")
+@pytest.mark.usefixtures("with_plugins")
+def test_equipment_get_renders_smw_options(app, clean_db, monkeypatch):
+    user = factories.Sysadmin()
+    dataset = factories.Dataset(
+        user=user,
+        resources=[{"url": "https://example.test/data.csv", "name": "data.csv"}],
+    )
+    monkeypatch.setattr(Common, "abort_if_dataset_editing_not_permit", lambda _id: True)
+    monkeypatch.setattr(
+        Helper,
+        "get_machines_list",
+        lambda: [
+            {"value": "0", "text": "None selected", "image": ""},
+            {
+                "value": "https://wiki.example/Equipment_A",
+                "text": "Equipment A",
+                "image": "",
+            },
+        ],
+    )
+
+    response = app.get(
+        "/smw/machines_view/{}".format(dataset["name"]),
+        extra_environ={"REMOTE_USER": user["name"]},
+    )
+
+    assert response.status_code == 200
+    body = response.get_data(as_text=True)
+    assert 'id="machine-form"' in body
+    assert "Equipment A" in body
+    assert 'value=https://wiki.example/Equipment_A' in body
+
+
+@pytest.mark.ckan_config("ckan.plugins", "machine_link sample_link")
+@pytest.mark.usefixtures("with_plugins")
+def test_equipment_post_saves_selection_and_continues_to_samples(
+    app, clean_db, monkeypatch
+):
+    user = factories.Sysadmin()
+    dataset = factories.Dataset(
+        user=user,
+        resources=[{"url": "https://example.test/data.csv", "name": "data.csv"}],
+    )
+    resource_id = dataset["resources"][0]["id"]
+    saved = {}
+    monkeypatch.setattr(Common, "abort_if_dataset_editing_not_permit", lambda _id: True)
+
+    def save_equipment(request, count):
+        saved["count"] = count
+        saved["url"] = request.form["machine_link1"]
+        saved["name"] = request.form["machine_name_1"]
+        saved["resources"] = request.form.getlist("machine_resources_list1")
+        return True
+
+    monkeypatch.setattr(Helper, "add_machine_links", save_equipment)
+
+    response = app.post(
+        "/smw/save_machines",
+        data={
+            "package": dataset["name"],
+            "machine_count": "1",
+            "save_btn": "finish_machine",
+            "machine_link1": "https://wiki.example/Equipment_A",
+            "machine_name_1": "Equipment A",
+            "machine_resources_list1": resource_id,
+        },
+        extra_environ={"REMOTE_USER": user["name"]},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+    assert response.location.endswith(
+        "/smw/add_samples_view/{}".format(dataset["name"])
+    )
+    assert saved == {
+        "count": 1,
+        "url": "https://wiki.example/Equipment_A",
+        "name": "Equipment A",
+        "resources": [resource_id],
+    }
+
+
+def test_saved_equipment_remains_available_when_revisiting(monkeypatch):
+    from ckanext.semantic_media_wiki.libs import media_wiki
+
+    records = []
+
+    class FakeEquipmentLink:
+        def __init__(
+            self, resource_id=None, url=None, link_name=None,
+            create_at=None, updated_at=None
+        ):
+            self.resource_id = resource_id
+            self.url = url
+            self.link_name = link_name
+
+        def save(self):
+            records.append(self)
+
+        def get_by_resource(self, id):
+            matches = [record for record in records if record.resource_id == id]
+            return matches or False
+
+    monkeypatch.setattr(media_wiki, "ResourceEquipmentLink", FakeEquipmentLink)
+    request = SimpleNamespace(
+        form=MultiDict([
+            ("machine_link1", "https://wiki.example/Equipment_A"),
+            ("machine_name_1", "Equipment A"),
+            ("machine_resources_list1", "resource-1"),
+        ])
+    )
+
+    assert Helper.add_machine_links(request, 1)
+    assert Helper.get_machine_link("resource-1") == {
+        "Equipment A": "https://wiki.example/Equipment_A"
+    }
+    assert Helper.get_machine_link("resource-1") == {
+        "Equipment A": "https://wiki.example/Equipment_A"
+    }
